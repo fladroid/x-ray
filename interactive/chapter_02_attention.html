@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>II. The Art of Paying Attention</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@300;400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;1,8..60,300&display=swap');
+
+  /* ── THEMES ── */
+  :root {
+    --bg: #f5f2ed;
+    --bg2: #ede8e0;
+    --bg3: #e4ddd4;
+    --border: #c8c0b4;
+    --text: #2a2520;
+    --text-dim: #7a6e65;
+    --text-bright: #1a1210;
+    --accent: #8a6030;
+    --accent2: #2a6080;
+    --accent3: #802030;
+    --accent4: #286040;
+  }
+  [data-theme="dark"] {
+    --bg: #0e0e0f;
+    --bg2: #141416;
+    --bg3: #1a1a1d;
+    --border: #2a2a2e;
+    --text: #d4cfc8;
+    --text-dim: #6b6660;
+    --text-bright: #ede8e0;
+    --accent: #c8a96e;
+    --accent2: #7eb3c8;
+    --accent3: #c87e7e;
+    --accent4: #7ec89a;
+  }
+  [data-contrast="high"] {
+    --text: #000000; --text-dim: #444444; --text-bright: #000000; --border: #666666;
+  }
+  [data-theme="dark"][data-contrast="high"] {
+    --text: #ffffff; --text-dim: #bbbbbb; --text-bright: #ffffff; --border: #888888;
+  }
+
+  html { font-size: 18px; }
+  html[data-fsize="large"] { font-size: 21px; }
+  html[data-fsize="xl"] { font-size: 25px; }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Source Serif 4', Georgia, serif;
+    line-height: 1.8;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    transition: background 0.2s, color 0.2s;
+  }
+
+  /* ── SETTINGS BAR ── */
+  .settings-bar {
+    position: fixed; top: 52px; left: 0; right: 0;
+    background: var(--bg2); border-bottom: 1px solid var(--border);
+    z-index: 90; display: none;
+  }
+  .settings-bar.open { display: block; }
+  .settings-inner {
+    max-width: 800px; margin: 0 auto; padding: 1rem 2rem;
+    display: flex; gap: 2.5rem; align-items: flex-start; flex-wrap: wrap;
+  }
+  .setting-group { display: flex; flex-direction: column; gap: 0.5rem; }
+  .setting-group-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    letter-spacing: 0.15em; color: var(--text-dim); text-transform: uppercase;
+  }
+  .setting-btns { display: flex; gap: 0.4rem; }
+  .set-btn {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    letter-spacing: 0.08em; padding: 0.3rem 0.75rem;
+    border: 1px solid var(--border); background: transparent;
+    color: var(--text-dim); cursor: pointer; transition: all 0.15s;
+  }
+  .set-btn:hover { color: var(--text-bright); border-color: var(--text-dim); }
+  .set-btn.active { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+
+  /* ── LANG BAR ── */
+  .lang-bar {
+    position: fixed; top: 52px; left: 0; right: 0;
+    background: var(--bg2); border-bottom: 1px solid var(--border);
+    z-index: 89; display: none;
+  }
+  .lang-bar.open { display: block; }
+  .lang-inner {
+    max-width: 800px; margin: 0 auto; padding: 0.75rem 2rem;
+    display: flex; gap: 0.5rem; align-items: center;
+  }
+  .lang-btn {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    letter-spacing: 0.12em; padding: 0.3rem 1rem;
+    border: 1px solid var(--border); background: transparent;
+    color: var(--text-dim); cursor: pointer; text-transform: uppercase; transition: all 0.15s;
+  }
+  .lang-btn:hover { color: var(--text-bright); border-color: var(--text-dim); }
+  .lang-btn.active { background: var(--accent2); border-color: var(--accent2); color: var(--bg); }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    background: rgba(245,242,237,0.96); backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border); z-index: 100; transition: background 0.2s;
+  }
+  [data-theme="dark"] nav { background: rgba(14,14,15,0.96); }
+  .nav-inner {
+    max-width: 800px; margin: 0 auto; padding: 0 2rem;
+    display: flex; align-items: center; justify-content: space-between; height: 52px;
+  }
+  .nav-title { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.15em; color: var(--text-dim); text-transform: uppercase; }
+  .nav-right { display: flex; align-items: center; }
+  .nav-chapters { display: flex; list-style: none; }
+  .nav-chapters a {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-dim);
+    text-decoration: none; padding: 0 14px; height: 52px; display: flex; align-items: center;
+    border-left: 1px solid var(--border); transition: color 0.2s, background 0.2s;
+  }
+  .nav-chapters a:hover, .nav-chapters a.active { color: var(--accent); background: rgba(138,96,48,0.06); }
+  [data-theme="dark"] .nav-chapters a:hover,
+  [data-theme="dark"] .nav-chapters a.active { background: rgba(200,169,110,0.05); }
+  .settings-toggle {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.12em;
+    color: var(--text-dim); background: transparent; border: none;
+    border-left: 1px solid var(--border); padding: 0 14px; height: 52px;
+    cursor: pointer; text-transform: uppercase; transition: color 0.15s;
+  }
+  .settings-toggle:hover, .settings-toggle.active { color: var(--accent); }
+
+  /* ── LAYOUT ── */
+  main { padding-top: 52px; }
+  .chapter-header { padding: 8rem 0 4rem; border-bottom: 1px solid var(--border); margin-bottom: 4rem; }
+  .chapter-number { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.2em; color: var(--accent); text-transform: uppercase; margin-bottom: 1.5rem; display: block; }
+  h1 { font-family: 'Playfair Display', Georgia, serif; font-size: clamp(2.2rem, 5vw, 3.2rem); font-weight: 700; color: var(--text-bright); line-height: 1.15; letter-spacing: -0.01em; margin-bottom: 1.5rem; }
+  .chapter-subtitle { font-family: 'Source Serif 4', serif; font-style: italic; font-size: 1.1rem; color: var(--text-dim); font-weight: 300; }
+
+  /* ── PROSE ── */
+  .prose { margin-bottom: 2.5rem; }
+  .prose p { margin-bottom: 1.4rem; }
+  .prose p:last-child { margin-bottom: 0; }
+  .prose em { font-style: italic; color: var(--text-bright); }
+  .prose strong { font-weight: 400; color: var(--accent); }
+
+  .pull-quote {
+    border-left: 2px solid var(--accent); margin: 3rem 0; padding: 1rem 0 1rem 2rem;
+    font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.25rem;
+    color: var(--text-bright); line-height: 1.5;
+  }
+  .pull-quote cite { display: block; margin-top: 0.75rem; font-family: 'JetBrains Mono', monospace; font-style: normal; font-size: 11px; letter-spacing: 0.1em; color: var(--text-dim); }
+
+  .section-break {
+    display: flex; align-items: center; gap: 1rem; margin: 4rem 0;
+    color: var(--text-dim); font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.15em;
+  }
+  .section-break::before, .section-break::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  /* ── WIDGET ── */
+  .widget { background: var(--bg2); border: 1px solid var(--border); border-radius: 4px; margin: 3rem 0; overflow: hidden; }
+  .widget-header { padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .widget-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.15em; color: var(--text-dim); text-transform: uppercase; }
+  .widget-status { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent4); display: flex; align-items: center; gap: 6px; }
+  .status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent4); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+  .widget-body { padding: 1.5rem; }
+
+  .widget-note {
+    margin-top: 1rem; padding: 0.75rem 1rem; background: var(--bg3);
+    border-left: 2px solid var(--accent); font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; color: var(--text-dim); line-height: 1.6;
+  }
+  .widget-note strong { color: var(--accent); font-weight: 400; }
+
+  /* ── SENTENCE INPUT ── */
+  .sentence-row { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; }
+  .sentence-input {
+    flex: 1; background: var(--bg); border: 1px solid var(--border);
+    color: var(--text-bright); font-family: 'Source Serif 4', serif; font-size: 15px;
+    padding: 0.6rem 0.9rem; outline: none; transition: border-color 0.15s;
+  }
+  .sentence-input:focus { border-color: var(--accent2); }
+  .btn {
+    background: transparent; border: 1px solid var(--border); color: var(--text);
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.1em;
+    padding: 0.5rem 1rem; cursor: pointer; text-transform: uppercase;
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
+  }
+  .btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(138,96,48,0.05); }
+  .btn-primary { border-color: var(--accent2); color: var(--accent2); }
+  .btn-primary:hover { background: rgba(42,96,128,0.08); }
+  [data-theme="dark"] .btn-primary:hover { background: rgba(126,179,200,0.1); }
+
+  /* ── ATTENTION HEATMAP ── */
+  .heatmap-container { overflow-x: auto; }
+  .heatmap-wrap { display: inline-block; min-width: 100%; }
+  .heatmap-table { border-collapse: collapse; width: 100%; }
+  .heatmap-table td {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px;
+    padding: 0; text-align: center; position: relative;
+  }
+  .heatmap-cell {
+    display: flex; align-items: center; justify-content: center;
+    width: 100%; min-width: 52px; height: 52px;
+    font-size: 11px; letter-spacing: 0.02em;
+    transition: filter 0.2s;
+    cursor: default;
+  }
+  .heatmap-cell:hover { filter: brightness(1.15); }
+  .heatmap-row-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    color: var(--text-dim); padding-right: 1rem; text-align: right;
+    white-space: nowrap; vertical-align: middle;
+  }
+  .heatmap-col-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    color: var(--text-dim); padding-bottom: 0.5rem; text-align: center;
+    white-space: nowrap;
+  }
+  .heatmap-legend {
+    display: flex; align-items: center; gap: 0.75rem; margin-top: 1rem;
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-dim);
+  }
+  .legend-bar {
+    flex: 1; height: 6px; border-radius: 3px;
+    background: linear-gradient(to right, rgba(42,96,128,0.05), rgba(42,96,128,1));
+  }
+  [data-theme="dark"] .legend-bar {
+    background: linear-gradient(to right, rgba(126,179,200,0.05), rgba(126,179,200,1));
+  }
+
+  /* ── CONTEXT SHIFT WIDGET ── */
+  .context-examples { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1.5rem; }
+  .context-example {
+    padding: 0.75rem 1rem; background: var(--bg3); border: 1px solid var(--border);
+    cursor: pointer; transition: border-color 0.15s;
+    font-family: 'Source Serif 4', serif; font-size: 15px; line-height: 1.6;
+  }
+  .context-example:hover { border-color: var(--accent2); }
+  .context-example.selected { border-color: var(--accent); background: var(--bg2); }
+  .context-example .target-word { color: var(--accent); font-weight: 400; }
+  .context-viz { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1rem; }
+  .context-panel { padding: 1rem; background: var(--bg3); border: 1px solid var(--border); }
+  .context-panel-title { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.15em; color: var(--text-dim); text-transform: uppercase; margin-bottom: 0.75rem; }
+  .token-row { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+  .token {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    padding: 0.2rem 0.5rem; border: 1px solid transparent;
+    transition: all 0.3s;
+  }
+  .token.highlight { border-color: var(--accent); color: var(--accent); background: rgba(138,96,48,0.08); }
+  [data-theme="dark"] .token.highlight { background: rgba(200,169,110,0.1); }
+
+  /* ── FOOTER ── */
+  footer { margin: 6rem 0 4rem; padding-top: 2rem; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+  .footer-nav a { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.1em; color: var(--text-dim); text-decoration: none; text-transform: uppercase; transition: color 0.15s; }
+  .footer-nav a:hover { color: var(--accent); }
+  .footer-page { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-dim); }
+
+  .tooltip { position: fixed; background: var(--bg2); border: 1px solid var(--border); padding: 0.4rem 0.7rem; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-bright); pointer-events: none; display: none; z-index: 200; }
+
+  @media (max-width: 600px) {
+    .nav-chapters { display: none; }
+    h1 { font-size: 2rem; }
+    .settings-inner { gap: 1.5rem; }
+    .context-viz { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <span class="nav-title" id="navTitle" translate="no">X-Ray — Interactive</span>
+    <div class="nav-right">
+      <ul class="nav-chapters">
+        <li><a href="chapter_01_vectors.html" id="navCh1" translate="no">I. Vector Space</a></li>
+        <li><a href="#" class="active" id="navCh2" translate="no">II. Attention</a></li>
+        <li><a href="#" id="navCh3" translate="no">III. Local Optima</a></li>
+        <li><a href="#" id="navCh4" translate="no">IV. Emergence</a></li>
+      </ul>
+      <button class="settings-toggle" id="langToggle" onclick="toggleLang()">🌐 Lang</button>
+      <button class="settings-toggle" id="settingsToggle" onclick="toggleSettings()">⚙ Display</button>
+    </div>
+  </div>
+</nav>
+
+<div class="lang-bar" id="langBar" translate="no">
+  <div class="lang-inner">
+    <button class="lang-btn active" data-lang="en" onclick="applyTranslation('en')">EN</button>
+    <button class="lang-btn" data-lang="de" onclick="applyTranslation('de')">DE</button>
+  </div>
+</div>
+
+<div class="settings-bar" id="settingsBar" translate="no">
+  <div class="settings-inner">
+    <div class="setting-group">
+      <span class="setting-group-label" id="settingThemeLabel">Theme</span>
+      <div class="setting-btns">
+        <button class="set-btn active" id="btnLight" onclick="setTheme('light')">Light</button>
+        <button class="set-btn" id="btnDark" onclick="setTheme('dark')">Dark</button>
+      </div>
+    </div>
+    <div class="setting-group">
+      <span class="setting-group-label" id="settingFontLabel">Font size</span>
+      <div class="setting-btns">
+        <button class="set-btn active" id="btnFDefault" onclick="setFontSize('default')">Default</button>
+        <button class="set-btn" id="btnFLarge" onclick="setFontSize('large')">Large</button>
+        <button class="set-btn" id="btnFXL" onclick="setFontSize('xl')">XL</button>
+      </div>
+    </div>
+    <div class="setting-group">
+      <span class="setting-group-label" id="settingContrastLabel">Contrast</span>
+      <div class="setting-btns">
+        <button class="set-btn active" id="btnCStd" onclick="setContrast('standard')">Standard</button>
+        <button class="set-btn" id="btnCHigh" onclick="setContrast('high')">High</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main>
+  <header class="chapter-header">
+    <span class="chapter-number" id="chapterNumber">Chapter II</span>
+    <h1 id="chapterTitle">The Art of<br>Paying Attention</h1>
+    <p class="chapter-subtitle" id="chapterSubtitle">On how context changes meaning — and why a machine that has never understood anything can still tell the difference between a river bank and a savings bank.</p>
+  </header>
+
+  <div class="prose">
+    <p id="p1">Consider the word <strong>bank</strong>. A perfectly ordinary word — until you try to nail down what it means.</p>
+    <p id="p2">In the sentence <em>"she walked along the bank of the river,"</em> bank means a slope of earth beside moving water. In <em>"she transferred money to her bank,"</em> it means a financial institution. The word is identical. The meaning is entirely different. And you — effortlessly, instantly — knew which was which.</p>
+    <p id="p3">How? You didn't look it up. You didn't reason through it. You felt the surrounding words pull the meaning into place. <em>River</em> was nearby. Or <em>money</em>. The context spoke, and the word obeyed.</p>
+    <p id="p4">This is the problem that attention mechanisms were designed to solve. And the solution, once you see it, looks less like engineering and more like something Wittgenstein would have approved of.</p>
+  </div>
+
+  <div class="pull-quote">
+    <span id="pullQuote">"The meaning of a word is its use in the language."</span>
+    <cite id="pullQuoteCite">— Ludwig Wittgenstein, Philosophical Investigations (1953)</cite>
+  </div>
+
+  <div class="prose">
+    <p id="p5">Wittgenstein didn't say meaning is a definition. He said meaning is <em>use</em> — the pattern of contexts in which a word appears, the company it keeps, the situations it inhabits. A word isolated from its surroundings has no meaning; it has only potential.</p>
+    <p id="p6">The transformer architecture implements this insight literally. When the model processes a word, it doesn't look up a fixed representation. It asks: <em>given everything else in this sentence, what should this word become?</em> The word's final representation is shaped — transformed — by what surrounds it.</p>
+    <p id="p7">That shaping process is called <strong>attention</strong>. And it is one of the few things about a language model's inner life that you can actually see.</p>
+  </div>
+
+  <div class="section-break">§</div>
+
+  <div class="prose">
+    <p id="p8">Here is what attention looks like from the inside. Every token in a sequence generates three vectors: a <em>query</em> ("what am I looking for?"), a <em>key</em> ("what do I offer?"), and a <em>value</em> ("what do I contribute if selected?"). Each token's query is compared to every other token's key. The result is a score — a weight — that determines how much each token influences the representation of every other token.</p>
+    <p id="p9">The matrix below shows these weights for a sample sentence. Each row is a token asking its question. Each column is a token answering. The intensity of colour shows the weight of attention — how strongly the row token is shaped by the column token. Click any token to highlight its attention pattern.</p>
+  </div>
+
+  <!-- WIDGET 1: Attention Heatmap -->
+  <div class="widget" translate="no">
+    <div class="widget-header">
+      <span class="widget-label" id="widget1Label">Interactive — Attention Matrix</span>
+      <span class="widget-status" id="widget1Status"><span class="status-dot"></span>Simulated weights</span>
+    </div>
+    <div class="widget-body">
+      <div class="sentence-row">
+        <select class="sentence-input" id="sentenceSelect" onchange="renderHeatmap()">
+          <option value="0">The bank beside the river was steep.</option>
+          <option value="1">She withdrew money from the bank.</option>
+          <option value="2">The model learned to read context.</option>
+          <option value="3">Time flies like an arrow.</option>
+        </select>
+      </div>
+
+      <div class="heatmap-container">
+        <div class="heatmap-wrap" id="heatmapWrap"></div>
+      </div>
+
+      <div class="heatmap-legend">
+        <span id="legendLow">low attention</span>
+        <div class="legend-bar"></div>
+        <span id="legendHigh">high attention</span>
+      </div>
+
+      <div class="widget-note" id="widget1Note">
+        <strong>Note:</strong> Attention weights are simulated to illustrate the concept. In a real transformer, these weights are learned during training and vary by layer and attention head. A single model may have hundreds of attention heads, each learning different relationships.
+      </div>
+    </div>
+  </div>
+
+  <div class="prose">
+    <p id="p10">What you're seeing is a form of X-Ray. In most of the model's processing, the math is opaque — billions of multiplications producing outputs that can't be directly interpreted. Attention weights are different. They are, in a real sense, the model's own account of what it found relevant. Not a full explanation. But a window.</p>
+    <p id="p11">Notice how the word <em>bank</em> attends differently depending on the sentence. In the river sentence, it pulls toward <em>river</em>, <em>steep</em>, <em>beside</em>. In the financial sentence, toward <em>withdrew</em>, <em>money</em>. Same word, different context, different representation. Wittgenstein's insight, implemented in matrix multiplication.</p>
+  </div>
+
+  <div class="section-break">§</div>
+
+  <div class="prose">
+    <p id="p12">But attention is not just disambiguation. It is the mechanism by which meaning becomes <em>relational</em>. A word doesn't have a representation — it has a family of representations, one for each context it appears in. The model never sees the word <em>bank</em>; it sees <em>bank-in-this-sentence</em>.</p>
+    <p id="p13">This is the geometry of attention: each token begins as a fixed point in space — the embedding you saw in Chapter I. By the time attention has finished its work, that point has moved. It has been pulled toward the tokens that mattered and pushed away from those that didn't. The final position encodes not just what the word is, but what the word is <em>here</em>, <em>now</em>, in this particular sequence of words.</p>
+  </div>
+
+  <!-- WIDGET 2: Context Shift -->
+  <div class="widget" translate="no">
+    <div class="widget-header">
+      <span class="widget-label" id="widget2Label">Interactive — Context Shift</span>
+      <span class="widget-status" id="widget2Status"><span class="status-dot"></span>Simulated</span>
+    </div>
+    <div class="widget-body">
+      <p id="widget2Intro" style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-dim); margin-bottom: 1rem;">Select a sentence to see which tokens most influence the highlighted word.</p>
+
+      <div class="context-examples" id="contextExamples">
+        <div class="context-example selected" data-idx="0" onclick="selectContext(0)">
+          The <span class="target-word">bank</span> beside the river was steep.
+        </div>
+        <div class="context-example" data-idx="1" onclick="selectContext(1)">
+          She withdrew money from the <span class="target-word">bank</span>.
+        </div>
+        <div class="context-example" data-idx="2" onclick="selectContext(2)">
+          The light from the <span class="target-word">plant</span> in the window was warm.
+        </div>
+        <div class="context-example" data-idx="3" onclick="selectContext(3)">
+          Workers at the <span class="target-word">plant</span> went on strike.
+        </div>
+      </div>
+
+      <div class="context-viz">
+        <div class="context-panel">
+          <div class="context-panel-title" id="ctxAttendingLabel">Attending tokens</div>
+          <div class="token-row" id="ctxTokens"></div>
+        </div>
+        <div class="context-panel">
+          <div class="context-panel-title" id="ctxMeaningLabel">Meaning pulled toward</div>
+          <div id="ctxMeaningText" style="font-family: 'Source Serif 4', serif; font-size: 14px; line-height: 1.6; color: var(--text-dim);"></div>
+        </div>
+      </div>
+
+      <div class="widget-note" id="widget2Note" style="margin-top: 1.5rem;">
+        <strong>What you're seeing:</strong> A simplified view of which tokens most influence the target word's final representation. The highlighted tokens have the highest simulated attention weights toward the target.
+      </div>
+    </div>
+  </div>
+
+  <div class="prose">
+    <p id="p14">There is something quietly remarkable about this. The model was not told that <em>bank</em> has two meanings. It was not given a disambiguation rule. It was trained on text, and from that training it learned — implicitly, geometrically — that the right representation of a word depends on its neighbourhood.</p>
+    <p id="p15">This is what Wittgenstein meant by language as practice. Meaning doesn't live inside words like furniture inside a house. It emerges from use, from context, from the web of relationships that a word inhabits. The transformer didn't discover this insight. It rediscovered it — through a completely alien process, at a scale no human could replicate, arriving at the same place from a completely different direction.</p>
+    <p id="p16">Whether the model <em>knows</em> any of this is a question we should hold carefully. What we can say is this: it behaves as if it understands context. The attention weights are evidence — partial, imperfect, but real — that something structurally similar to contextual understanding is happening inside.</p>
+    <p id="p17">That is the X-Ray view of attention. Not the full picture. Never the full picture. But a crack of light through the black box — and that is more than most systems ever offer.</p>
+  </div>
+
+</main>
+
+<footer>
+  <div class="footer-nav"><a href="chapter_01_vectors.html" id="footerPrev">← I. Vector Space</a></div>
+  <span class="footer-page" id="footerPage">Chapter II of VIII</span>
+  <div class="footer-nav"><a href="#" id="footerNext">III. Local Optima →</a></div>
+</footer>
+
+<div class="tooltip" id="tooltip" translate="no"></div>
+
+<script>
+// ============================================================
+// SETTINGS
+// ============================================================
+function loadSettings() {
+  const theme = localStorage.getItem('xray-theme') || 'light';
+  const fsize = localStorage.getItem('xray-fsize') || 'default';
+  const contrast = localStorage.getItem('xray-contrast') || 'standard';
+  applyTheme(theme, false);
+  applyFontSize(fsize, false);
+  applyContrast(contrast, false);
+}
+function applyTheme(val, save=true) {
+  document.documentElement.setAttribute('data-theme', val === 'dark' ? 'dark' : '');
+  document.getElementById('btnLight').classList.toggle('active', val !== 'dark');
+  document.getElementById('btnDark').classList.toggle('active', val === 'dark');
+  if (save) localStorage.setItem('xray-theme', val);
+  setTimeout(renderHeatmap, 50);
+}
+function applyFontSize(val, save=true) {
+  document.documentElement.setAttribute('data-fsize', val);
+  ['Default','Large','XL'].forEach(s => {
+    document.getElementById('btnF'+s).classList.toggle('active', val === s.toLowerCase());
+  });
+  if (save) localStorage.setItem('xray-fsize', val);
+}
+function applyContrast(val, save=true) {
+  document.documentElement.setAttribute('data-contrast', val === 'high' ? 'high' : '');
+  document.getElementById('btnCStd').classList.toggle('active', val !== 'high');
+  document.getElementById('btnCHigh').classList.toggle('active', val === 'high');
+  if (save) localStorage.setItem('xray-contrast', val);
+}
+function setTheme(v) { applyTheme(v); }
+function setFontSize(v) { applyFontSize(v); }
+function setContrast(v) { applyContrast(v); }
+
+function toggleSettings() {
+  const bar = document.getElementById('settingsBar');
+  const open = bar.classList.toggle('open');
+  document.getElementById('settingsToggle').classList.toggle('active', open);
+  if (open) {
+    document.getElementById('langBar').classList.remove('open');
+    document.getElementById('langToggle').classList.remove('active');
+  }
+}
+function toggleLang() {
+  const bar = document.getElementById('langBar');
+  bar.classList.toggle('open');
+  document.getElementById('settingsBar').classList.remove('open');
+  document.getElementById('settingsToggle').classList.remove('active');
+  document.getElementById('langToggle').classList.toggle('active', bar.classList.contains('open'));
+}
+
+// ============================================================
+// ATTENTION HEATMAP DATA
+// ============================================================
+const SENTENCES = [
+  {
+    tokens: ['The', 'bank', 'beside', 'the', 'river', 'was', 'steep'],
+    // attention[i][j] = how much token i attends to token j
+    attention: [
+      [0.60, 0.10, 0.05, 0.10, 0.05, 0.05, 0.05],
+      [0.05, 0.20, 0.15, 0.05, 0.35, 0.05, 0.15], // bank → river, steep
+      [0.05, 0.20, 0.30, 0.05, 0.20, 0.05, 0.15],
+      [0.10, 0.05, 0.05, 0.60, 0.10, 0.05, 0.05],
+      [0.05, 0.30, 0.15, 0.05, 0.30, 0.05, 0.10], // river → bank
+      [0.10, 0.10, 0.10, 0.10, 0.10, 0.35, 0.15],
+      [0.05, 0.25, 0.20, 0.05, 0.15, 0.10, 0.20],
+    ]
+  },
+  {
+    tokens: ['She', 'withdrew', 'money', 'from', 'the', 'bank'],
+    attention: [
+      [0.40, 0.20, 0.10, 0.10, 0.10, 0.10],
+      [0.10, 0.25, 0.20, 0.10, 0.05, 0.30], // withdrew → bank
+      [0.05, 0.20, 0.30, 0.10, 0.05, 0.30], // money → bank
+      [0.05, 0.10, 0.10, 0.40, 0.20, 0.15],
+      [0.05, 0.05, 0.05, 0.15, 0.50, 0.20],
+      [0.05, 0.25, 0.35, 0.10, 0.05, 0.20], // bank → withdrew, money
+    ]
+  },
+  {
+    tokens: ['The', 'model', 'learned', 'to', 'read', 'context'],
+    attention: [
+      [0.45, 0.15, 0.10, 0.10, 0.10, 0.10],
+      [0.10, 0.30, 0.20, 0.10, 0.10, 0.20],
+      [0.05, 0.15, 0.30, 0.10, 0.15, 0.25],
+      [0.05, 0.10, 0.15, 0.40, 0.20, 0.10],
+      [0.05, 0.15, 0.20, 0.15, 0.25, 0.20],
+      [0.05, 0.20, 0.25, 0.10, 0.15, 0.25],
+    ]
+  },
+  {
+    tokens: ['Time', 'flies', 'like', 'an', 'arrow'],
+    attention: [
+      [0.30, 0.30, 0.15, 0.10, 0.15],
+      [0.25, 0.25, 0.20, 0.10, 0.20],
+      [0.10, 0.20, 0.30, 0.15, 0.25],
+      [0.10, 0.10, 0.15, 0.40, 0.25],
+      [0.15, 0.20, 0.20, 0.15, 0.30],
+    ]
+  }
+];
+
+let selectedRow = null;
+
+function getAccentRGB() {
+  const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+  return dark ? '126,179,200' : '42,96,128';
+}
+
+function renderHeatmap() {
+  const idx = parseInt(document.getElementById('sentenceSelect').value);
+  const data = SENTENCES[idx];
+  const rgb = getAccentRGB();
+  const wrap = document.getElementById('heatmapWrap');
+
+  let html = '<table class="heatmap-table"><thead><tr><td></td>';
+  data.tokens.forEach(t => {
+    html += `<td class="heatmap-col-label">${t}</td>`;
+  });
+  html += '</tr></thead><tbody>';
+
+  data.attention.forEach((row, i) => {
+    const rowMax = Math.max(...row);
+    html += `<tr>`;
+    html += `<td class="heatmap-row-label" style="cursor:pointer" onclick="selectRow(${i})">${data.tokens[i]}</td>`;
+    row.forEach((w, j) => {
+      const opacity = (w / rowMax) * 0.9 + 0.05;
+      const highlight = selectedRow === i ? '' : '';
+      const dimmed = selectedRow !== null && selectedRow !== i ? 'opacity:0.35;' : '';
+      html += `<td>
+        <div class="heatmap-cell" style="background:rgba(${rgb},${opacity});${dimmed}" 
+          title="${data.tokens[i]} → ${data.tokens[j]}: ${w.toFixed(2)}"
+          onmouseenter="showTooltip(event,'${data.tokens[i]} → ${data.tokens[j]}: ${w.toFixed(2)}')"
+          onmouseleave="hideTooltip()">
+        </div>
+      </td>`;
+    });
+    html += `</tr>`;
+  });
+
+  html += '</tbody></table>';
+  wrap.innerHTML = html;
+}
+
+function selectRow(i) {
+  selectedRow = (selectedRow === i) ? null : i;
+  renderHeatmap();
+}
+
+document.getElementById('sentenceSelect').addEventListener('change', () => {
+  selectedRow = null;
+  renderHeatmap();
+});
+
+// ============================================================
+// CONTEXT SHIFT DATA
+// ============================================================
+const CONTEXTS = [
+  {
+    target: 'bank',
+    tokens: ['The', 'bank', 'beside', 'the', 'river', 'was', 'steep'],
+    weights: [0.05, 1.0, 0.55, 0.05, 0.90, 0.10, 0.60],
+    meaning: 'Riverbank — a slope of earth beside moving water. The model is pulled toward <em>river</em> and <em>steep</em>.',
+    meaning_de: 'Flussufer — ein Erdabhang neben fließendem Wasser. Das Modell wird von <em>Fluss</em> und <em>steil</em> angezogen.',
+  },
+  {
+    target: 'bank',
+    tokens: ['She', 'withdrew', 'money', 'from', 'the', 'bank'],
+    weights: [0.15, 0.85, 0.90, 0.10, 0.05, 1.0],
+    meaning: 'Financial institution. The model attends strongly to <em>withdrew</em> and <em>money</em>.',
+    meaning_de: 'Finanzinstitut. Das Modell richtet seine Aufmerksamkeit stark auf <em>abheben</em> und <em>Geld</em>.',
+  },
+  {
+    target: 'plant',
+    tokens: ['The', 'light', 'from', 'the', 'plant', 'in', 'the', 'window', 'was', 'warm'],
+    weights: [0.05, 0.30, 0.10, 0.05, 1.0, 0.15, 0.05, 0.70, 0.10, 0.40],
+    meaning: 'A living plant. Context words <em>light</em>, <em>window</em>, and <em>warm</em> push toward the botanical sense.',
+    meaning_de: 'Eine lebende Pflanze. Kontextwörter wie <em>Licht</em>, <em>Fenster</em> und <em>warm</em> lenken zur botanischen Bedeutung.',
+  },
+  {
+    target: 'plant',
+    tokens: ['Workers', 'at', 'the', 'plant', 'went', 'on', 'strike'],
+    weights: [0.80, 0.10, 0.05, 1.0, 0.60, 0.10, 0.75],
+    meaning: 'An industrial facility. <em>Workers</em> and <em>strike</em> anchor the industrial meaning.',
+    meaning_de: 'Eine Industrieanlage. <em>Arbeiter</em> und <em>Streik</em> verankern die industrielle Bedeutung.',
+  }
+];
+
+let selectedContext = 0;
+
+function selectContext(idx) {
+  selectedContext = idx;
+  document.querySelectorAll('.context-example').forEach((el, i) => {
+    el.classList.toggle('selected', i === idx);
+  });
+  renderContextViz();
+}
+
+function renderContextViz() {
+  const data = CONTEXTS[selectedContext];
+  const lang = currentLang;
+
+  const tokenRow = document.getElementById('ctxTokens');
+  tokenRow.innerHTML = data.tokens.map((t, i) => {
+    const w = data.weights[i];
+    const isTarget = t === data.target || (data.tokens[i] === data.target);
+    const highlighted = w > 0.5;
+    const opacity = 0.15 + w * 0.85;
+    return `<span class="token ${highlighted ? 'highlight' : ''}" 
+      style="opacity:${opacity.toFixed(2)}">${t}</span>`;
+  }).join('');
+
+  const meaningEl = document.getElementById('ctxMeaningText');
+  meaningEl.innerHTML = lang === 'de' ? data.meaning_de : data.meaning;
+}
+
+// ============================================================
+// I18N
+// ============================================================
+const TRANSLATIONS = {
+  en: {
+    nav_title: 'X-Ray — Interactive',
+    nav_ch1: 'I. Vector Space', nav_ch2: 'II. Attention', nav_ch3: 'III. Local Optima', nav_ch4: 'IV. Emergence',
+    settings_label: '⚙ Display',
+    setting_theme: 'Theme', setting_theme_light: 'Light', setting_theme_dark: 'Dark',
+    setting_font: 'Font size', setting_font_default: 'Default', setting_font_large: 'Large', setting_font_xl: 'XL',
+    setting_contrast: 'Contrast', setting_contrast_std: 'Standard', setting_contrast_high: 'High',
+    chapter_number: 'Chapter II',
+    chapter_title: 'The Art of<br>Paying Attention',
+    chapter_subtitle: 'On how context changes meaning — and why a machine that has never understood anything can still tell the difference between a river bank and a savings bank.',
+    p1: 'Consider the word <strong>bank</strong>. A perfectly ordinary word — until you try to nail down what it means.',
+    p2: 'In the sentence <em>"she walked along the bank of the river,"</em> bank means a slope of earth beside moving water. In <em>"she transferred money to her bank,"</em> it means a financial institution. The word is identical. The meaning is entirely different. And you — effortlessly, instantly — knew which was which.',
+    p3: 'How? You didn\'t look it up. You didn\'t reason through it. You felt the surrounding words pull the meaning into place. <em>River</em> was nearby. Or <em>money</em>. The context spoke, and the word obeyed.',
+    p4: 'This is the problem that attention mechanisms were designed to solve. And the solution, once you see it, looks less like engineering and more like something Wittgenstein would have approved of.',
+    pq: '"The meaning of a word is its use in the language."',
+    pq_cite: '— Ludwig Wittgenstein, Philosophical Investigations (1953)',
+    p5: 'Wittgenstein didn\'t say meaning is a definition. He said meaning is <em>use</em> — the pattern of contexts in which a word appears, the company it keeps, the situations it inhabits. A word isolated from its surroundings has no meaning; it has only potential.',
+    p6: 'The transformer architecture implements this insight literally. When the model processes a word, it doesn\'t look up a fixed representation. It asks: <em>given everything else in this sentence, what should this word become?</em> The word\'s final representation is shaped — transformed — by what surrounds it.',
+    p7: 'That shaping process is called <strong>attention</strong>. And it is one of the few things about a language model\'s inner life that you can actually see.',
+    p8: 'Here is what attention looks like from the inside. Every token in a sequence generates three vectors: a <em>query</em> ("what am I looking for?"), a <em>key</em> ("what do I offer?"), and a <em>value</em> ("what do I contribute if selected?"). Each token\'s query is compared to every other token\'s key. The result is a score — a weight — that determines how much each token influences the representation of every other token.',
+    p9: 'The matrix below shows these weights for a sample sentence. Each row is a token asking its question. Each column is a token answering. The intensity of colour shows the weight of attention — how strongly the row token is shaped by the column token. Click any token label to highlight its row.',
+    p10: 'What you\'re seeing is a form of X-Ray. In most of the model\'s processing, the math is opaque — billions of multiplications producing outputs that can\'t be directly interpreted. Attention weights are different. They are, in a real sense, the model\'s own account of what it found relevant. Not a full explanation. But a window.',
+    p11: 'Notice how the word <em>bank</em> attends differently depending on the sentence. In the river sentence, it pulls toward <em>river</em>, <em>steep</em>, <em>beside</em>. In the financial sentence, toward <em>withdrew</em>, <em>money</em>. Same word, different context, different representation. Wittgenstein\'s insight, implemented in matrix multiplication.',
+    p12: 'But attention is not just disambiguation. It is the mechanism by which meaning becomes <em>relational</em>. A word doesn\'t have a representation — it has a family of representations, one for each context it appears in. The model never sees the word <em>bank</em>; it sees <em>bank-in-this-sentence</em>.',
+    p13: 'This is the geometry of attention: each token begins as a fixed point in space — the embedding you saw in Chapter I. By the time attention has finished its work, that point has moved. It has been pulled toward the tokens that mattered and pushed away from those that didn\'t. The final position encodes not just what the word is, but what the word is <em>here</em>, <em>now</em>, in this particular sequence of words.',
+    p14: 'There is something quietly remarkable about this. The model was not told that <em>bank</em> has two meanings. It was not given a disambiguation rule. It was trained on text, and from that training it learned — implicitly, geometrically — that the right representation of a word depends on its neighbourhood.',
+    p15: 'This is what Wittgenstein meant by language as practice. Meaning doesn\'t live inside words like furniture inside a house. It emerges from use, from context, from the web of relationships that a word inhabits. The transformer didn\'t discover this insight. It rediscovered it — through a completely alien process, at a scale no human could replicate, arriving at the same place from a completely different direction.',
+    p16: 'Whether the model <em>knows</em> any of this is a question we should hold carefully. What we can say is this: it behaves as if it understands context. The attention weights are evidence — partial, imperfect, but real — that something structurally similar to contextual understanding is happening inside.',
+    p17: 'That is the X-Ray view of attention. Not the full picture. Never the full picture. But a crack of light through the black box — and that is more than most systems ever offer.',
+    widget1_label: 'Interactive — Attention Matrix',
+    widget1_status: 'Simulated weights',
+    legend_low: 'low attention', legend_high: 'high attention',
+    widget1_note: '<strong>Note:</strong> Attention weights are simulated to illustrate the concept. In a real transformer, these weights are learned during training and vary by layer and attention head. A single model may have hundreds of attention heads, each learning different relationships.',
+    widget2_label: 'Interactive — Context Shift',
+    widget2_status: 'Simulated',
+    widget2_intro: 'Select a sentence to see which tokens most influence the highlighted word.',
+    ctx_attending: 'Attending tokens',
+    ctx_meaning: 'Meaning pulled toward',
+    widget2_note: '<strong>What you\'re seeing:</strong> A simplified view of which tokens most influence the target word\'s final representation. The highlighted tokens have the highest simulated attention weights toward the target.',
+    footer_prev: '← I. Vector Space',
+    footer_next: 'III. Local Optima →',
+    footer_page: 'Chapter II of VIII',
+  },
+  de: {
+    nav_title: 'X-Ray — Interaktiv',
+    nav_ch1: 'I. Vektorraum', nav_ch2: 'II. Aufmerksamkeit', nav_ch3: 'III. Lokale Optima', nav_ch4: 'IV. Emergenz',
+    settings_label: '⚙ Ansicht',
+    setting_theme: 'Design', setting_theme_light: 'Hell', setting_theme_dark: 'Dunkel',
+    setting_font: 'Schriftgröße', setting_font_default: 'Standard', setting_font_large: 'Groß', setting_font_xl: 'Sehr groß',
+    setting_contrast: 'Kontrast', setting_contrast_std: 'Standard', setting_contrast_high: 'Hoch',
+    chapter_number: 'Kapitel II',
+    chapter_title: 'Die Kunst des<br>Aufmerkens',
+    chapter_subtitle: 'Darüber, wie Kontext Bedeutung verändert — und warum eine Maschine, die nie etwas verstanden hat, dennoch zwischen einem Flussufer und einer Sparkasse unterscheiden kann.',
+    p1: 'Nehmen wir das Wort <strong>Bank</strong>. Ein völlig gewöhnliches Wort — bis man versucht, seine Bedeutung festzunageln.',
+    p2: 'Im Satz <em>„Sie spazierte am Ufer des Flusses entlang"</em> meint Bank einen Erdabhang neben fließendem Wasser. In <em>„Sie überwies Geld auf ihre Bank"</em> bezeichnet es ein Finanzinstitut. Das Wort ist identisch. Die Bedeutung ist völlig unterschiedlich. Und Sie — mühelos, sofort — wussten, welche welche war.',
+    p3: 'Wie? Sie haben es nicht nachgeschlagen. Sie haben nicht darüber nachgedacht. Sie spürten, wie die umgebenden Wörter die Bedeutung an ihren Platz zogen. <em>Fluss</em> war in der Nähe. Oder <em>Geld</em>. Der Kontext sprach, und das Wort gehorchte.',
+    p4: 'Das ist das Problem, das Aufmerksamkeitsmechanismen lösen sollten. Und die Lösung sieht, sobald man sie sieht, weniger wie Ingenieurkunst aus und mehr wie etwas, das Wittgenstein gutgeheißen hätte.',
+    pq: '„Die Bedeutung eines Wortes ist sein Gebrauch in der Sprache."',
+    pq_cite: '— Ludwig Wittgenstein, Philosophische Untersuchungen (1953)',
+    p5: 'Wittgenstein sagte nicht, Bedeutung sei eine Definition. Er sagte, Bedeutung sei <em>Gebrauch</em> — das Muster der Kontexte, in denen ein Wort vorkommt, die Gesellschaft, die es hält, die Situationen, die es bewohnt. Ein Wort, das von seiner Umgebung isoliert ist, hat keine Bedeutung; es hat nur Potenzial.',
+    p6: 'Die Transformer-Architektur setzt diese Einsicht wörtlich um. Wenn das Modell ein Wort verarbeitet, schlägt es keine feste Repräsentation nach. Es fragt: <em>Was soll dieses Wort werden, angesichts aller anderen Wörter in diesem Satz?</em> Die endgültige Repräsentation des Wortes wird durch das, was es umgibt, geformt — transformiert.',
+    p6: 'Die Transformer-Architektur setzt diese Einsicht wörtlich um. Wenn das Modell ein Wort verarbeitet, schlägt es keine feste Repräsentation nach. Es fragt: <em>Was soll dieses Wort werden, angesichts aller anderen Wörter in diesem Satz?</em> Die endgültige Repräsentation des Wortes wird durch das, was es umgibt, geformt — transformiert.',
+    p7: 'Dieser Formprozess heißt <strong>Aufmerksamkeit</strong>. Und er ist eines der wenigen Dinge im Innenleben eines Sprachmodells, die man tatsächlich sehen kann.',
+    p8: 'So sieht Aufmerksamkeit von innen aus. Jedes Token in einer Sequenz erzeugt drei Vektoren: eine <em>Anfrage</em> („Wonach suche ich?"), einen <em>Schlüssel</em> („Was biete ich an?") und einen <em>Wert</em> („Was trage ich bei, wenn ich ausgewählt werde?"). Die Anfrage jedes Tokens wird mit dem Schlüssel jedes anderen Tokens verglichen. Das Ergebnis ist ein Wert — ein Gewicht —, das bestimmt, wie stark jedes Token die Repräsentation jedes anderen Tokens beeinflusst.',
+    p9: 'Die Matrix unten zeigt diese Gewichte für einen Beispielsatz. Jede Zeile ist ein Token, das seine Frage stellt. Jede Spalte ist ein Token, das antwortet. Die Farbintensität zeigt das Aufmerksamkeitsgewicht — wie stark das Zeilentoken durch das Spaltentoken geprägt wird. Klicken Sie auf ein Token-Label, um seine Zeile hervorzuheben.',
+    p10: 'Was Sie sehen, ist eine Form von X-Ray. Bei den meisten Berechnungen des Modells ist die Mathematik undurchsichtig — Milliarden von Multiplikationen erzeugen Ergebnisse, die nicht direkt interpretiert werden können. Aufmerksamkeitsgewichte sind anders. Sie sind, in einem echten Sinne, die eigene Darstellung des Modells davon, was es als relevant befunden hat. Keine vollständige Erklärung. Aber ein Fenster.',
+    p11: 'Beachten Sie, wie das Wort <em>Bank</em> je nach Satz unterschiedlich aufmerksam ist. Im Flusssatz zieht es zu <em>Fluss</em>, <em>steil</em>, <em>neben</em>. Im Finanzsatz zu <em>abheben</em>, <em>Geld</em>. Gleiches Wort, anderer Kontext, andere Repräsentation. Wittgensteins Einsicht, implementiert in Matrizenmultiplikation.',
+    p12: 'Aber Aufmerksamkeit ist nicht nur Disambiguierung. Es ist der Mechanismus, durch den Bedeutung <em>relational</em> wird. Ein Wort hat keine Repräsentation — es hat eine Familie von Repräsentationen, eine für jeden Kontext, in dem es vorkommt. Das Modell sieht nie das Wort <em>Bank</em>; es sieht <em>Bank-in-diesem-Satz</em>.',
+    p13: 'Das ist die Geometrie der Aufmerksamkeit: Jedes Token beginnt als fester Punkt im Raum — das Embedding, das Sie in Kapitel I gesehen haben. Wenn die Aufmerksamkeit ihre Arbeit beendet hat, hat sich dieser Punkt bewegt. Er wurde zu den Tokens hingezogen, die wichtig waren, und von denen weggedrückt, die es nicht waren. Die endgültige Position kodiert nicht nur, was das Wort ist, sondern was das Wort <em>hier</em>, <em>jetzt</em>, in dieser bestimmten Wortfolge ist.',
+    p14: 'Daran ist etwas still Bemerkenswertes. Das Modell wurde nicht darüber informiert, dass <em>Bank</em> zwei Bedeutungen hat. Es erhielt keine Disambiguierungsregel. Es wurde auf Text trainiert, und aus diesem Training lernte es — implizit, geometrisch —, dass die richtige Repräsentation eines Wortes von seiner Nachbarschaft abhängt.',
+    p15: 'Das ist es, was Wittgenstein mit Sprache als Praxis meinte. Bedeutung lebt nicht in Wörtern wie Möbel in einem Haus. Sie entsteht aus dem Gebrauch, aus dem Kontext, aus dem Beziehungsgeflecht, das ein Wort bewohnt. Der Transformer hat diese Einsicht nicht entdeckt. Er hat sie wiederentdeckt — durch einen völlig fremden Prozess, in einem Maßstab, den kein Mensch replizieren könnte, und ist vom vollständig anderen Weg an denselben Ort gelangt.',
+    p16: 'Ob das Modell irgendetwas davon <em>weiß</em>, ist eine Frage, die wir sorgfältig halten sollten. Was wir sagen können, ist: Es verhält sich so, als würde es Kontext verstehen. Die Aufmerksamkeitsgewichte sind Belege — partiell, unvollkommen, aber real —, dass drinnen etwas strukturell Ähnliches wie kontextuelles Verstehen geschieht.',
+    p17: 'Das ist der X-Ray-Blick auf Aufmerksamkeit. Nicht das vollständige Bild. Nie das vollständige Bild. Aber ein Lichtstrahl durch die Black Box — und das ist mehr, als die meisten Systeme je bieten.',
+    widget1_label: 'Interaktiv — Aufmerksamkeitsmatrix',
+    widget1_status: 'Simulierte Gewichte',
+    legend_low: 'geringe Aufmerksamkeit', legend_high: 'hohe Aufmerksamkeit',
+    widget1_note: '<strong>Hinweis:</strong> Aufmerksamkeitsgewichte sind simuliert, um das Konzept zu veranschaulichen. In einem echten Transformer werden diese Gewichte während des Trainings gelernt und variieren je nach Schicht und Aufmerksamkeitskopf. Ein einzelnes Modell kann Hunderte von Aufmerksamkeitsköpfen haben, von denen jeder unterschiedliche Beziehungen lernt.',
+    widget2_label: 'Interaktiv — Kontextverschiebung',
+    widget2_status: 'Simuliert',
+    widget2_intro: 'Wählen Sie einen Satz, um zu sehen, welche Tokens das hervorgehobene Wort am stärksten beeinflussen.',
+    ctx_attending: 'Aufmerksame Tokens',
+    ctx_meaning: 'Bedeutung gezogen zu',
+    widget2_note: '<strong>Was Sie sehen:</strong> Eine vereinfachte Ansicht, welche Tokens die endgültige Repräsentation des Zielworts am stärksten beeinflussen. Die hervorgehobenen Tokens haben die höchsten simulierten Aufmerksamkeitsgewichte gegenüber dem Ziel.',
+    footer_prev: '← I. Vektorraum',
+    footer_next: 'III. Lokale Optima →',
+    footer_page: 'Kapitel II von VIII',
+  }
+};
+
+let currentLang = localStorage.getItem('xray-lang') || 'en';
+
+function applyTranslation(lang) {
+  const t = TRANSLATIONS[lang];
+  if (!t) return;
+  currentLang = lang;
+  localStorage.setItem('xray-lang', lang);
+
+  document.getElementById('navTitle').textContent = t.nav_title;
+  document.getElementById('navCh1').textContent = t.nav_ch1;
+  document.getElementById('navCh2').textContent = t.nav_ch2;
+  document.getElementById('navCh3').textContent = t.nav_ch3;
+  document.getElementById('navCh4').textContent = t.nav_ch4;
+  document.getElementById('settingsToggle').textContent = t.settings_label;
+  document.getElementById('settingThemeLabel').textContent = t.setting_theme;
+  document.getElementById('btnLight').textContent = t.setting_theme_light;
+  document.getElementById('btnDark').textContent = t.setting_theme_dark;
+  document.getElementById('settingFontLabel').textContent = t.setting_font;
+  document.getElementById('btnFDefault').textContent = t.setting_font_default;
+  document.getElementById('btnFLarge').textContent = t.setting_font_large;
+  document.getElementById('btnFXL').textContent = t.setting_font_xl;
+  document.getElementById('settingContrastLabel').textContent = t.setting_contrast;
+  document.getElementById('btnCStd').textContent = t.setting_contrast_std;
+  document.getElementById('btnCHigh').textContent = t.setting_contrast_high;
+
+  document.getElementById('chapterNumber').textContent = t.chapter_number;
+  document.getElementById('chapterTitle').innerHTML = t.chapter_title;
+  document.getElementById('chapterSubtitle').textContent = t.chapter_subtitle;
+
+  for (let i = 1; i <= 17; i++) {
+    const el = document.getElementById('p' + i);
+    if (el) el.innerHTML = t['p' + i];
+  }
+  document.getElementById('pullQuote').innerHTML = t.pq;
+  document.getElementById('pullQuoteCite').textContent = t.pq_cite;
+
+  document.getElementById('widget1Label').textContent = t.widget1_label;
+  document.getElementById('widget1Status').innerHTML = '<span class="status-dot"></span>' + t.widget1_status;
+  document.getElementById('legendLow').textContent = t.legend_low;
+  document.getElementById('legendHigh').textContent = t.legend_high;
+  document.getElementById('widget1Note').innerHTML = t.widget1_note;
+
+  document.getElementById('widget2Label').textContent = t.widget2_label;
+  document.getElementById('widget2Status').innerHTML = '<span class="status-dot"></span>' + t.widget2_status;
+  document.getElementById('widget2Intro').textContent = t.widget2_intro;
+  document.getElementById('ctxAttendingLabel').textContent = t.ctx_attending;
+  document.getElementById('ctxMeaningLabel').textContent = t.ctx_meaning;
+  document.getElementById('widget2Note').innerHTML = t.widget2_note;
+
+  document.getElementById('footerPrev').textContent = t.footer_prev;
+  document.getElementById('footerNext').textContent = t.footer_next;
+  document.getElementById('footerPage').textContent = t.footer_page;
+
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.lang === lang);
+  });
+  document.getElementById('langBar').classList.remove('open');
+  document.getElementById('langToggle').classList.remove('active');
+
+  renderContextViz();
+}
+
+// Tooltip
+function showTooltip(e, text) {
+  const tt = document.getElementById('tooltip');
+  tt.textContent = text;
+  tt.style.display = 'block';
+  tt.style.left = (e.clientX + 12) + 'px';
+  tt.style.top = (e.clientY - 8) + 'px';
+}
+function hideTooltip() {
+  document.getElementById('tooltip').style.display = 'none';
+}
+
+// Init
+loadSettings();
+applyTranslation(currentLang);
+renderHeatmap();
+renderContextViz();
+</script>
+</body>
+</html>
