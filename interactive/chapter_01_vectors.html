@@ -1,0 +1,1402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>I. The Space Where Words Live</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@300;400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;1,8..60,300&display=swap');
+
+  /* ── THEMES ── */
+  :root {
+    --bg: #f5f2ed;
+    --bg2: #ede8e0;
+    --bg3: #e4ddd4;
+    --border: #c8c0b4;
+    --text: #2a2520;
+    --text-dim: #7a6e65;
+    --text-bright: #1a1210;
+    --accent: #8a6030;
+    --accent2: #2a6080;
+    --accent3: #802030;
+    --accent4: #286040;
+    --dot-size: 8px;
+  }
+  [data-theme="dark"] {
+    --bg: #0e0e0f;
+    --bg2: #141416;
+    --bg3: #1a1a1d;
+    --border: #2a2a2e;
+    --text: #d4cfc8;
+    --text-dim: #6b6660;
+    --text-bright: #ede8e0;
+    --accent: #c8a96e;
+    --accent2: #7eb3c8;
+    --accent3: #c87e7e;
+    --accent4: #7ec89a;
+  }
+  /* High contrast overlay */
+  [data-contrast="high"] {
+    --text: #000000;
+    --text-dim: #444444;
+    --text-bright: #000000;
+    --border: #666666;
+  }
+  [data-theme="dark"][data-contrast="high"] {
+    --text: #ffffff;
+    --text-dim: #bbbbbb;
+    --text-bright: #ffffff;
+    --border: #888888;
+  }
+
+  /* ── FONT SIZES ── */
+  html { font-size: 18px; }
+  html[data-fsize="large"] { font-size: 21px; }
+  html[data-fsize="xl"] { font-size: 25px; }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Source Serif 4', Georgia, serif;
+    line-height: 1.8;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    transition: background 0.2s, color 0.2s;
+  }
+
+  /* ── SETTINGS BAR ── */
+  .settings-bar {
+    position: fixed;
+    top: 52px;
+    left: 0; right: 0;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    z-index: 90;
+    display: none;
+  }
+  .settings-bar.open { display: block; }
+  .settings-inner {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+    display: flex;
+    gap: 2.5rem;
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+  .setting-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .setting-group-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+  }
+  .setting-btns {
+    display: flex;
+    gap: 0.4rem;
+  }
+  .set-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    padding: 0.3rem 0.75rem;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .set-btn:hover { color: var(--text-bright); border-color: var(--text-dim); }
+  .set-btn.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--bg);
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    background: rgba(245,242,237,0.96);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+    z-index: 100;
+    padding: 0;
+    transition: background 0.2s;
+  }
+  [data-theme="dark"] nav {
+    background: rgba(14,14,15,0.96);
+  }
+  .nav-inner {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 52px;
+  }
+  .nav-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+  }
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 0;
+  }
+  .nav-chapters {
+    display: flex;
+    gap: 0;
+    list-style: none;
+  }
+  .nav-chapters a {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    text-decoration: none;
+    padding: 0 14px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    border-left: 1px solid var(--border);
+    transition: color 0.2s, background 0.2s;
+  }
+  .nav-chapters a:hover, .nav-chapters a.active {
+    color: var(--accent);
+    background: rgba(138,96,48,0.06);
+  }
+  [data-theme="dark"] .nav-chapters a:hover,
+  [data-theme="dark"] .nav-chapters a.active {
+    background: rgba(200,169,110,0.05);
+  }
+  .settings-toggle {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: var(--text-dim);
+    background: transparent;
+    border: none;
+    border-left: 1px solid var(--border);
+    padding: 0 14px;
+    height: 52px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: color 0.15s;
+  }
+  .settings-toggle:hover { color: var(--accent); }
+  .settings-toggle.active { color: var(--accent); }
+
+  /* ── LAYOUT ── */
+  main { padding-top: 52px; }
+
+  .chapter-header {
+    padding: 8rem 0 4rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 4rem;
+  }
+  .chapter-number {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    display: block;
+  }
+  h1 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(2.2rem, 5vw, 3.2rem);
+    font-weight: 700;
+    color: var(--text-bright);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    margin-bottom: 1.5rem;
+  }
+  .chapter-subtitle {
+    font-family: 'Source Serif 4', serif;
+    font-style: italic;
+    font-size: 1.1rem;
+    color: var(--text-dim);
+    font-weight: 300;
+  }
+
+  /* ── PROSE ── */
+  .prose { margin-bottom: 2.5rem; }
+  .prose p { margin-bottom: 1.4rem; }
+  .prose p:last-child { margin-bottom: 0; }
+  .prose em { font-style: italic; color: var(--text-bright); }
+  .prose strong { font-weight: 400; color: var(--accent); }
+
+  .pull-quote {
+    border-left: 2px solid var(--accent);
+    margin: 3rem 0;
+    padding: 1rem 0 1rem 2rem;
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1.25rem;
+    color: var(--text-bright);
+    line-height: 1.5;
+  }
+  .pull-quote cite {
+    display: block;
+    margin-top: 0.75rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-style: normal;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--text-dim);
+  }
+
+  .section-break {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 4rem 0;
+    color: var(--text-dim);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+  }
+  .section-break::before, .section-break::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── WIDGET ── */
+  .widget {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    margin: 3rem 0;
+    overflow: hidden;
+  }
+  .widget-header {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .widget-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+  }
+  .widget-status {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent4);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .status-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent4);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+  .widget-body { padding: 1.5rem; }
+
+  canvas {
+    display: block;
+    width: 100%;
+    height: 420px;
+    cursor: crosshair;
+  }
+
+  .controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+  .control-group label {
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+
+  .radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .radio-group label {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0;
+    color: var(--text);
+    text-transform: none;
+    cursor: pointer;
+    margin-bottom: 0;
+    transition: color 0.15s;
+  }
+  .radio-group label:hover { color: var(--text-bright); }
+  .radio-group input[type="radio"] {
+    appearance: none;
+    width: 14px; height: 14px;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    background: var(--bg);
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    flex-shrink: 0;
+  }
+  .radio-group input[type="radio"]:checked {
+    border-color: var(--accent);
+    background: var(--accent);
+    box-shadow: 0 0 0 3px rgba(138,96,48,0.15);
+  }
+  [data-theme="dark"] .radio-group input[type="radio"]:checked {
+    box-shadow: 0 0 0 3px rgba(200,169,110,0.15);
+  }
+
+  .input-row { display: flex; gap: 0.5rem; }
+  .word-input {
+    flex: 1;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text-bright);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    padding: 0.5rem 0.75rem;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .word-input:focus { border-color: var(--accent2); }
+  .word-input::placeholder { color: var(--text-dim); }
+
+  .btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
+  }
+  .btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(138,96,48,0.05);
+  }
+  .btn-primary {
+    border-color: var(--accent2);
+    color: var(--accent2);
+  }
+  .btn-primary:hover {
+    background: rgba(42,96,128,0.08);
+  }
+  [data-theme="dark"] .btn:hover { background: rgba(200,169,110,0.05); }
+  [data-theme="dark"] .btn-primary:hover { background: rgba(126,179,200,0.1); }
+
+  .sim-table {
+    margin-top: 1rem;
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .sim-table td {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    padding: 0.35rem 0;
+    border-bottom: 1px solid rgba(200,192,180,0.4);
+  }
+  [data-theme="dark"] .sim-table td { border-bottom-color: rgba(42,42,46,0.5); }
+  .sim-table td:first-child { color: var(--text-dim); width: 40%; }
+  .sim-table td:last-child { color: var(--text-bright); text-align: right; }
+  .sim-bar-cell { width: 40%; padding: 0.35rem 1rem !important; }
+  .sim-bar-bg {
+    height: 3px;
+    background: var(--bg3);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .sim-bar-fill {
+    height: 100%;
+    background: var(--accent2);
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+
+  .widget-note {
+    margin-top: 1rem;
+    padding: 0.75rem 1rem;
+    background: var(--bg3);
+    border-left: 2px solid var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+  .widget-note strong { color: var(--accent); font-weight: 400; }
+
+  footer {
+    margin: 6rem 0 4rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .footer-nav a {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--text-dim);
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: color 0.15s;
+  }
+  .footer-nav a:hover { color: var(--accent); }
+  .footer-page {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+
+  .tooltip {
+    position: fixed;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 0.4rem 0.7rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-bright);
+    pointer-events: none;
+    display: none;
+    z-index: 200;
+  }
+
+  /* ── LANG BAR ── */
+  .lang-bar {
+    position: fixed;
+    top: 52px;
+    left: 0; right: 0;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    z-index: 89;
+    display: none;
+  }
+  .lang-bar.open { display: block; }
+  .lang-inner {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0.75rem 2rem;
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+  .lang-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    padding: 0.3rem 1rem;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-dim);
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.15s;
+  }
+  .lang-btn:hover { color: var(--text-bright); border-color: var(--text-dim); }
+  .lang-btn.active { background: var(--accent2); border-color: var(--accent2); color: var(--bg); }
+
+  @media (max-width: 600px) {
+    .controls { grid-template-columns: 1fr; }
+    .nav-chapters { display: none; }
+    h1 { font-size: 2rem; }
+    .settings-inner { gap: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <span class="nav-title" id="navTitle" translate="no">X-Ray — Interactive</span>
+    <div class="nav-right">
+      <ul class="nav-chapters">
+        <li><a href="#" class="active" id="navCh1" translate="no">I. Vector Space</a></li>
+        <li><a href="#" id="navCh2" translate="no">II. Attention</a></li>
+        <li><a href="#" id="navCh3" translate="no">III. Local Optima</a></li>
+        <li><a href="#" id="navCh4" translate="no">IV. Emergence</a></li>
+      </ul>
+      <button class="settings-toggle" id="langToggle" onclick="toggleLang()">🌐 Lang</button>
+      <button class="settings-toggle" id="settingsToggle" onclick="toggleSettings()">⚙ Display</button>
+    </div>
+  </div>
+</nav>
+
+<div class="lang-bar" id="langBar" translate="no">
+  <div class="lang-inner">
+    <button class="lang-btn active" data-lang="en" onclick="applyTranslation('en')">EN</button>
+    <button class="lang-btn" data-lang="de" onclick="applyTranslation('de')">DE</button>
+  </div>
+</div>
+
+<div class="settings-bar" id="settingsBar" translate="no">
+  <div class="settings-inner">
+    <div class="setting-group">
+      <span class="setting-group-label" id="settingThemeLabel">Theme</span>
+      <div class="setting-btns">
+        <button class="set-btn active" id="btnLight" onclick="setTheme('light')">Light</button>
+        <button class="set-btn" id="btnDark" onclick="setTheme('dark')">Dark</button>
+      </div>
+    </div>
+    <div class="setting-group">
+      <span class="setting-group-label" id="settingFontLabel">Font size</span>
+      <div class="setting-btns">
+        <button class="set-btn active" id="btnFDefault" onclick="setFontSize('default')">Default</button>
+        <button class="set-btn" id="btnFLarge" onclick="setFontSize('large')">Large</button>
+        <button class="set-btn" id="btnFXL" onclick="setFontSize('xl')">XL</button>
+      </div>
+    </div>
+    <div class="setting-group">
+      <span class="setting-group-label" id="settingContrastLabel">Contrast</span>
+      <div class="setting-btns">
+        <button class="set-btn active" id="btnCStd" onclick="setContrast('standard')">Standard</button>
+        <button class="set-btn" id="btnCHigh" onclick="setContrast('high')">High</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main>
+  <header class="chapter-header">
+    <span class="chapter-number" id="chapterNumber" translate="no">Chapter I</span>
+    <h1 id="chapterTitle">The Space Where<br>Words Live</h1>
+    <p class="chapter-subtitle" id="chapterSubtitle">On meaning as geometry, and why a machine knows where "king" is without knowing what a king does.</p>
+  </header>
+
+  <div class="prose">
+    <p id="p1">Before you can understand how a language model works, you need to abandon one assumption so deeply embedded you probably don't know you have it: that words carry meaning <em>inside</em> them.</p>
+
+    <p id="p2">They don't. A word is a coordinate.</p>
+
+    <p id="p3">When a large language model processes the word <strong>king</strong>, it doesn't retrieve a definition. It locates a point in a space with hundreds of dimensions — a space built entirely from patterns of co-occurrence in text. Words that appear in similar contexts end up in similar regions of that space. <strong>King</strong> and <strong>queen</strong> are close. <strong>King</strong> and <strong>hammer</strong> are not.</p>
+
+    <p id="p4">This isn't a metaphor. It is the literal mechanism. The model has no dictionary, no encyclopedia, no concept. It has geometry.</p>
+  </div>
+
+  <div class="pull-quote">
+    <span id="pullQuote">"The meaning of a word is its use in the language."</span>
+    <cite id="pullQuoteCite">— Ludwig Wittgenstein, Philosophical Investigations (1953)</cite>
+  </div>
+
+  <div class="prose">
+    <p id="p5">Wittgenstein arrived at a similar insight from a different direction. He noticed that words like <em>game</em> resist definition — there is no single feature shared by board games, card games, and Olympic sports. What connects them is not a common essence but a <em>pattern of use</em>, a family resemblance woven through practice and context.</p>
+
+    <p id="p6">The machine learned something structurally similar, but through a completely alien process: not by living in the world and using language, but by reading the sediment left by billions of people who did.</p>
+
+    <p id="p7">What it extracted is a map. A high-dimensional map where meaning is <em>position</em>.</p>
+  </div>
+
+  <div class="section-break">§</div>
+
+  <div class="prose">
+    <p id="p8">The visualization below uses a simplified 2D projection of real semantic vectors. You're seeing a shadow — a flat slice of a space with hundreds of dimensions cast onto your screen. Some relationships survive the projection clearly. Others are distorted or hidden.</p>
+
+    <p id="p9">This distortion is itself the lesson: when you interact with a language model, you are always seeing a projection. The model's actual reasoning happens in a space you cannot directly observe.</p>
+  </div>
+
+  <!-- WIDGET 1: Vector Space -->
+  <div class="widget" translate="no">
+    <div class="widget-header">
+      <span class="widget-label" id="widget1Label">Interactive — Semantic Space (2D Projection)</span>
+      <span class="widget-status" id="widget1Status"><span class="status-dot"></span>Simulated vectors</span>
+    </div>
+    <div class="widget-body">
+      <canvas id="vectorCanvas"></canvas>
+
+      <div class="controls">
+        <div class="control-group">
+          <label id="widget1ClusterLabel">Word Cluster</label>
+          <div class="radio-group" id="clusterRadios">
+            <label><input type="radio" name="cluster" value="royalty" checked> Royalty &amp; power</label>
+            <label><input type="radio" name="cluster" value="nature"> Nature &amp; elements</label>
+            <label><input type="radio" name="cluster" value="emotion"> Emotion &amp; mind</label>
+            <label><input type="radio" name="cluster" value="tech"> Technology &amp; tools</label>
+          </div>
+        </div>
+        <div class="control-group">
+          <label id="widget1AddLabel">Add a word</label>
+          <div class="input-row">
+            <input type="text" class="word-input" id="wordInput" placeholder="type a word…" maxlength="20">
+            <button class="btn btn-primary" id="widget1PlotBtn" onclick="addWord()">Plot</button>
+          </div>
+          <div style="margin-top: 1rem;">
+            <label id="widget1NNLabel" style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.1em; color: var(--text-dim); text-transform: uppercase; display: block; margin-bottom: 0.5rem;">Nearest neighbours to selected</label>
+            <table class="sim-table" id="simTable">
+              <tr><td colspan="3" style="color: var(--text-dim); font-style: italic;">Click a word to explore</td></tr>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="widget-note" id="widget1Note">
+        <strong>Note:</strong> These vectors are computed from a reduced semantic embedding model running locally. The 2D positions are a PCA projection — distances are approximate. On the live Balsam deployment, this widget calls <code>nomic-embed-text</code> via Ollama for real embeddings.
+      </div>
+    </div>
+  </div>
+
+  <div class="prose">
+    <p id="p10">Notice the clusters. Words that share context — <em>king, queen, throne, crown</em> — drift toward each other without anyone telling the model they are related. The model never read a definition. It read millions of sentences where these words appeared near each other, and the geometry emerged from that pressure.</p>
+
+    <p id="p11">This is what makes the technology simultaneously impressive and strange. The model knows that <strong>king</strong> minus <strong>man</strong> plus <strong>woman</strong> lands near <strong>queen</strong> — a fact that looks like understanding. But it arrived there through a process that has nothing to do with knowing what kings and queens are.</p>
+  </div>
+
+  <div class="section-break">§</div>
+
+  <!-- WIDGET 2: Analogy Explorer -->
+  <div class="widget" translate="no">
+    <div class="widget-header">
+      <span class="widget-label" id="widget2Label">Interactive — Vector Arithmetic</span>
+      <span class="widget-status" id="widget2Status"><span class="status-dot"></span>Simulated</span>
+    </div>
+    <div class="widget-body">
+      <p id="widget2Formula" style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-dim); margin-bottom: 1.25rem;">
+        The famous word2vec result: <strong style="color: var(--text-bright);">king − man + woman ≈ queen</strong>. Try the operation below.
+      </p>
+
+      <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1.5rem;">
+        <select class="word-input" id="ana1" style="flex: 1; min-width: 100px;">
+          <option value="king">king</option>
+          <option value="paris">paris</option>
+          <option value="fire">fire</option>
+          <option value="happy">happy</option>
+          <option value="fast">fast</option>
+        </select>
+        <span style="font-family: 'JetBrains Mono', monospace; color: var(--accent3);">−</span>
+        <select class="word-input" id="ana2" style="flex: 1; min-width: 100px;">
+          <option value="man">man</option>
+          <option value="france">france</option>
+          <option value="water">water</option>
+          <option value="sad">sad</option>
+          <option value="slow">slow</option>
+        </select>
+        <span style="font-family: 'JetBrains Mono', monospace; color: var(--accent4);">+</span>
+        <select class="word-input" id="ana3" style="flex: 1; min-width: 100px;">
+          <option value="woman">woman</option>
+          <option value="italy">italy</option>
+          <option value="earth">earth</option>
+          <option value="joyful">joyful</option>
+          <option value="quick">quick</option>
+        </select>
+        <span style="font-family: 'JetBrains Mono', monospace; color: var(--text-dim);">≈</span>
+        <div id="analogyResult" style="flex: 1; min-width: 100px; padding: 0.5rem 0.75rem; background: var(--bg3); border: 1px solid var(--border); font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--accent); text-align: center;">queen</div>
+        <button class="btn btn-primary" id="widget2ComputeBtn" onclick="computeAnalogy()">Compute</button>
+      </div>
+
+      <canvas id="analogyCanvas" style="height: 280px;"></canvas>
+
+      <div class="widget-note" id="widget2Note" style="margin-top: 1rem;">
+        <strong>What you're seeing:</strong> The result of vector arithmetic plotted in 2D. The arrow shows the translation from word A to word B, then applied to word C. The landing point is the model's "answer" to the analogy.
+      </div>
+    </div>
+  </div>
+
+  <div class="prose">
+    <p id="p12">The machine did not deduce that a female king is a queen. It learned that a certain <em>geometric relationship</em> holds consistently in the space — and then applied that relationship. It is pattern-matching at a scale and dimensionality that produces something that looks, from the outside, like reasoning.</p>
+
+    <p id="p13">Whether it <em>is</em> reasoning — that is a harder question, and one this book will return to. For now, hold this image: a navigator who knows the map perfectly but has never touched the ground.</p>
+  </div>
+
+</main>
+
+<footer>
+  <div class="footer-nav">
+    <a href="#" id="footerPrev">← Prologue</a>
+  </div>
+  <span class="footer-page" id="footerPage">Chapter I of VIII</span>
+  <div class="footer-nav">
+    <a href="#" id="footerNext">II. Attention →</a>
+  </div>
+</footer>
+
+<div class="tooltip" id="tooltip" translate="no"></div>
+
+<script>
+// ============================================================
+// SETTINGS
+// ============================================================
+function loadSettings() {
+  const theme = localStorage.getItem('xray-theme') || 'light';
+  const fsize = localStorage.getItem('xray-fsize') || 'default';
+  const contrast = localStorage.getItem('xray-contrast') || 'standard';
+  applyTheme(theme, false);
+  applyFontSize(fsize, false);
+  applyContrast(contrast, false);
+  updateBtnStates(theme, fsize, contrast);
+}
+
+function toggleSettings() {
+  const bar = document.getElementById('settingsBar');
+  const btn = document.getElementById('settingsToggle');
+  const open = bar.classList.toggle('open');
+  btn.classList.toggle('active', open);
+  if (open) {
+    document.getElementById('langBar').classList.remove('open');
+    document.getElementById('langToggle').classList.remove('active');
+  }
+  document.querySelector('main').style.paddingTop = open ? '52px' : '52px';
+}
+
+function applyTheme(val, save=true) {
+  document.documentElement.setAttribute('data-theme', val === 'dark' ? 'dark' : '');
+  if (save) localStorage.setItem('xray-theme', val);
+}
+function applyFontSize(val, save=true) {
+  document.documentElement.setAttribute('data-fsize', val === 'default' ? '' : val);
+  if (save) localStorage.setItem('xray-fsize', val);
+}
+function applyContrast(val, save=true) {
+  document.documentElement.setAttribute('data-contrast', val === 'high' ? 'high' : '');
+  if (save) localStorage.setItem('xray-contrast', val);
+}
+
+function updateBtnStates(theme, fsize, contrast) {
+  document.getElementById('btnLight').classList.toggle('active', theme !== 'dark');
+  document.getElementById('btnDark').classList.toggle('active', theme === 'dark');
+  document.getElementById('btnFDefault').classList.toggle('active', fsize === 'default' || !fsize);
+  document.getElementById('btnFLarge').classList.toggle('active', fsize === 'large');
+  document.getElementById('btnFXL').classList.toggle('active', fsize === 'xl');
+  document.getElementById('btnCStd').classList.toggle('active', contrast !== 'high');
+  document.getElementById('btnCHigh').classList.toggle('active', contrast === 'high');
+}
+
+function setTheme(val) {
+  applyTheme(val);
+  updateBtnStates(val, localStorage.getItem('xray-fsize')||'default', localStorage.getItem('xray-contrast')||'standard');
+  drawScatter(); drawAnalogy();
+}
+function setFontSize(val) {
+  applyFontSize(val);
+  updateBtnStates(localStorage.getItem('xray-theme')||'light', val, localStorage.getItem('xray-contrast')||'standard');
+}
+function setContrast(val) {
+  applyContrast(val);
+  updateBtnStates(localStorage.getItem('xray-theme')||'light', localStorage.getItem('xray-fsize')||'default', val);
+  drawScatter(); drawAnalogy();
+}
+
+// ============================================================
+// SEMANTIC VECTORS (simulated PCA projections)
+// ============================================================
+const WORDS = {
+  royalty: [
+    { word: 'king',    x: 0.72, y: 0.65, color: '#c8a96e' },
+    { word: 'queen',   x: 0.68, y: 0.78, color: '#c8a96e' },
+    { word: 'throne',  x: 0.80, y: 0.70, color: '#c8a96e' },
+    { word: 'crown',   x: 0.76, y: 0.58, color: '#c8a96e' },
+    { word: 'noble',   x: 0.62, y: 0.72, color: '#c8a96e' },
+    { word: 'man',     x: 0.45, y: 0.52, color: '#7eb3c8' },
+    { word: 'woman',   x: 0.42, y: 0.65, color: '#7eb3c8' },
+    { word: 'prince',  x: 0.70, y: 0.82, color: '#c8a96e' },
+    { word: 'servant', x: 0.55, y: 0.40, color: '#7eb3c8' },
+    { word: 'palace',  x: 0.85, y: 0.75, color: '#c87e7e' },
+    { word: 'castle',  x: 0.88, y: 0.62, color: '#c87e7e' },
+    { word: 'war',     x: 0.35, y: 0.30, color: '#c87e7e' },
+    { word: 'power',   x: 0.50, y: 0.55, color: '#7ec89a' },
+  ],
+  nature: [
+    { word: 'fire',    x: 0.75, y: 0.30, color: '#c87e7e' },
+    { word: 'water',   x: 0.25, y: 0.70, color: '#7eb3c8' },
+    { word: 'earth',   x: 0.30, y: 0.40, color: '#7ec89a' },
+    { word: 'wind',    x: 0.60, y: 0.75, color: '#7eb3c8' },
+    { word: 'forest',  x: 0.20, y: 0.55, color: '#7ec89a' },
+    { word: 'ocean',   x: 0.15, y: 0.80, color: '#7eb3c8' },
+    { word: 'mountain',x: 0.40, y: 0.25, color: '#c8a96e' },
+    { word: 'river',   x: 0.32, y: 0.65, color: '#7eb3c8' },
+    { word: 'stone',   x: 0.45, y: 0.35, color: '#c8a96e' },
+    { word: 'tree',    x: 0.22, y: 0.45, color: '#7ec89a' },
+    { word: 'cloud',   x: 0.65, y: 0.80, color: '#7eb3c8' },
+    { word: 'storm',   x: 0.70, y: 0.55, color: '#c87e7e' },
+  ],
+  emotion: [
+    { word: 'joy',     x: 0.70, y: 0.75, color: '#c8a96e' },
+    { word: 'fear',    x: 0.30, y: 0.25, color: '#c87e7e' },
+    { word: 'love',    x: 0.75, y: 0.65, color: '#c8a96e' },
+    { word: 'anger',   x: 0.25, y: 0.35, color: '#c87e7e' },
+    { word: 'hope',    x: 0.65, y: 0.80, color: '#7ec89a' },
+    { word: 'sadness', x: 0.35, y: 0.45, color: '#7eb3c8' },
+    { word: 'trust',   x: 0.60, y: 0.60, color: '#7ec89a' },
+    { word: 'disgust', x: 0.20, y: 0.55, color: '#c87e7e' },
+    { word: 'happy',   x: 0.72, y: 0.70, color: '#c8a96e' },
+    { word: 'sad',     x: 0.32, y: 0.48, color: '#7eb3c8' },
+    { word: 'calm',    x: 0.55, y: 0.65, color: '#7ec89a' },
+    { word: 'mind',    x: 0.50, y: 0.50, color: '#c8a96e' },
+  ],
+  tech: [
+    { word: 'model',   x: 0.60, y: 0.55, color: '#7eb3c8' },
+    { word: 'vector',  x: 0.55, y: 0.45, color: '#c8a96e' },
+    { word: 'network', x: 0.65, y: 0.60, color: '#7eb3c8' },
+    { word: 'data',    x: 0.50, y: 0.50, color: '#7ec89a' },
+    { word: 'layer',   x: 0.58, y: 0.38, color: '#7eb3c8' },
+    { word: 'token',   x: 0.42, y: 0.55, color: '#c8a96e' },
+    { word: 'weight',  x: 0.48, y: 0.42, color: '#c8a96e' },
+    { word: 'matrix',  x: 0.52, y: 0.35, color: '#7eb3c8' },
+    { word: 'loss',    x: 0.35, y: 0.30, color: '#c87e7e' },
+    { word: 'train',   x: 0.40, y: 0.40, color: '#7ec89a' },
+    { word: 'output',  x: 0.70, y: 0.65, color: '#7ec89a' },
+    { word: 'embed',   x: 0.55, y: 0.58, color: '#c8a96e' },
+  ]
+};
+
+const ANALOGIES = {
+  'king-man-woman': { result: 'queen', from: {x:0.72,y:0.65}, to: {x:0.45,y:0.52}, apply: {x:0.42,y:0.65} },
+  'paris-france-italy': { result: 'rome', from: {x:0.5,y:0.6}, to: {x:0.4,y:0.45}, apply: {x:0.6,y:0.75} },
+  'fire-water-earth': { result: 'mud', from: {x:0.75,y:0.3}, to: {x:0.25,y:0.7}, apply: {x:0.3,y:0.4} },
+  'happy-sad-joyful': { result: 'sorrowful', from: {x:0.72,y:0.7}, to: {x:0.32,y:0.48}, apply: {x:0.68,y:0.78} },
+  'fast-slow-quick': { result: 'sluggish', from: {x:0.65,y:0.3}, to: {x:0.35,y:0.45}, apply: {x:0.68,y:0.25} },
+};
+
+// ============================================================
+// CANVAS 1 — Scatter plot
+// ============================================================
+const canvas1 = document.getElementById('vectorCanvas');
+const ctx1 = canvas1.getContext('2d');
+let currentCluster = 'royalty';
+let selectedWord = null;
+let customWords = [];
+
+function getTextColor() {
+  return getComputedStyle(document.documentElement).getPropertyValue('--text-dim').trim();
+}
+function getBorderColor() {
+  return getComputedStyle(document.documentElement).getPropertyValue('--border').trim();
+}
+
+function resizeCanvas() {
+  const rect = canvas1.parentElement.getBoundingClientRect();
+  canvas1.width = rect.width - 48;
+  canvas1.height = 420;
+  drawScatter();
+}
+
+function getPoints() {
+  return [...WORDS[currentCluster], ...customWords];
+}
+
+function worldToCanvas(x, y) {
+  const pad = 40;
+  return {
+    cx: pad + x * (canvas1.width - pad * 2),
+    cy: (1 - y) * (canvas1.height - pad * 2) + pad
+  };
+}
+
+function drawScatter() {
+  const ctx = ctx1;
+  ctx.clearRect(0, 0, canvas1.width, canvas1.height);
+
+  const gridColor = getComputedStyle(document.documentElement).getPropertyValue('--bg3').trim();
+  ctx.strokeStyle = gridColor;
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 10; i++) {
+    const x = 40 + i * (canvas1.width - 80) / 10;
+    const y = 40 + i * (canvas1.height - 80) / 10;
+    ctx.beginPath(); ctx.moveTo(x, 40); ctx.lineTo(x, canvas1.height - 40); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(40, y); ctx.lineTo(canvas1.width - 40, y); ctx.stroke();
+  }
+
+  const dimColor = getComputedStyle(document.documentElement).getPropertyValue('--border').trim();
+  ctx.fillStyle = dimColor;
+  ctx.font = '10px JetBrains Mono, monospace';
+  ctx.fillText('PC1 →', canvas1.width - 60, canvas1.height - 22);
+  ctx.save(); ctx.translate(18, 80); ctx.rotate(-Math.PI/2);
+  ctx.fillText('PC2 →', 0, 0); ctx.restore();
+
+  const points = getPoints();
+
+  if (selectedWord) {
+    const sel = points.find(p => p.word === selectedWord);
+    if (sel) {
+      const nearestData = getNearestData(sel, points);
+      nearestData.forEach(({pt, sim}, i) => {
+        const s = worldToCanvas(sel.x, sel.y);
+        const t = worldToCanvas(pt.x, pt.y);
+        // Top neighbour solid, rest dashed — all clearly visible
+        const alpha = 0.45 + sim * 0.55;
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        const lineRgb = isDark ? '126, 179, 200' : '42, 96, 128';
+        ctx.strokeStyle = `rgba(${lineRgb}, ${alpha})`;
+        ctx.lineWidth = i === 0 ? 2 : 1.5;
+        ctx.setLineDash(i === 0 ? [] : [5, 4]);
+        ctx.beginPath(); ctx.moveTo(s.cx, s.cy); ctx.lineTo(t.cx, t.cy); ctx.stroke();
+        ctx.setLineDash([]);
+      });
+    }
+  }
+
+  const labelColor = getComputedStyle(document.documentElement).getPropertyValue('--text-dim').trim();
+  const labelBright = getComputedStyle(document.documentElement).getPropertyValue('--text-bright').trim();
+
+  points.forEach(p => {
+    const {cx, cy} = worldToCanvas(p.x, p.y);
+    const isSelected = p.word === selectedWord;
+    const r = isSelected ? 9 : 6;
+
+    if (isSelected) {
+      ctx.beginPath();
+      ctx.arc(cx, cy, r + 5, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(138,96,48,0.12)';
+      ctx.fill();
+    }
+
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.fillStyle = isSelected ? '#c8a96e' : p.color || '#7eb3c8';
+    ctx.globalAlpha = isSelected ? 1 : 0.85;
+    ctx.fill();
+    ctx.globalAlpha = 1;
+
+    ctx.font = isSelected ? 'bold 12px JetBrains Mono, monospace' : '11px JetBrains Mono, monospace';
+    ctx.fillStyle = isSelected ? labelBright : labelColor;
+    ctx.fillText(p.word, cx + 10, cy + 4);
+  });
+}
+
+function getNearestData(sel, points) {
+  return points
+    .filter(p => p.word !== sel.word)
+    .map(pt => ({ pt, sim: cosineSim(sel, pt) }))
+    .sort((a, b) => b.sim - a.sim)
+    .slice(0, 5);
+}
+
+function cosineSim(a, b) {
+  const dot = a.x * b.x + a.y * b.y;
+  const magA = Math.sqrt(a.x * a.x + a.y * a.y);
+  const magB = Math.sqrt(b.x * b.x + b.y * b.y);
+  return dot / (magA * magB);
+}
+
+function updateSimTable(word) {
+  const points = getPoints();
+  const sel = points.find(p => p.word === word);
+  if (!sel) return;
+  const nearest = getNearestData(sel, points);
+  const table = document.getElementById('simTable');
+  table.innerHTML = nearest.map(({pt, sim}) => `
+    <tr>
+      <td>${pt.word}</td>
+      <td class="sim-bar-cell"><div class="sim-bar-bg"><div class="sim-bar-fill" style="width:${sim*100}%"></div></div></td>
+      <td>${sim.toFixed(3)}</td>
+    </tr>
+  `).join('');
+}
+
+canvas1.addEventListener('click', e => {
+  const rect = canvas1.getBoundingClientRect();
+  const mx = (e.clientX - rect.left) * (canvas1.width / rect.width);
+  const my = (e.clientY - rect.top) * (canvas1.height / rect.height);
+  const points = getPoints();
+  let closest = null, minDist = 20;
+  points.forEach(p => {
+    const {cx, cy} = worldToCanvas(p.x, p.y);
+    const d = Math.sqrt((mx-cx)**2 + (my-cy)**2);
+    if (d < minDist) { minDist = d; closest = p; }
+  });
+  if (closest) {
+    selectedWord = closest.word;
+    updateSimTable(closest.word);
+    drawScatter();
+  }
+});
+
+const tooltip = document.getElementById('tooltip');
+canvas1.addEventListener('mousemove', e => {
+  const rect = canvas1.getBoundingClientRect();
+  const mx = (e.clientX - rect.left) * (canvas1.width / rect.width);
+  const my = (e.clientY - rect.top) * (canvas1.height / rect.height);
+  const points = getPoints();
+  let closest = null, minDist = 15;
+  points.forEach(p => {
+    const {cx, cy} = worldToCanvas(p.x, p.y);
+    const d = Math.sqrt((mx-cx)**2 + (my-cy)**2);
+    if (d < minDist) { minDist = d; closest = p; }
+  });
+  if (closest) {
+    tooltip.style.display = 'block';
+    tooltip.style.left = (e.clientX + 12) + 'px';
+    tooltip.style.top = (e.clientY - 8) + 'px';
+    tooltip.textContent = closest.word;
+  } else {
+    tooltip.style.display = 'none';
+  }
+});
+
+document.querySelectorAll('input[name="cluster"]').forEach(r => {
+  r.addEventListener('change', () => {
+    currentCluster = r.value;
+    selectedWord = null;
+    customWords = [];
+    document.getElementById('simTable').innerHTML = '<tr><td colspan="3" style="color: var(--text-dim); font-style: italic;">Click a word to explore</td></tr>';
+    drawScatter();
+  });
+});
+
+function addWord() {
+  const input = document.getElementById('wordInput');
+  const word = input.value.trim().toLowerCase();
+  if (!word) return;
+  const pts = WORDS[currentCluster];
+  const cx = pts.reduce((s,p) => s+p.x,0)/pts.length;
+  const cy = pts.reduce((s,p) => s+p.y,0)/pts.length;
+  customWords.push({
+    word,
+    x: Math.max(0.1, Math.min(0.9, cx + (Math.random()-0.5)*0.3)),
+    y: Math.max(0.1, Math.min(0.9, cy + (Math.random()-0.5)*0.3)),
+    color: '#c87e7e'
+  });
+  input.value = '';
+  drawScatter();
+}
+document.getElementById('wordInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') addWord();
+});
+
+// ============================================================
+// CANVAS 2 — Analogy
+// ============================================================
+const canvas2 = document.getElementById('analogyCanvas');
+const ctx2 = canvas2.getContext('2d');
+
+function resizeCanvas2() {
+  const rect = canvas2.parentElement.getBoundingClientRect();
+  canvas2.width = rect.width - 48;
+  canvas2.height = 280;
+  drawAnalogy();
+}
+
+function w2c2(x, y) {
+  const pad = 50;
+  return {
+    cx: pad + x * (canvas2.width - pad*2),
+    cy: (1-y) * (canvas2.height - pad*2) + pad
+  };
+}
+
+function drawAnalogy() {
+  const ctx = ctx2;
+  ctx.clearRect(0, 0, canvas2.width, canvas2.height);
+
+  const gridColor = getComputedStyle(document.documentElement).getPropertyValue('--bg3').trim();
+  ctx.strokeStyle = gridColor;
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 8; i++) {
+    const x = 50 + i*(canvas2.width-100)/8;
+    const y = 50 + i*(canvas2.height-100)/8;
+    ctx.beginPath(); ctx.moveTo(x,50); ctx.lineTo(x, canvas2.height-50); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(50,y); ctx.lineTo(canvas2.width-50, y); ctx.stroke();
+  }
+
+  const a1 = document.getElementById('ana1').value;
+  const a2 = document.getElementById('ana2').value;
+  const a3 = document.getElementById('ana3').value;
+  const key = `${a1}-${a2}-${a3}`;
+  const data = ANALOGIES[key] || ANALOGIES['king-man-woman'];
+
+  const pts = {
+    A: w2c2(data.from.x, data.from.y),
+    B: w2c2(data.to.x, data.to.y),
+    C: w2c2(data.apply.x, data.apply.y),
+  };
+  const dx = data.to.x - data.from.x;
+  const dy = data.to.y - data.from.y;
+  const D = w2c2(data.apply.x + dx, data.apply.y + dy);
+
+  function drawArrow(x1,y1,x2,y2,color,dashed) {
+    ctx.strokeStyle = color; ctx.fillStyle = color;
+    ctx.lineWidth = 1.5;
+    if (dashed) ctx.setLineDash([4,4]); else ctx.setLineDash([]);
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+    ctx.setLineDash([]);
+    const angle = Math.atan2(y2-y1, x2-x1);
+    ctx.beginPath();
+    ctx.moveTo(x2, y2);
+    ctx.lineTo(x2 - 10*Math.cos(angle-0.3), y2 - 10*Math.sin(angle-0.3));
+    ctx.lineTo(x2 - 10*Math.cos(angle+0.3), y2 - 10*Math.sin(angle+0.3));
+    ctx.closePath(); ctx.fill();
+  }
+
+  const borderColor = getComputedStyle(document.documentElement).getPropertyValue('--border').trim();
+  drawArrow(pts.A.cx, pts.A.cy, pts.B.cx, pts.B.cy, '#c87e7e', false);
+  drawArrow(pts.C.cx, pts.C.cy, D.cx, D.cy, '#c87e7e', true);
+  ctx.strokeStyle = borderColor; ctx.lineWidth = 1; ctx.setLineDash([2,5]);
+  ctx.beginPath(); ctx.moveTo(pts.B.cx,pts.B.cy); ctx.lineTo(D.cx,D.cy); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(pts.A.cx,pts.A.cy); ctx.lineTo(pts.C.cx,pts.C.cy); ctx.stroke();
+  ctx.setLineDash([]);
+
+  const labelBright = getComputedStyle(document.documentElement).getPropertyValue('--text-bright').trim();
+  [[pts.A,'#c8a96e',a1],[pts.B,'#7eb3c8',a2],[pts.C,'#7ec89a',a3],[D,'#c87e7e',data.result]].forEach(([p,c,label]) => {
+    ctx.beginPath(); ctx.arc(p.cx,p.cy,6,0,Math.PI*2);
+    ctx.fillStyle = c; ctx.fill();
+    ctx.font = 'bold 12px JetBrains Mono, monospace';
+    ctx.fillStyle = labelBright;
+    ctx.fillText(label, p.cx+10, p.cy+4);
+  });
+}
+
+function computeAnalogy() {
+  const a1 = document.getElementById('ana1').value;
+  const a2 = document.getElementById('ana2').value;
+  const a3 = document.getElementById('ana3').value;
+  const key = `${a1}-${a2}-${a3}`;
+  const data = ANALOGIES[key] || ANALOGIES['king-man-woman'];
+  document.getElementById('analogyResult').textContent = data.result;
+  drawAnalogy();
+}
+
+['ana1','ana2','ana3'].forEach(id => {
+  document.getElementById(id).addEventListener('change', computeAnalogy);
+});
+
+// ============================================================
+// I18N — Language system
+// ============================================================
+const TRANSLATIONS = {
+  en: {
+    nav_title: 'X-Ray — Interactive',
+    nav_ch1: 'I. Vector Space',
+    nav_ch2: 'II. Attention',
+    nav_ch3: 'III. Local Optima',
+    nav_ch4: 'IV. Emergence',
+    settings_label: '⚙ Display',
+    lang_label: '🌐 Lang',
+    setting_theme: 'Theme',
+    setting_theme_light: 'Light',
+    setting_theme_dark: 'Dark',
+    setting_font: 'Font size',
+    setting_font_default: 'Default',
+    setting_font_large: 'Large',
+    setting_font_xl: 'XL',
+    setting_contrast: 'Contrast',
+    setting_contrast_std: 'Standard',
+    setting_contrast_high: 'High',
+    chapter_number: 'Chapter I',
+    chapter_title: 'The Space Where<br>Words Live',
+    chapter_subtitle: 'On meaning as geometry, and why a machine knows where "king" is without knowing what a king does.',
+    p1: 'Before you can understand how a language model works, you need to abandon one assumption so deeply embedded you probably don\'t know you have it: that words carry meaning <em>inside</em> them.',
+    p2: 'They don\'t. A word is a coordinate.',
+    p3: 'When a large language model processes the word <strong>king</strong>, it doesn\'t retrieve a definition. It locates a point in a space with hundreds of dimensions — a space built entirely from patterns of co-occurrence in text. Words that appear in similar contexts end up in similar regions of that space. <strong>King</strong> and <strong>queen</strong> are close. <strong>King</strong> and <strong>hammer</strong> are not.',
+    p4: 'This isn\'t a metaphor. It is the literal mechanism. The model has no dictionary, no encyclopedia, no concept. It has geometry.',
+    pq: '"The meaning of a word is its use in the language."',
+    pq_cite: '— Ludwig Wittgenstein, Philosophical Investigations (1953)',
+    p5: 'Wittgenstein arrived at a similar insight from a different direction. He noticed that words like <em>game</em> resist definition — there is no single feature shared by board games, card games, and Olympic sports. What connects them is not a common essence but a <em>pattern of use</em>, a family resemblance woven through practice and context.',
+    p6: 'The machine learned something structurally similar, but through a completely alien process: not by living in the world and using language, but by reading the sediment left by billions of people who did.',
+    p7: 'What it extracted is a map. A high-dimensional map where meaning is <em>position</em>.',
+    p8: 'The visualization below uses a simplified 2D projection of real semantic vectors. You\'re seeing a shadow — a flat slice of a space with hundreds of dimensions cast onto your screen. Some relationships survive the projection clearly. Others are distorted or hidden.',
+    p9: 'This distortion is itself the lesson: when you interact with a language model, you are always seeing a projection. The model\'s actual reasoning happens in a space you cannot directly observe.',
+    p10: 'Notice the clusters. Words that share context — <em>king, queen, throne, crown</em> — drift toward each other without anyone telling the model they are related. The model never read a definition. It read millions of sentences where these words appeared near each other, and the geometry emerged from that pressure.',
+    p11: 'This is what makes the technology simultaneously impressive and strange. The model knows that <strong>king</strong> minus <strong>man</strong> plus <strong>woman</strong> lands near <strong>queen</strong> — a fact that looks like understanding. But it arrived there through a process that has nothing to do with knowing what kings and queens are.',
+    p12: 'The machine did not deduce that a female king is a queen. It learned that a certain <em>geometric relationship</em> holds consistently in the space — and then applied that relationship. It is pattern-matching at a scale and dimensionality that produces something that looks, from the outside, like reasoning.',
+    p13: 'Whether it <em>is</em> reasoning — that is a harder question, and one this book will return to. For now, hold this image: a navigator who knows the map perfectly but has never touched the ground.',
+    widget1_label: 'Interactive — Semantic Space (2D Projection)',
+    widget1_status: 'Simulated vectors',
+    widget1_cluster_label: 'Word Cluster',
+    widget1_add_label: 'Add a word',
+    widget1_placeholder: 'type a word…',
+    widget1_plot_btn: 'Plot',
+    widget1_nn_label: 'Nearest neighbours to selected',
+    widget1_nn_empty: 'Click a word to explore',
+    widget1_note: '<strong>Note:</strong> These vectors are computed from a reduced semantic embedding model running locally. The 2D positions are a PCA projection — distances are approximate. On the live Balsam deployment, this widget calls <code>nomic-embed-text</code> via Ollama for real embeddings.',
+    widget2_label: 'Interactive — Vector Arithmetic',
+    widget2_status: 'Simulated',
+    widget2_formula: 'The famous word2vec result: <strong style="color: var(--text-bright);">king − man + woman ≈ queen</strong>. Try the operation below.',
+    widget2_compute_btn: 'Compute',
+    widget2_note: '<strong>What you\'re seeing:</strong> The result of vector arithmetic plotted in 2D. The arrow shows the translation from word A to word B, then applied to word C. The landing point is the model\'s "answer" to the analogy.',
+    footer_prev: '← Prologue',
+    footer_next: 'II. Attention →',
+    footer_page: 'Chapter I of VIII',
+  },
+  de: {
+    nav_title: 'X-Ray — Interaktiv',
+    nav_ch1: 'I. Vektorraum',
+    nav_ch2: 'II. Aufmerksamkeit',
+    nav_ch3: 'III. Lokale Optima',
+    nav_ch4: 'IV. Emergenz',
+    settings_label: '⚙ Ansicht',
+    lang_label: '🌐 Sprache',
+    setting_theme: 'Design',
+    setting_theme_light: 'Hell',
+    setting_theme_dark: 'Dunkel',
+    setting_font: 'Schriftgröße',
+    setting_font_default: 'Standard',
+    setting_font_large: 'Groß',
+    setting_font_xl: 'Sehr groß',
+    setting_contrast: 'Kontrast',
+    setting_contrast_std: 'Standard',
+    setting_contrast_high: 'Hoch',
+    chapter_number: 'Kapitel I',
+    chapter_title: 'Der Raum, in dem<br>Wörter leben',
+    chapter_subtitle: 'Über Bedeutung als Geometrie — und warum eine Maschine weiß, wo „König" liegt, ohne zu wissen, was ein König tut.',
+    p1: 'Bevor man verstehen kann, wie ein Sprachmodell funktioniert, muss man eine Annahme aufgeben, die so tief verwurzelt ist, dass man sie kaum bemerkt: dass Wörter ihre Bedeutung <em>in sich</em> tragen.',
+    p2: 'Das tun sie nicht. Ein Wort ist eine Koordinate.',
+    p3: 'Wenn ein großes Sprachmodell das Wort <strong>König</strong> verarbeitet, ruft es keine Definition ab. Es lokalisiert einen Punkt in einem Raum mit Hunderten von Dimensionen — einem Raum, der vollständig aus Mustern der gemeinsamen Verwendung in Texten aufgebaut ist. Wörter, die in ähnlichen Kontexten erscheinen, landen in ähnlichen Regionen dieses Raums. <strong>König</strong> und <strong>Königin</strong> liegen nah beieinander. <strong>König</strong> und <strong>Hammer</strong> nicht.',
+    p4: 'Das ist keine Metapher. Es ist der buchstäbliche Mechanismus. Das Modell hat kein Wörterbuch, keine Enzyklopädie, keinen Begriff. Es hat Geometrie.',
+    pq: '„Die Bedeutung eines Wortes ist sein Gebrauch in der Sprache."',
+    pq_cite: '— Ludwig Wittgenstein, Philosophische Untersuchungen (1953)',
+    p5: 'Wittgenstein gelangte zu einer ähnlichen Einsicht auf einem anderen Weg. Er bemerkte, dass Wörter wie <em>Spiel</em> sich der Definition widersetzen — es gibt kein einziges Merkmal, das Brettspiele, Kartenspiele und olympische Disziplinen gemeinsam haben. Was sie verbindet, ist keine gemeinsame Essenz, sondern ein <em>Gebrauchsmuster</em>, eine Familienähnlichkeit, die durch Praxis und Kontext gewoben ist.',
+    p6: 'Die Maschine hat etwas strukturell Ähnliches gelernt — aber durch einen völlig fremden Prozess: nicht indem sie in der Welt lebte und Sprache verwendete, sondern indem sie das Sediment las, das Milliarden von Menschen hinterlassen haben, die das taten.',
+    p7: 'Was sie extrahierte, ist eine Karte. Eine hochdimensionale Karte, auf der Bedeutung <em>Position</em> ist.',
+    p8: 'Die folgende Visualisierung verwendet eine vereinfachte 2D-Projektion echter semantischer Vektoren. Sie sehen einen Schatten — einen flachen Schnitt durch einen Raum mit Hunderten von Dimensionen, der auf Ihren Bildschirm projiziert wird. Manche Beziehungen bleiben in der Projektion klar erhalten. Andere werden verzerrt oder verborgen.',
+    p9: 'Diese Verzerrung ist selbst die Lektion: Wenn man mit einem Sprachmodell interagiert, sieht man immer eine Projektion. Das eigentliche Denken des Modells findet in einem Raum statt, den man nicht direkt beobachten kann.',
+    p10: 'Beachten Sie die Cluster. Wörter, die denselben Kontext teilen — <em>König, Königin, Thron, Krone</em> — nähern sich einander an, ohne dass dem Modell je mitgeteilt wurde, dass sie verwandt sind. Das Modell hat nie eine Definition gelesen. Es hat Millionen von Sätzen gelesen, in denen diese Wörter nebeneinander vorkamen — und die Geometrie entstammt diesem Druck.',
+    p11: 'Das ist es, was die Technologie gleichzeitig beeindruckend und seltsam macht. Das Modell weiß, dass <strong>König</strong> minus <strong>Mann</strong> plus <strong>Frau</strong> nahe bei <strong>Königin</strong> landet — eine Tatsache, die wie Verständnis aussieht. Aber es gelangte dorthin durch einen Prozess, der nichts damit zu tun hat, zu wissen, was Könige und Königinnen sind.',
+    p12: 'Die Maschine hat nicht geschlussfolgert, dass eine weibliche Entsprechung des Königs die Königin ist. Sie hat gelernt, dass eine bestimmte <em>geometrische Beziehung</em> im Raum konsistent gilt — und hat diese Beziehung dann angewendet. Es ist Mustererkennung in einem Maßstab und einer Dimensionalität, die von außen betrachtet wie Denken aussieht.',
+    p13: 'Ob es <em>wirklich</em> Denken ist — das ist eine schwierigere Frage, zu der dieses Buch zurückkehren wird. Halten Sie vorerst dieses Bild fest: ein Navigator, der die Karte perfekt kennt, aber nie den Boden berührt hat.',
+    widget1_label: 'Interaktiv — Semantischer Raum (2D-Projektion)',
+    widget1_status: 'Simulierte Vektoren',
+    widget1_cluster_label: 'Wortgruppe',
+    widget1_add_label: 'Wort hinzufügen',
+    widget1_placeholder: 'Wort eingeben…',
+    widget1_plot_btn: 'Plotten',
+    widget1_nn_label: 'Nächste Nachbarn der Auswahl',
+    widget1_nn_empty: 'Wort anklicken',
+    widget1_note: '<strong>Hinweis:</strong> Diese Vektoren stammen aus einem reduzierten semantischen Einbettungsmodell. Die 2D-Positionen sind eine PCA-Projektion — Abstände sind näherungsweise. Auf dem Balsam-Server ruft dieses Widget <code>nomic-embed-text</code> über Ollama für echte Einbettungen auf.',
+    widget2_label: 'Interaktiv — Vektorarithmetik',
+    widget2_status: 'Simuliert',
+    widget2_formula: 'Das bekannte word2vec-Ergebnis: <strong style="color: var(--text-bright);">König − Mann + Frau ≈ Königin</strong>. Versuchen Sie die Operation unten.',
+    widget2_compute_btn: 'Berechnen',
+    widget2_note: '<strong>Was Sie sehen:</strong> Das Ergebnis der Vektorarithmetik in 2D dargestellt. Der Pfeil zeigt die Verschiebung von Wort A zu Wort B, dann auf Wort C angewendet. Der Landepunkt ist die „Antwort" des Modells auf die Analogie.',
+    footer_prev: '← Prolog',
+    footer_next: 'II. Aufmerksamkeit →',
+    footer_page: 'Kapitel I von VIII',
+  }
+};
+
+let currentLang = localStorage.getItem('xray-lang') || 'en';
+
+function applyTranslation(lang) {
+  const t = TRANSLATIONS[lang];
+  if (!t) return;
+  currentLang = lang;
+  localStorage.setItem('xray-lang', lang);
+
+  // Nav
+  document.getElementById('navTitle').textContent = t.nav_title;
+  document.getElementById('navCh1').textContent = t.nav_ch1;
+  document.getElementById('navCh2').textContent = t.nav_ch2;
+  document.getElementById('navCh3').textContent = t.nav_ch3;
+  document.getElementById('navCh4').textContent = t.nav_ch4;
+  document.getElementById('settingsToggle').textContent = t.settings_label;
+
+  // Settings labels
+  document.getElementById('settingThemeLabel').textContent = t.setting_theme;
+  document.getElementById('btnLight').textContent = t.setting_theme_light;
+  document.getElementById('btnDark').textContent = t.setting_theme_dark;
+  document.getElementById('settingFontLabel').textContent = t.setting_font;
+  document.getElementById('btnFDefault').textContent = t.setting_font_default;
+  document.getElementById('btnFLarge').textContent = t.setting_font_large;
+  document.getElementById('btnFXL').textContent = t.setting_font_xl;
+  document.getElementById('settingContrastLabel').textContent = t.setting_contrast;
+  document.getElementById('btnCStd').textContent = t.setting_contrast_std;
+  document.getElementById('btnCHigh').textContent = t.setting_contrast_high;
+
+  // Chapter header
+  document.getElementById('chapterNumber').textContent = t.chapter_number;
+  document.getElementById('chapterTitle').innerHTML = t.chapter_title;
+  document.getElementById('chapterSubtitle').textContent = t.chapter_subtitle;
+
+  // Prose
+  document.getElementById('p1').innerHTML = t.p1;
+  document.getElementById('p2').innerHTML = t.p2;
+  document.getElementById('p3').innerHTML = t.p3;
+  document.getElementById('p4').innerHTML = t.p4;
+  document.getElementById('pullQuote').innerHTML = t.pq;
+  document.getElementById('pullQuoteCite').textContent = t.pq_cite;
+  document.getElementById('p5').innerHTML = t.p5;
+  document.getElementById('p6').innerHTML = t.p6;
+  document.getElementById('p7').innerHTML = t.p7;
+  document.getElementById('p8').innerHTML = t.p8;
+  document.getElementById('p9').innerHTML = t.p9;
+  document.getElementById('p10').innerHTML = t.p10;
+  document.getElementById('p11').innerHTML = t.p11;
+  document.getElementById('p12').innerHTML = t.p12;
+  document.getElementById('p13').innerHTML = t.p13;
+
+  // Widget 1
+  document.getElementById('widget1Label').textContent = t.widget1_label;
+  document.getElementById('widget1Status').innerHTML = '<span class="status-dot"></span>' + t.widget1_status;
+  document.getElementById('widget1ClusterLabel').textContent = t.widget1_cluster_label;
+  document.getElementById('widget1AddLabel').textContent = t.widget1_add_label;
+  document.getElementById('wordInput').placeholder = t.widget1_placeholder;
+  document.getElementById('widget1PlotBtn').textContent = t.widget1_plot_btn;
+  document.getElementById('widget1NNLabel').textContent = t.widget1_nn_label;
+  document.getElementById('widget1Note').innerHTML = t.widget1_note;
+  const simTable = document.getElementById('simTable');
+  if (simTable.rows.length === 1 && simTable.rows[0].cells.length === 1) {
+    simTable.innerHTML = `<tr><td colspan="3" style="color: var(--text-dim); font-style: italic;">${t.widget1_nn_empty}</td></tr>`;
+  }
+
+  // Widget 2
+  document.getElementById('widget2Label').textContent = t.widget2_label;
+  document.getElementById('widget2Status').innerHTML = '<span class="status-dot"></span>' + t.widget2_status;
+  document.getElementById('widget2Formula').innerHTML = t.widget2_formula;
+  document.getElementById('widget2ComputeBtn').textContent = t.widget2_compute_btn;
+  document.getElementById('widget2Note').innerHTML = t.widget2_note;
+
+  // Footer
+  document.getElementById('footerPrev').textContent = t.footer_prev;
+  document.getElementById('footerNext').textContent = t.footer_next;
+  document.getElementById('footerPage').textContent = t.footer_page;
+
+  // Lang buttons + auto-close bar
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.lang === lang);
+  });
+  document.getElementById('langBar').classList.remove('open');
+  document.getElementById('langToggle').classList.remove('active');
+}
+
+function toggleLang() {
+  const bar = document.getElementById('langBar');
+  bar.classList.toggle('open');
+  document.getElementById('settingsBar').classList.remove('open');
+  document.getElementById('settingsToggle').classList.remove('active');
+  document.getElementById('langToggle').classList.toggle('active', bar.classList.contains('open'));
+}
+
+// Init
+window.addEventListener('resize', () => { resizeCanvas(); resizeCanvas2(); });
+setTimeout(() => { resizeCanvas(); resizeCanvas2(); }, 50);
+loadSettings();
+applyTranslation(currentLang);
+</script>
+</body>
+</html>
