@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>V. Memory</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@300;400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;1,8..60,300&display=swap');
+
+  :root {
+    --bg: #f5f2ed; --bg2: #ede8e0; --bg3: #e4ddd4;
+    --border: #c8c0b4; --text: #2a2520; --text-dim: #7a6e65;
+    --text-bright: #1a1210; --accent: #8a6030; --accent2: #2a6080;
+    --accent3: #802030; --accent4: #286040;
+  }
+  [data-theme="dark"] {
+    --bg: #0e0e0f; --bg2: #141416; --bg3: #1a1a1d;
+    --border: #2a2a2e; --text: #d4cfc8; --text-dim: #6b6660;
+    --text-bright: #ede8e0; --accent: #c8a96e; --accent2: #7eb3c8;
+    --accent3: #c87e7e; --accent4: #7ec89a;
+  }
+  [data-contrast="high"] { --text: #000; --text-dim: #444; --text-bright: #000; --border: #666; }
+  [data-theme="dark"][data-contrast="high"] { --text: #fff; --text-dim: #bbb; --text-bright: #fff; --border: #888; }
+
+  html { font-size: 18px; }
+  html[data-fsize="large"] { font-size: 21px; }
+  html[data-fsize="xl"] { font-size: 25px; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: 'Source Serif 4', Georgia, serif; line-height: 1.8; max-width: 800px; margin: 0 auto; padding: 0 2rem; transition: background 0.2s, color 0.2s; }
+
+  .settings-bar { position: fixed; top: 52px; left: 0; right: 0; background: var(--bg2); border-bottom: 1px solid var(--border); z-index: 90; display: none; }
+  .settings-bar.open { display: block; }
+  .settings-inner { max-width: 800px; margin: 0 auto; padding: 1rem 2rem; display: flex; gap: 2.5rem; align-items: flex-start; flex-wrap: wrap; }
+  .setting-group { display: flex; flex-direction: column; gap: 0.5rem; }
+  .setting-group-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.15em; color: var(--text-dim); text-transform: uppercase; }
+  .setting-btns { display: flex; gap: 0.4rem; }
+  .set-btn { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em; padding: 0.3rem 0.75rem; border: 1px solid var(--border); background: transparent; color: var(--text-dim); cursor: pointer; transition: all 0.15s; }
+  .set-btn:hover { color: var(--text-bright); border-color: var(--text-dim); }
+  .set-btn.active { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+
+  .lang-bar { position: fixed; top: 52px; left: 0; right: 0; background: var(--bg2); border-bottom: 1px solid var(--border); z-index: 89; display: none; }
+  .lang-bar.open { display: block; }
+  .lang-inner { max-width: 800px; margin: 0 auto; padding: 0.75rem 2rem; display: flex; gap: 0.5rem; }
+  .lang-btn { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.12em; padding: 0.3rem 1rem; border: 1px solid var(--border); background: transparent; color: var(--text-dim); cursor: pointer; text-transform: uppercase; transition: all 0.15s; }
+  .lang-btn:hover { color: var(--text-bright); border-color: var(--text-dim); }
+  .lang-btn.active { background: var(--accent2); border-color: var(--accent2); color: var(--bg); }
+
+  nav { position: fixed; top: 0; left: 0; right: 0; background: rgba(245,242,237,0.96); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); z-index: 100; transition: background 0.2s; }
+  [data-theme="dark"] nav { background: rgba(14,14,15,0.96); }
+  .nav-inner { max-width: 800px; margin: 0 auto; padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 52px; }
+  .nav-title { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.15em; color: var(--text-dim); text-transform: uppercase; }
+  .nav-right { display: flex; align-items: center; }
+  .nav-chapters { display: flex; list-style: none; }
+  .nav-chapters a { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-dim); text-decoration: none; padding: 0 14px; height: 52px; display: flex; align-items: center; border-left: 1px solid var(--border); transition: color 0.2s, background 0.2s; }
+  .nav-chapters a:hover, .nav-chapters a.active { color: var(--accent); background: rgba(138,96,48,0.06); }
+  [data-theme="dark"] .nav-chapters a:hover, [data-theme="dark"] .nav-chapters a.active { background: rgba(200,169,110,0.05); }
+  .settings-toggle { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.12em; color: var(--text-dim); background: transparent; border: none; border-left: 1px solid var(--border); padding: 0 14px; height: 52px; cursor: pointer; text-transform: uppercase; transition: color 0.15s; }
+  .settings-toggle:hover, .settings-toggle.active { color: var(--accent); }
+  @media (max-width: 640px) { .nav-chapters { display: none; } }
+
+  main { padding-top: 52px; }
+  .chapter-header { padding: 8rem 0 4rem; border-bottom: 1px solid var(--border); margin-bottom: 4rem; }
+  .chapter-number { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.2em; color: var(--accent); text-transform: uppercase; margin-bottom: 1.5rem; display: block; }
+  h1 { font-family: 'Playfair Display', Georgia, serif; font-size: clamp(2.2rem, 5vw, 3.2rem); font-weight: 700; color: var(--text-bright); line-height: 1.15; letter-spacing: -0.01em; margin-bottom: 1.5rem; }
+  .chapter-subtitle { font-family: 'Source Serif 4', serif; font-style: italic; font-size: 1.1rem; color: var(--text-dim); font-weight: 300; }
+
+  .prose { margin-bottom: 2.5rem; }
+  .prose p { margin-bottom: 1.4rem; }
+  .prose p:last-child { margin-bottom: 0; }
+  .prose em { font-style: italic; color: var(--text-bright); }
+  .prose strong { font-weight: 400; color: var(--accent); }
+
+  .pull-quote { border-left: 2px solid var(--accent); margin: 3rem 0; padding: 1rem 0 1rem 2rem; font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.25rem; color: var(--text-bright); line-height: 1.5; }
+  .pull-quote cite { display: block; margin-top: 0.75rem; font-family: 'JetBrains Mono', monospace; font-style: normal; font-size: 11px; letter-spacing: 0.1em; color: var(--text-dim); }
+
+  .section-break { display: flex; align-items: center; gap: 1rem; margin: 4rem 0; color: var(--text-dim); font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.15em; }
+  .section-break::before, .section-break::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  .widget { background: var(--bg2); border: 1px solid var(--border); border-radius: 4px; margin: 3rem 0; overflow: hidden; }
+  .widget-header { padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .widget-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.18em; color: var(--text-dim); text-transform: uppercase; }
+  .widget-body { padding: 1.5rem; }
+
+  /* dual panel */
+  .dual-canvas-row { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+  .dual-panel { display: flex; flex-direction: column; gap: 0.4rem; }
+  .dual-panel-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.15em; color: var(--text-dim); text-transform: uppercase; text-align: center; }
+  .dual-panel canvas { display: block; border: 1px solid var(--border); }
+
+  /* stats row */
+  .dual-stats-row { display: flex; gap: 2rem; flex-wrap: wrap; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); }
+  .stat-row { display: flex; flex-direction: column; gap: 0.15rem; }
+  .stat-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em; color: var(--text-dim); text-transform: uppercase; }
+  .stat-value { font-family: 'JetBrains Mono', monospace; font-size: 1.3rem; color: var(--text-bright); }
+  .stat-sub { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-dim); }
+
+  /* sliders */
+  .sliders-row { display: flex; gap: 1.5rem; flex-wrap: wrap; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); }
+  .slider-group { display: flex; flex-direction: column; gap: 0.3rem; flex: 1; min-width: 150px; }
+  .slider-header { display: flex; justify-content: space-between; align-items: baseline; }
+  .slider-name { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em; color: var(--text-dim); text-transform: uppercase; }
+  .slider-val { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent); }
+  input[type=range] { width: 100%; accent-color: var(--accent); cursor: pointer; }
+  .slider-desc { font-family: 'Source Serif 4', serif; font-size: 0.72rem; color: var(--text-dim); line-height: 1.4; font-style: italic; }
+
+  /* legend */
+  .legend-row { display: flex; gap: 1.5rem; margin-top: 1rem; flex-wrap: wrap; align-items: center; }
+  .legend-item { display: flex; align-items: center; gap: 0.4rem; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .legend-text { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-dim); }
+  .q-scale-wrap { flex: 1; min-width: 120px; }
+  .q-scale-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em; color: var(--text-dim); text-transform: uppercase; margin-bottom: 0.25rem; }
+  .q-scale { display: flex; height: 8px; border-radius: 2px; overflow: hidden; border: 1px solid var(--border); }
+  .q-scale-labels { display: flex; justify-content: space-between; margin-top: 0.2rem; }
+  .q-scale-labels span { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--text-dim); }
+
+  /* controls */
+  .widget-controls { padding: 1rem 1.5rem; border-top: 1px solid var(--border); display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; }
+  .ctrl-btn { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em; padding: 0.35rem 1rem; border: 1px solid var(--border); background: transparent; color: var(--text-dim); cursor: pointer; transition: all 0.15s; }
+  .ctrl-btn:hover { color: var(--text-bright); border-color: var(--text-dim); }
+  .ctrl-btn.primary { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+  .ctrl-btn.primary:hover { opacity: 0.85; }
+  .ctrl-btn.danger { border-color: var(--accent3); color: var(--accent3); }
+  .ctrl-btn.danger:hover { background: var(--accent3); color: var(--bg); }
+  .ctrl-spacer { flex: 1; }
+  .speed-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-dim); letter-spacing: 0.1em; }
+
+  /* episode banner */
+  .episode-banner { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent4); letter-spacing: 0.08em; padding: 0.4rem 0; min-height: 1.6rem; }
+
+  footer { padding: 4rem 0 6rem; border-top: 1px solid var(--border); margin-top: 6rem; display: flex; justify-content: space-between; align-items: center; }
+  .footer-nav a { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.1em; color: var(--text-dim); text-decoration: none; transition: color 0.15s; }
+  .footer-nav a:hover { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <span class="nav-title" translate="no">X-Ray</span>
+    <div class="nav-right">
+      <ul class="nav-chapters">
+        <li><a href="chapter_01_vectors.html" id="navCh1" translate="no">I. Vectors</a></li>
+        <li><a href="chapter_02_attention.html" id="navCh2" translate="no">II. Attention</a></li>
+        <li><a href="chapter_03_local_optima.html" id="navCh3" translate="no">III. Local Optima</a></li>
+        <li><a href="chapter_04_emergence.html" id="navCh4" translate="no">IV. Emergence</a></li>
+        <li><a href="#" class="active" id="navCh5" translate="no">V. Memory</a></li>
+      </ul>
+      <button class="settings-toggle" id="langToggle" onclick="toggleLang()" translate="no">🌐 Lang</button>
+      <button class="settings-toggle" id="settingsToggle" onclick="toggleSettings()" translate="no">⚙ Display</button>
+    </div>
+  </div>
+</nav>
+
+<div class="lang-bar" id="langBar">
+  <div class="lang-inner">
+    <button class="lang-btn active" data-lang="en" onclick="applyTranslation('en')">EN</button>
+    <button class="lang-btn" data-lang="de" onclick="applyTranslation('de')">DE</button>
+  </div>
+</div>
+
+<div class="settings-bar" id="settingsBar">
+  <div class="settings-inner">
+    <div class="setting-group">
+      <span class="setting-group-label" translate="no">Theme</span>
+      <div class="setting-btns">
+        <button class="set-btn active" id="btnLight" onclick="setTheme('light')" translate="no">Light</button>
+        <button class="set-btn" id="btnDark" onclick="setTheme('dark')" translate="no">Dark</button>
+      </div>
+    </div>
+    <div class="setting-group">
+      <span class="setting-group-label" translate="no">Font size</span>
+      <div class="setting-btns">
+        <button class="set-btn active" id="btnFsDef" onclick="setFsize('default')" translate="no">Default</button>
+        <button class="set-btn" id="btnFsLg" onclick="setFsize('large')" translate="no">Large</button>
+        <button class="set-btn" id="btnFsXl" onclick="setFsize('xl')" translate="no">XL</button>
+      </div>
+    </div>
+    <div class="setting-group">
+      <span class="setting-group-label" translate="no">Contrast</span>
+      <div class="setting-btns">
+        <button class="set-btn active" id="btnCnStd" onclick="setContrast('standard')" translate="no">Standard</button>
+        <button class="set-btn" id="btnCnHi" onclick="setContrast('high')" translate="no">High</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main>
+  <div class="chapter-header">
+    <span class="chapter-number" id="chNum">Chapter V</span>
+    <h1 id="chTitle">Memory</h1>
+    <p class="chapter-subtitle" id="chSub">What changes when wandering becomes learning</p>
+  </div>
+
+  <div class="prose">
+    <p id="p1">The wanderer from the previous chapter had no memory. Each step was the first step. It could reach the goal a thousand times and still not know how to find it again. There was no accumulation — only noise.</p>
+    <p id="p2">Now we add one thing: a table. For every cell in the maze, the agent stores a number — its estimate of how valuable it is to be there. At first, all values are zero. The agent still explores randomly. But each time it reaches the goal, something propagates backward through its recent path. The cells that led to the reward become slightly more valuable. The table remembers.</p>
+    <p id="p3">This is Q-learning. The Q stands for quality — the quality of being in a given state. Over many episodes, the table fills with accurate estimates. The agent stops wandering and starts navigating.</p>
+  </div>
+
+  <div class="pull-quote">
+    <span id="pq1">"What fires together, wires together."</span>
+    <cite id="pq1cite">— Donald Hebb, <em>The Organization of Behavior</em>, 1949</cite>
+  </div>
+
+  <div class="prose">
+    <p id="p4">The right panel shows the Q-table as a heatmap. Each cell's color represents its current best estimated value — how useful it is to be there. At the start, everything is cold. Watch what happens after the agent reaches the goal for the first time: a warm signal appears at ★ and begins to spread. Cells near the goal warm up first. Cells far away take longer.</p>
+    <p id="p5">This is the X-Ray view of learning — not the agent's behavior on the surface, but the knowledge structure forming underneath.</p>
+  </div>
+
+  <div class="widget">
+    <div class="widget-header">
+      <span class="widget-label" id="wLabel" translate="no">The Learner — agent behavior vs. Q-table</span>
+    </div>
+    <div class="widget-body">
+      <div class="dual-canvas-row">
+        <div class="dual-panel">
+          <div class="dual-panel-label" id="panelLabelAgent">Agent view</div>
+          <canvas id="mazeCanvas" width="300" height="300"></canvas>
+        </div>
+        <div class="dual-panel">
+          <div class="dual-panel-label" id="panelLabelQ">Q-table (max per cell)</div>
+          <canvas id="qCanvas" width="300" height="300"></canvas>
+        </div>
+      </div>
+
+      <div class="dual-stats-row">
+        <div class="stat-row">
+          <span class="stat-label" id="statLabelEp">Episodes</span>
+          <span class="stat-value" id="statEp">0</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label" id="statLabelSteps">Steps</span>
+          <span class="stat-value" id="statSteps">0</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label" id="statLabelBest">Best episode</span>
+          <span class="stat-value" id="statBest">—</span>
+          <span class="stat-sub" id="statBestSub">steps to goal</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label" id="statLabelEps">ε (epsilon)</span>
+          <span class="stat-value" id="statEpsilon">1.00</span>
+          <span class="stat-sub" id="statEpsSub">exploration rate</span>
+        </div>
+      </div>
+
+      <div class="episode-banner" id="episodeBanner"></div>
+
+      <div class="sliders-row">
+        <div class="slider-group">
+          <div class="slider-header">
+            <span class="slider-name" translate="no">α — learning rate</span>
+            <span class="slider-val" id="valAlpha">0.3</span>
+          </div>
+          <input type="range" id="sliderAlpha" min="0.05" max="0.9" step="0.05" value="0.3" oninput="updateSliders()">
+          <span class="slider-desc" id="descAlpha">How much new information overwrites old. High = fast but unstable.</span>
+        </div>
+        <div class="slider-group">
+          <div class="slider-header">
+            <span class="slider-name" translate="no">γ — discount</span>
+            <span class="slider-val" id="valGamma">0.9</span>
+          </div>
+          <input type="range" id="sliderGamma" min="0.5" max="0.99" step="0.01" value="0.9" oninput="updateSliders()">
+          <span class="slider-desc" id="descGamma">How much future rewards matter. High = patient, far-sighted agent.</span>
+        </div>
+        <div class="slider-group">
+          <div class="slider-header">
+            <span class="slider-name" translate="no">ε decay</span>
+            <span class="slider-val" id="valDecay">0.995</span>
+          </div>
+          <input type="range" id="sliderDecay" min="0.98" max="0.999" step="0.001" value="0.995" oninput="updateSliders()">
+          <span class="slider-desc" id="descDecay">How fast exploration shrinks. Slow = more wandering before exploiting.</span>
+        </div>
+      </div>
+
+      <div class="legend-row">
+        <div class="q-scale-wrap">
+          <div class="q-scale-label" id="qScaleLabel">Q-value scale</div>
+          <div class="q-scale" id="qScale"></div>
+          <div class="q-scale-labels">
+            <span id="qScaleLow">0 (unknown)</span>
+            <span id="qScaleHigh">high value</span>
+          </div>
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background:#c87e7e"></div>
+          <span class="legend-text" id="legendAgent">agent</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background:#7ec89a"></div>
+          <span class="legend-text" id="legendGoal">goal ★</span>
+        </div>
+      </div>
+    </div>
+    <div class="widget-controls">
+      <button class="ctrl-btn primary" id="btnRun" onclick="toggleRun()" translate="no">Run</button>
+      <button class="ctrl-btn" onclick="resetAll()" translate="no">Reset</button>
+      <button class="ctrl-btn" onclick="newMaze()" translate="no">New maze</button>
+      <span class="ctrl-spacer"></span>
+      <span class="speed-label" id="speedLabel">Speed:</span>
+      <button class="set-btn" id="spd1" onclick="setSpeed(1)" translate="no">1×</button>
+      <button class="set-btn active" id="spd5" onclick="setSpeed(5)" translate="no">5×</button>
+      <button class="set-btn" id="spd20" onclick="setSpeed(20)" translate="no">20×</button>
+    </div>
+  </div>
+
+  <div class="section-break" id="secBreak1">memory</div>
+
+  <div class="prose">
+    <p id="p6">Notice the asymmetry: the agent does not plan. It does not reason about paths. It only consults its table at each step and asks: which direction has the highest estimated value? The intelligence is in the table — not in the agent. The table is the memory. The agent is just the body that carries it.</p>
+    <p id="p7">This is what makes Q-learning an X-Ray tool: it externalizes knowledge into a structure we can inspect. We are not guessing what the agent has learned. We can see it — cell by cell, value by value.</p>
+    <p id="p8">But there is a limit waiting ahead. The maze here has 81 cells. A real problem — say, a game of chess, or a robot navigating a building — has millions of possible states. The table would need a row for each one. At some point, the table becomes too large to exist. That is where the next chapter begins.</p>
+  </div>
+</main>
+
+<footer>
+  <div class="footer-nav"><a href="chapter_04_emergence.html" id="footerPrev">← IV. Emergence</a></div>
+  <div class="footer-nav"><a href="#" id="footerNext">VI. The Wall →</a></div>
+</footer>
+
+<script>
+// ─── Constants ───────────────────────────────────────────────────────────────
+const COLS = 7, ROWS = 7;
+const CELL = 300 / COLS;
+const goalR = ROWS - 1, goalC = COLS - 1;
+const ACTIONS = [{dr:-1,dc:0},{dr:1,dc:0},{dr:0,dc:1},{dr:0,dc:-1}]; // N S E W
+
+// ─── Settings ────────────────────────────────────────────────────────────────
+function setTheme(t, skipRedraw) {
+  document.documentElement.dataset.theme = t === 'dark' ? 'dark' : '';
+  localStorage.setItem('xray-theme', t);
+  document.getElementById('btnLight').classList.toggle('active', t === 'light');
+  document.getElementById('btnDark').classList.toggle('active', t === 'dark');
+  if (!skipRedraw) redrawAll();
+}
+function setFsize(s) {
+  document.documentElement.dataset.fsize = s === 'default' ? '' : s;
+  localStorage.setItem('xray-fsize', s);
+  ['btnFsDef','btnFsLg','btnFsXl'].forEach(id => document.getElementById(id).classList.remove('active'));
+  document.getElementById(s === 'default' ? 'btnFsDef' : s === 'large' ? 'btnFsLg' : 'btnFsXl').classList.add('active');
+}
+function setContrast(c) {
+  document.documentElement.dataset.contrast = c === 'high' ? 'high' : '';
+  localStorage.setItem('xray-contrast', c);
+  document.getElementById('btnCnStd').classList.toggle('active', c === 'standard');
+  document.getElementById('btnCnHi').classList.toggle('active', c === 'high');
+}
+function toggleSettings() {
+  const sb = document.getElementById('settingsBar'), lb = document.getElementById('langBar');
+  lb.classList.remove('open'); document.getElementById('langToggle').classList.remove('active');
+  sb.classList.toggle('open');
+  document.getElementById('settingsToggle').classList.toggle('active', sb.classList.contains('open'));
+}
+function toggleLang() {
+  const lb = document.getElementById('langBar'), sb = document.getElementById('settingsBar');
+  sb.classList.remove('open'); document.getElementById('settingsToggle').classList.remove('active');
+  lb.classList.toggle('open');
+  document.getElementById('langToggle').classList.toggle('active', lb.classList.contains('open'));
+}
+
+// ─── Maze generation ─────────────────────────────────────────────────────────
+function generateMaze() {
+  const visited = Array.from({length:ROWS}, () => new Array(COLS).fill(false));
+  const walls = Array.from({length:ROWS}, () =>
+    Array.from({length:COLS}, () => ({N:true,S:true,E:true,W:true})));
+  const dirs = [{dr:-1,dc:0,d:'N',opp:'S'},{dr:1,dc:0,d:'S',opp:'N'},{dr:0,dc:1,d:'E',opp:'W'},{dr:0,dc:-1,d:'W',opp:'E'}];
+  function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+  let r=0,c=0; visited[r][c]=true;
+  const stack=[[r,c]];
+  while(stack.length){
+    const[cr,cc]=stack[stack.length-1];
+    const nbrs=shuffle(dirs.map(d=>({nr:cr+d.dr,nc:cc+d.dc,d:d.d,opp:d.opp}))).filter(({nr,nc})=>nr>=0&&nr<ROWS&&nc>=0&&nc<COLS&&!visited[nr][nc]);
+    if(nbrs.length){const{nr,nc,d,opp}=nbrs[0];walls[cr][cc][d]=false;walls[nr][nc][opp]=false;visited[nr][nc]=true;stack.push([nr,nc]);}
+    else stack.pop();
+  }
+  return walls;
+}
+
+// ─── State ───────────────────────────────────────────────────────────────────
+let maze = generateMaze();
+// Q[r][c][a] where a: 0=N,1=S,2=E,3=W
+let Q = Array.from({length:ROWS}, () => Array.from({length:COLS}, () => new Array(4).fill(0)));
+let agentR = 0, agentC = 0;
+let epsilon = 1.0;
+let episodes = 0, totalSteps = 0, bestEpisode = Infinity;
+let episodeSteps = 0;
+let running = false, animHandle = null;
+let stepsPerFrame = 5;
+let alpha = 0.3, gamma = 0.9, epsilonDecay = 0.995;
+const epsilonMin = 0.05;
+
+function resetAll() {
+  Q = Array.from({length:ROWS}, () => Array.from({length:COLS}, () => new Array(4).fill(0)));
+  agentR = 0; agentC = 0; epsilon = 1.0;
+  episodes = 0; totalSteps = 0; bestEpisode = Infinity; episodeSteps = 0;
+  running = false;
+  if (animHandle) { cancelAnimationFrame(animHandle); animHandle = null; }
+  document.getElementById('btnRun').textContent = currentLang === 'de' ? 'Start' : 'Run';
+  document.getElementById('btnRun').classList.add('primary');
+  document.getElementById('btnRun').classList.remove('danger');
+  document.getElementById('episodeBanner').textContent = '';
+  updateStats();
+  redrawAll();
+}
+
+function newMaze() { maze = generateMaze(); resetAll(); }
+
+function updateSliders() {
+  alpha = parseFloat(document.getElementById('sliderAlpha').value);
+  gamma = parseFloat(document.getElementById('sliderGamma').value);
+  epsilonDecay = parseFloat(document.getElementById('sliderDecay').value);
+  document.getElementById('valAlpha').textContent = alpha.toFixed(2);
+  document.getElementById('valGamma').textContent = gamma.toFixed(2);
+  document.getElementById('valDecay').textContent = epsilonDecay.toFixed(3);
+}
+
+function setSpeed(s) {
+  stepsPerFrame = s === 1 ? 1 : s === 5 ? 8 : 40;
+  ['spd1','spd5','spd20'].forEach(id => document.getElementById(id).classList.remove('active'));
+  document.getElementById('spd'+s).classList.add('active');
+}
+
+// ─── Q-learning step ─────────────────────────────────────────────────────────
+function canMove(r, c, a) {
+  const w = maze[r][c];
+  if (a === 0) return r > 0 && !w.N;
+  if (a === 1) return r < ROWS-1 && !w.S;
+  if (a === 2) return c < COLS-1 && !w.E;
+  if (a === 3) return c > 0 && !w.W;
+  return false;
+}
+
+function validActions(r, c) {
+  return ACTIONS.map((_,i) => i).filter(a => canMove(r, c, a));
+}
+
+function chooseAction(r, c) {
+  const valid = validActions(r, c);
+  if (Math.random() < epsilon) {
+    return valid[Math.floor(Math.random() * valid.length)];
+  }
+  let best = -Infinity, bestA = valid[0];
+  for (const a of valid) { if (Q[r][c][a] > best) { best = Q[r][c][a]; bestA = a; } }
+  return bestA;
+}
+
+function step() {
+  const a = chooseAction(agentR, agentC);
+  const nr = agentR + ACTIONS[a].dr, nc = agentC + ACTIONS[a].dc;
+  const reward = (nr === goalR && nc === goalC) ? 1.0 : -0.01;
+  const maxNextQ = nr === goalR && nc === goalC ? 0 :
+    Math.max(...validActions(nr, nc).map(na => Q[nr][nc][na]));
+  Q[agentR][agentC][a] += alpha * (reward + gamma * maxNextQ - Q[agentR][agentC][a]);
+  agentR = nr; agentC = nc;
+  totalSteps++; episodeSteps++;
+
+  if (agentR === goalR && agentC === goalC) {
+    if (episodeSteps < bestEpisode) bestEpisode = episodeSteps;
+    episodes++;
+    epsilon = Math.max(epsilonMin, epsilon * epsilonDecay);
+    const banner = document.getElementById('episodeBanner');
+    banner.textContent = `Episode ${episodes} — reached goal in ${episodeSteps} steps`;
+    episodeSteps = 0;
+    agentR = 0; agentC = 0;
+  }
+}
+
+// ─── Drawing ─────────────────────────────────────────────────────────────────
+function getCSSVar(name) {
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+}
+
+function drawMaze() {
+  const canvas = document.getElementById('mazeCanvas');
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle = getCSSVar('--bg3');
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  // goal
+  ctx.fillStyle = getCSSVar('--accent4');
+  ctx.font = `${Math.floor(CELL*0.45)}px serif`;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText('★', (goalC+0.5)*CELL, (goalR+0.5)*CELL);
+
+  // walls
+  ctx.strokeStyle = getCSSVar('--border');
+  ctx.lineWidth = 1.5;
+  ctx.strokeRect(0.75, 0.75, canvas.width-1.5, canvas.height-1.5);
+  for (let r=0;r<ROWS;r++) for (let c=0;c<COLS;c++) {
+    const x=c*CELL, y=r*CELL, w=maze[r][c];
+    ctx.beginPath();
+    if (w.S && r<ROWS-1) { ctx.moveTo(x,y+CELL); ctx.lineTo(x+CELL,y+CELL); }
+    if (w.E && c<COLS-1) { ctx.moveTo(x+CELL,y); ctx.lineTo(x+CELL,y+CELL); }
+    ctx.stroke();
+  }
+
+  // start marker
+  ctx.font = `${Math.floor(CELL*0.28)}px JetBrains Mono, monospace`;
+  ctx.fillStyle = getCSSVar('--text-dim');
+  ctx.fillText('S', CELL*0.5, CELL*0.5);
+
+  // agent
+  const isDark = document.documentElement.dataset.theme === 'dark';
+  const ax = (agentC+0.5)*CELL, ay = (agentR+0.5)*CELL;
+  ctx.beginPath();
+  ctx.arc(ax, ay, CELL*0.28, 0, Math.PI*2);
+  ctx.fillStyle = isDark ? '#c87e7e' : '#802030';
+  ctx.fill();
+}
+
+function drawQ() {
+  const canvas = document.getElementById('qCanvas');
+  const ctx = canvas.getContext('2d');
+  const isDark = document.documentElement.dataset.theme === 'dark';
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle = getCSSVar('--bg3');
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  // find global max for normalisation
+  let maxQ = 0;
+  for (let r=0;r<ROWS;r++) for (let c=0;c<COLS;c++)
+    maxQ = Math.max(maxQ, ...Q[r][c]);
+  if (maxQ < 0.001) maxQ = 1;
+
+  for (let r=0;r<ROWS;r++) {
+    for (let c=0;c<COLS;c++) {
+      const v = Math.max(0, Math.max(...Q[r][c])) / maxQ;
+      if (v > 0.001) {
+        let col;
+        if (isDark) {
+          // cold blue → warm amber
+          const rr = Math.round(42 + v*(200-42));
+          const g  = Math.round(60 + v*(169-60));
+          const b  = Math.round(128 + v*(40-128));
+          col = `rgb(${rr},${g},${b})`;
+        } else {
+          // pale → warm brown-gold
+          const rr = Math.round(228 + v*(160-228));
+          const g  = Math.round(221 + v*(110-221));
+          const b  = Math.round(212 + v*(30-212));
+          col = `rgb(${rr},${g},${b})`;
+        }
+        ctx.fillStyle = col;
+        ctx.fillRect(c*CELL, r*CELL, CELL, CELL);
+      }
+    }
+  }
+
+  // goal
+  ctx.fillStyle = getCSSVar('--accent4');
+  ctx.font = `${Math.floor(CELL*0.45)}px serif`;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText('★', (goalC+0.5)*CELL, (goalR+0.5)*CELL);
+
+  // walls
+  ctx.strokeStyle = getCSSVar('--text');
+  ctx.lineWidth = 1;
+  ctx.strokeRect(0.5, 0.5, canvas.width-1, canvas.height-1);
+  for (let r=0;r<ROWS;r++) for (let c=0;c<COLS;c++) {
+    const x=c*CELL, y=r*CELL, w=maze[r][c];
+    ctx.beginPath();
+    if (w.S && r<ROWS-1) { ctx.moveTo(x,y+CELL); ctx.lineTo(x+CELL,y+CELL); }
+    if (w.E && c<COLS-1) { ctx.moveTo(x+CELL,y); ctx.lineTo(x+CELL,y+CELL); }
+    ctx.stroke();
+  }
+
+  // agent dot (small)
+  const ax = (agentC+0.5)*CELL, ay = (agentR+0.5)*CELL;
+  ctx.beginPath();
+  ctx.arc(ax, ay, CELL*0.18, 0, Math.PI*2);
+  ctx.fillStyle = isDark ? 'rgba(200,126,126,0.7)' : 'rgba(128,32,48,0.6)';
+  ctx.fill();
+}
+
+function buildQScale() {
+  const scale = document.getElementById('qScale');
+  const isDark = document.documentElement.dataset.theme === 'dark';
+  scale.innerHTML = '';
+  for (let i=0;i<20;i++) {
+    const v = i/19;
+    let col;
+    if (isDark) {
+      col = `rgb(${Math.round(42+v*(200-42))},${Math.round(60+v*(169-60))},${Math.round(128+v*(40-128))})`;
+    } else {
+      col = `rgb(${Math.round(228+v*(160-228))},${Math.round(221+v*(110-221))},${Math.round(212+v*(30-212))})`;
+    }
+    const seg = document.createElement('div');
+    seg.style.cssText = `flex:1;background:${col};`;
+    scale.appendChild(seg);
+  }
+}
+
+function redrawAll() { drawMaze(); drawQ(); buildQScale(); }
+
+function updateStats() {
+  document.getElementById('statEp').textContent = episodes.toLocaleString();
+  document.getElementById('statSteps').textContent = totalSteps.toLocaleString();
+  document.getElementById('statBest').textContent = bestEpisode === Infinity ? '—' : bestEpisode.toLocaleString();
+  document.getElementById('statEpsilon').textContent = epsilon.toFixed(2);
+}
+
+// ─── Animation loop ───────────────────────────────────────────────────────────
+function toggleRun() {
+  running = !running;
+  const btn = document.getElementById('btnRun');
+  if (running) {
+    btn.textContent = 'Pause';
+    btn.classList.remove('primary'); btn.classList.add('danger');
+    animate();
+  } else {
+    btn.textContent = currentLang === 'de' ? 'Weiter' : 'Continue';
+    btn.classList.remove('danger'); btn.classList.add('primary');
+  }
+}
+
+let frameCount = 0;
+function animate() {
+  if (!running) return;
+  for (let i=0; i<stepsPerFrame; i++) step();
+  frameCount++;
+  if (frameCount % 2 === 0) { redrawAll(); updateStats(); }
+  animHandle = requestAnimationFrame(animate);
+}
+
+// ─── i18n ─────────────────────────────────────────────────────────────────────
+let currentLang = localStorage.getItem('xray-lang') || 'en';
+
+const TRANSLATIONS = {
+  en: {
+    chNum: 'Chapter V', chTitle: 'Memory', chSub: 'What changes when wandering becomes learning',
+    p1: 'The wanderer from the previous chapter had no memory. Each step was the first step. It could reach the goal a thousand times and still not know how to find it again. There was no accumulation — only noise.',
+    p2: 'Now we add one thing: a table. For every cell in the maze, the agent stores a number — its estimate of how valuable it is to be there. At first, all values are zero. The agent still explores randomly. But each time it reaches the goal, something propagates backward through its recent path. The cells that led to the reward become slightly more valuable. The table remembers.',
+    p3: 'This is Q-learning. The Q stands for quality — the quality of being in a given state. Over many episodes, the table fills with accurate estimates. The agent stops wandering and starts navigating.',
+    pq1: '"What fires together, wires together."',
+    pq1cite: '— Donald Hebb, The Organization of Behavior, 1949',
+    p4: "The right panel shows the Q-table as a heatmap. Each cell's color represents its current best estimated value — how useful it is to be there. At the start, everything is cold. Watch what happens after the agent reaches the goal for the first time: a warm signal appears at ★ and begins to spread. Cells near the goal warm up first. Cells far away take longer.",
+    p5: "This is the X-Ray view of learning — not the agent's behavior on the surface, but the knowledge structure forming underneath.",
+    wLabel: 'The Learner — agent behavior vs. Q-table',
+    panelLabelAgent: 'Agent view', panelLabelQ: 'Q-table (max per cell)',
+    statLabelEp: 'Episodes', statLabelSteps: 'Steps',
+    statLabelBest: 'Best episode', statBestSub: 'steps to goal',
+    statLabelEps: 'ε (epsilon)', statEpsSub: 'exploration rate',
+    descAlpha: 'How much new information overwrites old. High = fast but unstable.',
+    descGamma: 'How much future rewards matter. High = patient, far-sighted agent.',
+    descDecay: 'How fast exploration shrinks. Slow = more wandering before exploiting.',
+    qScaleLabel: 'Q-value scale', qScaleLow: '0 (unknown)', qScaleHigh: 'high value',
+    legendAgent: 'agent', legendGoal: 'goal ★',
+    p6: "Notice the asymmetry: the agent does not plan. It does not reason about paths. It only consults its table at each step and asks: which direction has the highest estimated value? The intelligence is in the table — not in the agent. The table is the memory. The agent is just the body that carries it.",
+    p7: "This is what makes Q-learning an X-Ray tool: it externalizes knowledge into a structure we can inspect. We are not guessing what the agent has learned. We can see it — cell by cell, value by value.",
+    p8: "But there is a limit waiting ahead. The maze here has 81 cells. A real problem — say, a game of chess, or a robot navigating a building — has millions of possible states. The table would need a row for each one. At some point, the table becomes too large to exist. That is where the next chapter begins.",
+    footer_prev: '← IV. Emergence', footer_next: 'VI. The Wall →',
+  },
+  de: {
+    chNum: 'Kapitel V', chTitle: 'Gedächtnis', chSub: 'Was sich ändert, wenn Wandern zu Lernen wird',
+    p1: 'Der Wanderer aus dem vorherigen Kapitel hatte kein Gedächtnis. Jeder Schritt war der erste Schritt. Er konnte das Ziel tausendmal erreichen und trotzdem nicht wissen, wie er es wieder findet. Es gab keine Akkumulation — nur Rauschen.',
+    p2: 'Jetzt fügen wir eine Sache hinzu: eine Tabelle. Für jede Zelle im Labyrinth speichert der Agent eine Zahl — seine Schätzung, wie wertvoll es ist, dort zu sein. Zunächst sind alle Werte null. Der Agent erkundet noch zufällig. Aber jedes Mal, wenn er das Ziel erreicht, propagiert sich etwas rückwärts durch seinen jüngsten Pfad. Die Zellen, die zur Belohnung führten, werden etwas wertvoller. Die Tabelle erinnert sich.',
+    p3: 'Das ist Q-Learning. Das Q steht für Qualität — die Qualität, sich in einem bestimmten Zustand zu befinden. Über viele Episoden füllt sich die Tabelle mit genauen Schätzungen. Der Agent hört auf zu wandern und beginnt zu navigieren.',
+    pq1: '„Was zusammen feuert, verbindet sich."',
+    pq1cite: '— Donald Hebb, The Organization of Behavior, 1949',
+    p4: 'Das rechte Panel zeigt die Q-Tabelle als Heatmap. Die Farbe jeder Zelle repräsentiert ihren aktuell besten geschätzten Wert — wie nützlich es ist, dort zu sein. Am Anfang ist alles kalt. Beobachte, was passiert, nachdem der Agent das Ziel zum ersten Mal erreicht: Ein warmes Signal erscheint bei ★ und beginnt sich auszubreiten.',
+    p5: 'Das ist die X-Ray-Sicht auf das Lernen — nicht das Oberflächenverhalten des Agenten, sondern die sich darunter bildende Wissensstruktur.',
+    wLabel: 'Der Lerner — Agentenverhalten vs. Q-Tabelle',
+    panelLabelAgent: 'Agentensicht', panelLabelQ: 'Q-Tabelle (Max pro Zelle)',
+    statLabelEp: 'Episoden', statLabelSteps: 'Schritte',
+    statLabelBest: 'Beste Episode', statBestSub: 'Schritte zum Ziel',
+    statLabelEps: 'ε (Epsilon)', statEpsSub: 'Erkundungsrate',
+    descAlpha: 'Wie viel neue Information alte überschreibt. Hoch = schnell, aber instabil.',
+    descGamma: 'Wie viel zukünftige Belohnungen zählen. Hoch = geduldiger, weitsichtiger Agent.',
+    descDecay: 'Wie schnell die Erkundung schrumpft. Langsam = mehr Wandern vor dem Ausnutzen.',
+    qScaleLabel: 'Q-Wert-Skala', qScaleLow: '0 (unbekannt)', qScaleHigh: 'hoher Wert',
+    legendAgent: 'Agent', legendGoal: 'Ziel ★',
+    p6: 'Beachte die Asymmetrie: Der Agent plant nicht. Er denkt nicht über Pfade nach. Er konsultiert bei jedem Schritt nur seine Tabelle und fragt: Welche Richtung hat den höchsten geschätzten Wert? Die Intelligenz liegt in der Tabelle — nicht im Agenten. Die Tabelle ist das Gedächtnis. Der Agent ist nur der Körper, der sie trägt.',
+    p7: 'Das macht Q-Learning zu einem X-Ray-Werkzeug: Es externalisiert Wissen in eine Struktur, die wir inspizieren können. Wir raten nicht, was der Agent gelernt hat. Wir können es sehen — Zelle für Zelle, Wert für Wert.',
+    p8: 'Aber es wartet eine Grenze. Das Labyrinth hier hat 81 Zellen. Ein reales Problem — etwa ein Schachspiel oder ein Roboter in einem Gebäude — hat Millionen möglicher Zustände. Die Tabelle bräuchte eine Zeile für jeden. Irgendwann wird die Tabelle zu groß, um zu existieren. Dort beginnt das nächste Kapitel.',
+    footer_prev: '← IV. Emergenz', footer_next: 'VI. Die Wand →',
+  }
+};
+
+function applyTranslation(lang) {
+  currentLang = lang;
+  localStorage.setItem('xray-lang', lang);
+  const t = TRANSLATIONS[lang];
+  const set = (id, val) => { const el = document.getElementById(id); if (el && val !== undefined) el.textContent = val; };
+  set('chNum',t.chNum); set('chTitle',t.chTitle); set('chSub',t.chSub);
+  set('p1',t.p1); set('p2',t.p2); set('p3',t.p3);
+  set('pq1',t.pq1); set('pq1cite',t.pq1cite);
+  set('p4',t.p4); set('p5',t.p5);
+  set('wLabel',t.wLabel); set('panelLabelAgent',t.panelLabelAgent); set('panelLabelQ',t.panelLabelQ);
+  set('statLabelEp',t.statLabelEp); set('statLabelSteps',t.statLabelSteps);
+  set('statLabelBest',t.statLabelBest); set('statBestSub',t.statBestSub);
+  set('statLabelEps',t.statLabelEps); set('statEpsSub',t.statEpsSub);
+  set('descAlpha',t.descAlpha); set('descGamma',t.descGamma); set('descDecay',t.descDecay);
+  set('qScaleLabel',t.qScaleLabel); set('qScaleLow',t.qScaleLow); set('qScaleHigh',t.qScaleHigh);
+  set('legendAgent',t.legendAgent); set('legendGoal',t.legendGoal);
+  set('p6',t.p6); set('p7',t.p7); set('p8',t.p8);
+  set('footerPrev',t.footer_prev); set('footerNext',t.footer_next);
+  const btn = document.getElementById('btnRun');
+  if (!running) btn.textContent = lang === 'de' ? 'Start' : 'Run';
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
+  document.getElementById('langBar').classList.remove('open');
+  document.getElementById('langToggle').classList.remove('active');
+}
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+(function() {
+  const theme = localStorage.getItem('xray-theme') || 'light';
+  const fsize = localStorage.getItem('xray-fsize') || 'default';
+  const contrast = localStorage.getItem('xray-contrast') || 'standard';
+  setTheme(theme, true); setFsize(fsize); setContrast(contrast);
+})();
+
+applyTranslation(currentLang);
+buildQScale();
+drawMaze();
+drawQ();
+updateStats();
+</script>
+</body>
+</html>
