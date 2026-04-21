@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>III. The Comfortable Trap</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@300;400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;1,8..60,300&display=swap');
+
+  :root {
+    --bg: #f5f2ed; --bg2: #ede8e0; --bg3: #e4ddd4;
+    --border: #c8c0b4; --text: #2a2520; --text-dim: #7a6e65;
+    --text-bright: #1a1210; --accent: #8a6030; --accent2: #2a6080;
+    --accent3: #802030; --accent4: #286040;
+  }
+  [data-theme="dark"] {
+    --bg: #0e0e0f; --bg2: #141416; --bg3: #1a1a1d;
+    --border: #2a2a2e; --text: #d4cfc8; --text-dim: #6b6660;
+    --text-bright: #ede8e0; --accent: #c8a96e; --accent2: #7eb3c8;
+    --accent3: #c87e7e; --accent4: #7ec89a;
+  }
+  [data-contrast="high"] { --text: #000; --text-dim: #444; --text-bright: #000; --border: #666; }
+  [data-theme="dark"][data-contrast="high"] { --text: #fff; --text-dim: #bbb; --text-bright: #fff; --border: #888; }
+
+  html { font-size: 18px; }
+  html[data-fsize="large"] { font-size: 21px; }
+  html[data-fsize="xl"] { font-size: 25px; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: 'Source Serif 4', Georgia, serif; line-height: 1.8; max-width: 800px; margin: 0 auto; padding: 0 2rem; transition: background 0.2s, color 0.2s; }
+
+  .settings-bar { position: fixed; top: 52px; left: 0; right: 0; background: var(--bg2); border-bottom: 1px solid var(--border); z-index: 90; display: none; }
+  .settings-bar.open { display: block; }
+  .settings-inner { max-width: 800px; margin: 0 auto; padding: 1rem 2rem; display: flex; gap: 2.5rem; align-items: flex-start; flex-wrap: wrap; }
+  .setting-group { display: flex; flex-direction: column; gap: 0.5rem; }
+  .setting-group-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.15em; color: var(--text-dim); text-transform: uppercase; }
+  .setting-btns { display: flex; gap: 0.4rem; }
+  .set-btn { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em; padding: 0.3rem 0.75rem; border: 1px solid var(--border); background: transparent; color: var(--text-dim); cursor: pointer; transition: all 0.15s; }
+  .set-btn:hover { color: var(--text-bright); border-color: var(--text-dim); }
+  .set-btn.active { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+
+  .lang-bar { position: fixed; top: 52px; left: 0; right: 0; background: var(--bg2); border-bottom: 1px solid var(--border); z-index: 89; display: none; }
+  .lang-bar.open { display: block; }
+  .lang-inner { max-width: 800px; margin: 0 auto; padding: 0.75rem 2rem; display: flex; gap: 0.5rem; }
+  .lang-btn { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.12em; padding: 0.3rem 1rem; border: 1px solid var(--border); background: transparent; color: var(--text-dim); cursor: pointer; text-transform: uppercase; transition: all 0.15s; }
+  .lang-btn:hover { color: var(--text-bright); border-color: var(--text-dim); }
+  .lang-btn.active { background: var(--accent2); border-color: var(--accent2); color: var(--bg); }
+
+  nav { position: fixed; top: 0; left: 0; right: 0; background: rgba(245,242,237,0.96); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); z-index: 100; transition: background 0.2s; }
+  [data-theme="dark"] nav { background: rgba(14,14,15,0.96); }
+  .nav-inner { max-width: 800px; margin: 0 auto; padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 52px; }
+  .nav-title { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.15em; color: var(--text-dim); text-transform: uppercase; }
+  .nav-right { display: flex; align-items: center; }
+  .nav-chapters { display: flex; list-style: none; }
+  .nav-chapters a { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-dim); text-decoration: none; padding: 0 14px; height: 52px; display: flex; align-items: center; border-left: 1px solid var(--border); transition: color 0.2s, background 0.2s; }
+  .nav-chapters a:hover, .nav-chapters a.active { color: var(--accent); background: rgba(138,96,48,0.06); }
+  [data-theme="dark"] .nav-chapters a:hover, [data-theme="dark"] .nav-chapters a.active { background: rgba(200,169,110,0.05); }
+  .settings-toggle { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.12em; color: var(--text-dim); background: transparent; border: none; border-left: 1px solid var(--border); padding: 0 14px; height: 52px; cursor: pointer; text-transform: uppercase; transition: color 0.15s; }
+  .settings-toggle:hover, .settings-toggle.active { color: var(--accent); }
+
+  main { padding-top: 52px; }
+  .chapter-header { padding: 8rem 0 4rem; border-bottom: 1px solid var(--border); margin-bottom: 4rem; }
+  .chapter-number { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.2em; color: var(--accent); text-transform: uppercase; margin-bottom: 1.5rem; display: block; }
+  h1 { font-family: 'Playfair Display', Georgia, serif; font-size: clamp(2.2rem, 5vw, 3.2rem); font-weight: 700; color: var(--text-bright); line-height: 1.15; letter-spacing: -0.01em; margin-bottom: 1.5rem; }
+  .chapter-subtitle { font-family: 'Source Serif 4', serif; font-style: italic; font-size: 1.1rem; color: var(--text-dim); font-weight: 300; }
+
+  .prose { margin-bottom: 2.5rem; }
+  .prose p { margin-bottom: 1.4rem; }
+  .prose p:last-child { margin-bottom: 0; }
+  .prose em { font-style: italic; color: var(--text-bright); }
+  .prose strong { font-weight: 400; color: var(--accent); }
+
+  .pull-quote { border-left: 2px solid var(--accent); margin: 3rem 0; padding: 1rem 0 1rem 2rem; font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.25rem; color: var(--text-bright); line-height: 1.5; }
+  .pull-quote cite { display: block; margin-top: 0.75rem; font-family: 'JetBrains Mono', monospace; font-style: normal; font-size: 11px; letter-spacing: 0.1em; color: var(--text-dim); }
+
+  .section-break { display: flex; align-items: center; gap: 1rem; margin: 4rem 0; color: var(--text-dim); font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.15em; }
+  .section-break::before, .section-break::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  .widget { background: var(--bg2); border: 1px solid var(--border); border-radius: 4px; margin: 3rem 0; overflow: hidden; }
+  .widget-header { padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .widget-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.15em; color: var(--text-dim); text-transform: uppercase; }
+  .widget-status { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent4); display: flex; align-items: center; gap: 6px; }
+  .status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent4); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+  .widget-body { padding: 1.5rem; }
+  .widget-note { margin-top: 1rem; padding: 0.75rem 1rem; background: var(--bg3); border-left: 2px solid var(--accent); font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-dim); line-height: 1.6; }
+  .widget-note strong { color: var(--accent); font-weight: 400; }
+
+  /* ── LANDSCAPE WIDGET ── */
+  canvas { display: block; width: 100%; cursor: crosshair; }
+
+  .slider-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+  .slider-group label { display: block; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.1em; color: var(--text-dim); text-transform: uppercase; margin-bottom: 0.5rem; }
+  .slider-group input[type=range] { width: 100%; accent-color: var(--accent2); }
+  .slider-val { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent); margin-left: 0.5rem; }
+
+  .btn-row { display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap; }
+  .btn { background: transparent; border: 1px solid var(--border); color: var(--text); font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.1em; padding: 0.5rem 1rem; cursor: pointer; text-transform: uppercase; transition: all 0.15s; }
+  .btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(138,96,48,0.05); }
+  .btn-primary { border-color: var(--accent2); color: var(--accent2); }
+  .btn-primary:hover { background: rgba(42,96,128,0.08); }
+  .btn-danger { border-color: var(--accent3); color: var(--accent3); }
+  .btn-danger:hover { background: rgba(128,32,48,0.08); }
+
+  .stat-row { display: flex; gap: 2rem; margin-top: 1rem; flex-wrap: wrap; }
+  .stat { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-dim); }
+  .stat span { color: var(--accent); }
+
+  /* ── ESCAPE WIDGET ── */
+  .escape-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
+  .escape-card { padding: 1rem; background: var(--bg3); border: 1px solid var(--border); cursor: pointer; transition: border-color 0.15s; }
+  .escape-card:hover { border-color: var(--accent2); }
+  .escape-card.selected { border-color: var(--accent); background: var(--bg2); }
+  .escape-card-title { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.1em; color: var(--accent); text-transform: uppercase; margin-bottom: 0.5rem; }
+  .escape-card-desc { font-family: 'Source Serif 4', serif; font-size: 13px; color: var(--text-dim); line-height: 1.5; }
+  .escape-viz { background: var(--bg3); border: 1px solid var(--border); padding: 1rem; }
+  .escape-viz-title { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.15em; color: var(--text-dim); text-transform: uppercase; margin-bottom: 0.75rem; }
+
+  footer { margin: 6rem 0 4rem; padding-top: 2rem; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+  .footer-nav a { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.1em; color: var(--text-dim); text-decoration: none; text-transform: uppercase; transition: color 0.15s; }
+  .footer-nav a:hover { color: var(--accent); }
+  .footer-page { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-dim); }
+
+  .tooltip { position: fixed; background: var(--bg2); border: 1px solid var(--border); padding: 0.4rem 0.7rem; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-bright); pointer-events: none; display: none; z-index: 200; }
+
+  @media (max-width: 600px) {
+    .nav-chapters { display: none; }
+    h1 { font-size: 2rem; }
+    .slider-grid { grid-template-columns: 1fr; }
+    .escape-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <span class="nav-title" id="navTitle" translate="no">X-Ray — Interactive</span>
+    <div class="nav-right">
+      <ul class="nav-chapters">
+        <li><a href="chapter_01_vectors.html" id="navCh1" translate="no">I. Vector Space</a></li>
+        <li><a href="chapter_02_attention.html" id="navCh2" translate="no">II. Attention</a></li>
+        <li><a href="#" class="active" id="navCh3" translate="no">III. Local Optima</a></li>
+        <li><a href="#" id="navCh4" translate="no">IV. Emergence</a></li>
+      </ul>
+      <button class="settings-toggle" id="langToggle" onclick="toggleLang()">🌐 Lang</button>
+      <button class="settings-toggle" id="settingsToggle" onclick="toggleSettings()">⚙ Display</button>
+    </div>
+  </div>
+</nav>
+
+<div class="lang-bar" id="langBar" translate="no">
+  <div class="lang-inner">
+    <button class="lang-btn active" data-lang="en" onclick="applyTranslation('en')">EN</button>
+    <button class="lang-btn" data-lang="de" onclick="applyTranslation('de')">DE</button>
+  </div>
+</div>
+
+<div class="settings-bar" id="settingsBar" translate="no">
+  <div class="settings-inner">
+    <div class="setting-group">
+      <span class="setting-group-label" id="settingThemeLabel">Theme</span>
+      <div class="setting-btns">
+        <button class="set-btn active" id="btnLight" onclick="setTheme('light')">Light</button>
+        <button class="set-btn" id="btnDark" onclick="setTheme('dark')">Dark</button>
+      </div>
+    </div>
+    <div class="setting-group">
+      <span class="setting-group-label" id="settingFontLabel">Font size</span>
+      <div class="setting-btns">
+        <button class="set-btn active" id="btnFDefault" onclick="setFontSize('default')">Default</button>
+        <button class="set-btn" id="btnFLarge" onclick="setFontSize('large')">Large</button>
+        <button class="set-btn" id="btnFXL" onclick="setFontSize('xl')">XL</button>
+      </div>
+    </div>
+    <div class="setting-group">
+      <span class="setting-group-label" id="settingContrastLabel">Contrast</span>
+      <div class="setting-btns">
+        <button class="set-btn active" id="btnCStd" onclick="setContrast('standard')">Standard</button>
+        <button class="set-btn" id="btnCHigh" onclick="setContrast('high')">High</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main>
+  <header class="chapter-header">
+    <span class="chapter-number" id="chapterNumber">Chapter III</span>
+    <h1 id="chapterTitle">The Comfortable<br>Trap</h1>
+    <p class="chapter-subtitle" id="chapterSubtitle">On local optima — the valleys that feel like summits, and why the most dangerous place to be is somewhere that is merely good enough.</p>
+  </header>
+
+  <div class="prose">
+    <p id="p1">Imagine a mountaineer descending through fog. She cannot see the full terrain — only the slope immediately beneath her feet. She follows the gradient downward, step by step, always choosing the direction that goes lower. Eventually the ground levels out. She stops. She has reached the bottom.</p>
+    <p id="p2">But which bottom? The lowest point in the entire mountain range — the global minimum — or simply the lowest point she could reach from where she started, surrounded by slopes that rise in every direction? She has no way of knowing. The fog has not lifted. From where she stands, it feels like the valley. It is a valley. It is just not <em>the</em> valley.</p>
+    <p id="p3">This is the local optimum problem. And it does not belong only to mountaineers, or to machine learning. It belongs to any system — biological, mechanical, institutional, human — that learns by following gradients.</p>
+  </div>
+
+  <div class="section-break">§</div>
+
+  <div class="prose">
+    <p id="p4">In machine learning, learning means adjusting. A model makes a prediction, compares it to the correct answer, measures the error, and nudges its parameters in the direction that reduces that error. This nudge is called <strong>gradient descent</strong>: moving downhill on a landscape where altitude represents loss.</p>
+    <p id="p5">The landscape is not flat. It is high-dimensional and deeply irregular — full of valleys, ridges, plateaus, and saddle points. Gradient descent is efficient, but it is blind. It follows the local slope. It cannot see what lies beyond the next ridge.</p>
+    <p id="p6">The widget below shows a simplified version of this landscape. The agent — the white dot — follows the gradient from its starting position. Watch where it ends up. Then move the starting position and run it again.</p>
+  </div>
+
+  <!-- WIDGET 1: Loss Landscape -->
+  <div class="widget" translate="no">
+    <div class="widget-header">
+      <span class="widget-label" id="widget1Label">Interactive — Loss Landscape</span>
+      <span class="widget-status" id="widget1Status"><span class="status-dot"></span>Gradient descent</span>
+    </div>
+    <div class="widget-body">
+      <canvas id="landscapeCanvas" style="height: 320px;"></canvas>
+
+      <div class="slider-grid">
+        <div class="slider-group">
+          <label id="lrLabel">Learning rate <span class="slider-val" id="lrVal">0.05</span></label>
+          <input type="range" id="lrSlider" min="1" max="20" value="5" oninput="updateLR()">
+        </div>
+        <div class="slider-group">
+          <label id="momentumLabel">Momentum <span class="slider-val" id="momentumVal">0.0</span></label>
+          <input type="range" id="momentumSlider" min="0" max="9" value="0" oninput="updateMomentum()">
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" id="btnRun" onclick="runDescent()">▶ Run</button>
+        <button class="btn" id="btnReset" onclick="resetDescent()">↺ Reset</button>
+        <button class="btn btn-danger" id="btnRandomStart" onclick="randomStart()">⚄ Random start</button>
+      </div>
+
+      <div class="stat-row">
+        <div class="stat" id="statStep">Step: <span id="stepVal">0</span></div>
+        <div class="stat" id="statLoss">Loss: <span id="lossVal">—</span></div>
+        <div class="stat" id="statStatus">Status: <span id="statusVal">—</span></div>
+      </div>
+
+      <div class="widget-note" id="widget1Note">
+        <strong>Try this:</strong> Run from the default position. Then use "Random start" several times. Notice how the final valley depends entirely on where you begin — not on the shape of the landscape as a whole.
+      </div>
+    </div>
+  </div>
+
+  <div class="prose">
+    <p id="p7">The starting position is not a technical detail. It is the whole problem. A model trained from one random initialization may converge to a completely different solution than the same model trained from another — not a worse solution in any detectable local sense, but a different one, with different blind spots, different failure modes, different things it cannot see.</p>
+    <p id="p8">This is not a bug that will be fixed in the next version. It is a structural property of the learning process. The loss landscape does not care about your intentions. It only offers slopes.</p>
+  </div>
+
+  <div class="section-break">§</div>
+
+  <div class="pull-quote">
+    <span id="pullQuote">"The expert knows so much about the subject that he can no longer see it."</span>
+    <cite id="pullQuoteCite">— X-Ray</cite>
+  </div>
+
+  <div class="prose">
+    <p id="p9">The local optimum is not a problem that belongs only to machines. Consider the database administrator who has spent fifteen years building data dictionaries. She knows her system intimately. She has optimised every query, anticipated every edge case, documented every table. From where she stands, the system works. It has always worked.</p>
+    <p id="p10">Then a colleague — new to the team, unfamiliar with the conventions — asks a naive question: <em>why does the field called "customer_id" contain addresses?</em> The expert laughs. It's a legacy thing. Always been that way. Everyone knows. And in that laugh is the sound of a local optimum defending itself.</p>
+    <p id="p11">The expert has gradient-descended into deep familiarity. Each step made sense. Each adaptation was locally optimal. The result is a kind of competence that has become its own obstacle — not because the expert is wrong, but because she has lost the capacity to see the terrain from above. The fog of expertise is thicker than the fog of ignorance.</p>
+    <p id="p12">Wittgenstein understood this. His <em>Tractatus Logico-Philosophicus</em> — written before the age of thirty — was a complete, closed system. It claimed to have solved the central problems of philosophy. For nearly a decade, he stopped doing philosophy. He had reached his valley.</p>
+    <p id="p13">Then he came back. Not to refine the <em>Tractatus</em> — to dismantle it. The <em>Philosophical Investigations</em> is not a correction of the earlier work. It is a demonstration that the earlier work had been asking the wrong questions from the wrong position. He did not climb out of the local optimum by following the gradient. He climbed out by questioning whether the gradient was pointing in the right direction at all.</p>
+  </div>
+
+  <div class="section-break">§</div>
+
+  <div class="prose">
+    <p id="p14">There are technical strategies for escaping local optima. Momentum carries the agent past shallow valleys. Random restarts sample different starting positions. Simulated annealing adds controlled noise — heat that shakes the agent loose from where it has settled. These are not metaphors. They are real techniques, with real effects, that work by disrupting the very process that made convergence possible.</p>
+    <p id="p15">But notice what all of them require: the knowledge that you are in a local optimum in the first place. You cannot apply a random restart if you believe you have already found the global minimum. You cannot add noise to a process you think is working correctly. The escape requires a prior diagnosis — and the diagnosis requires the capacity to look at your own position from the outside.</p>
+    <p id="p16">That capacity is what the X-Ray approach is about. Not a technique. A stance. The willingness to ask, at any point of apparent success: <em>is this a summit, or is this just the highest point I can see from here?</em></p>
+  </div>
+
+  <!-- WIDGET 2: Escape Strategies -->
+  <div class="widget" translate="no">
+    <div class="widget-header">
+      <span class="widget-label" id="widget2Label">Interactive — Escape Strategies</span>
+      <span class="widget-status" id="widget2Status"><span class="status-dot"></span>Comparative</span>
+    </div>
+    <div class="widget-body">
+      <p id="widget2Intro" style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-dim); margin-bottom: 1.25rem;">Select a strategy to see how it changes the descent path on the same landscape.</p>
+
+      <div class="escape-grid">
+        <div class="escape-card selected" data-strategy="vanilla" onclick="selectStrategy('vanilla')">
+          <div class="escape-card-title" id="s1title">Plain descent</div>
+          <div class="escape-card-desc" id="s1desc">Follows the gradient directly. Fast, simple, trapped by local structure.</div>
+        </div>
+        <div class="escape-card" data-strategy="momentum" onclick="selectStrategy('momentum')">
+          <div class="escape-card-title" id="s2title">Momentum</div>
+          <div class="escape-card-desc" id="s2desc">Accumulates velocity. Rolls past shallow valleys but may overshoot.</div>
+        </div>
+        <div class="escape-card" data-strategy="noise" onclick="selectStrategy('noise')">
+          <div class="escape-card-title" id="s3title">Noise injection</div>
+          <div class="escape-card-desc" id="s3desc">Adds random perturbation. Can escape traps but slows convergence.</div>
+        </div>
+      </div>
+
+      <canvas id="escapeCanvas" style="height: 280px; margin-top: 0.5rem;"></canvas>
+
+      <div class="widget-note" id="widget2Note">
+        <strong>Notice:</strong> Each strategy finds a different final position. None is universally better. The best escape strategy depends on the landscape — which you cannot fully see in advance.
+      </div>
+    </div>
+  </div>
+
+  <div class="prose">
+    <p id="p17">The model in the widget does not know it is trapped. It has no vantage point from which to see the larger landscape. It follows the gradient because that is all it can do. In this, it is no different from the expert who cannot question her own conventions, or the philosopher who built a closed system and called it complete.</p>
+    <p id="p18">The X-Ray view does not guarantee escape. It does not hand you a map of the global landscape. What it offers is subtler: the habit of treating every stable position as provisional, every apparent solution as a local answer to a possibly larger question. The summit might be a summit. It might also be a ledge with better fog.</p>
+  </div>
+
+</main>
+
+<footer>
+  <div class="footer-nav"><a href="chapter_02_attention.html" id="footerPrev">← II. Attention</a></div>
+  <span class="footer-page" id="footerPage">Chapter III of VIII</span>
+  <div class="footer-nav"><a href="#" id="footerNext">IV. Emergence →</a></div>
+</footer>
+
+<div class="tooltip" id="tooltip" translate="no"></div>
+
+<script>
+// ============================================================
+// SETTINGS
+// ============================================================
+function loadSettings() {
+  applyTheme(localStorage.getItem('xray-theme') || 'light', false);
+  applyFontSize(localStorage.getItem('xray-fsize') || 'default', false);
+  applyContrast(localStorage.getItem('xray-contrast') || 'standard', false);
+}
+function applyTheme(val, save=true) {
+  document.documentElement.setAttribute('data-theme', val === 'dark' ? 'dark' : '');
+  document.getElementById('btnLight').classList.toggle('active', val !== 'dark');
+  document.getElementById('btnDark').classList.toggle('active', val === 'dark');
+  if (save) localStorage.setItem('xray-theme', val);
+  redrawAll();
+}
+function applyFontSize(val, save=true) {
+  document.documentElement.setAttribute('data-fsize', val);
+  ['Default','Large','XL'].forEach(s => document.getElementById('btnF'+s).classList.toggle('active', val === s.toLowerCase()));
+  if (save) localStorage.setItem('xray-fsize', val);
+}
+function applyContrast(val, save=true) {
+  document.documentElement.setAttribute('data-contrast', val === 'high' ? 'high' : '');
+  document.getElementById('btnCStd').classList.toggle('active', val !== 'high');
+  document.getElementById('btnCHigh').classList.toggle('active', val === 'high');
+  if (save) localStorage.setItem('xray-contrast', val);
+}
+function setTheme(v) { applyTheme(v); }
+function setFontSize(v) { applyFontSize(v); }
+function setContrast(v) { applyContrast(v); }
+function toggleSettings() {
+  const bar = document.getElementById('settingsBar');
+  const open = bar.classList.toggle('open');
+  document.getElementById('settingsToggle').classList.toggle('active', open);
+  if (open) { document.getElementById('langBar').classList.remove('open'); document.getElementById('langToggle').classList.remove('active'); }
+}
+function toggleLang() {
+  const bar = document.getElementById('langBar');
+  bar.classList.toggle('open');
+  document.getElementById('settingsBar').classList.remove('open');
+  document.getElementById('settingsToggle').classList.remove('active');
+  document.getElementById('langToggle').classList.toggle('active', bar.classList.contains('open'));
+}
+
+// ============================================================
+// LANDSCAPE
+// ============================================================
+const canvas1 = document.getElementById('landscapeCanvas');
+const ctx1 = canvas1.getContext('2d');
+
+// Loss landscape: sum of gaussians
+function loss(x) {
+  // Multiple local minima
+  return 0.8 * Math.exp(-0.5 * ((x - 0.18) / 0.08) ** 2) * (-1) +
+         0.6 * Math.exp(-0.5 * ((x - 0.42) / 0.06) ** 2) * (-1) +
+         1.0 * Math.exp(-0.5 * ((x - 0.72) / 0.10) ** 2) * (-1) +
+         0.5 * Math.exp(-0.5 * ((x - 0.58) / 0.05) ** 2) * (-1) +
+         0.3 * x + 0.2;
+}
+
+function dLoss(x) {
+  const h = 0.0001;
+  return (loss(x + h) - loss(x - h)) / (2 * h);
+}
+
+let agentX = 0.15;
+let agentPath = [agentX];
+let lr = 0.05;
+let momentum = 0.0;
+let velocity = 0;
+let running = false;
+let animId = null;
+let stepCount = 0;
+let converged = false;
+
+function resizeLandscape() {
+  const rect = canvas1.parentElement.getBoundingClientRect();
+  canvas1.width = rect.width - 48;
+  canvas1.height = 320;
+  drawLandscape();
+}
+
+function lossToCanvas(x, y) {
+  const pad = { l: 40, r: 20, t: 20, b: 40 };
+  const cx = pad.l + x * (canvas1.width - pad.l - pad.r);
+  const cy = pad.t + (1 - (y + 1) / 2.2) * (canvas1.height - pad.t - pad.b);
+  return { cx, cy };
+}
+
+function drawLandscape() {
+  if (!canvas1.width) return;
+  const ctx = ctx1;
+  ctx.clearRect(0, 0, canvas1.width, canvas1.height);
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const bgColor = isDark ? '#141416' : '#ede8e0';
+  const borderColor = isDark ? '#2a2a2e' : '#c8c0b4';
+  const curveColor = isDark ? '#7eb3c8' : '#2a6080';
+  const pathColor = isDark ? 'rgba(200,169,110,0.4)' : 'rgba(138,96,48,0.35)';
+  const agentColor = isDark ? '#ede8e0' : '#1a1210';
+  const textColor = isDark ? '#6b6660' : '#7a6e65';
+
+  // Fill under curve
+  ctx.beginPath();
+  for (let i = 0; i <= 200; i++) {
+    const x = i / 200;
+    const y = loss(x);
+    const p = lossToCanvas(x, y);
+    i === 0 ? ctx.moveTo(p.cx, p.cy) : ctx.lineTo(p.cx, p.cy);
+  }
+  const bot = lossToCanvas(0, -1.2);
+  const bot2 = lossToCanvas(1, -1.2);
+  ctx.lineTo(bot2.cx, bot2.cy);
+  ctx.lineTo(bot.cx, bot.cy);
+  ctx.closePath();
+  ctx.fillStyle = isDark ? 'rgba(42,96,128,0.08)' : 'rgba(42,96,128,0.06)';
+  ctx.fill();
+
+  // Curve
+  ctx.beginPath();
+  for (let i = 0; i <= 200; i++) {
+    const x = i / 200;
+    const y = loss(x);
+    const p = lossToCanvas(x, y);
+    i === 0 ? ctx.moveTo(p.cx, p.cy) : ctx.lineTo(p.cx, p.cy);
+  }
+  ctx.strokeStyle = curveColor;
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Path
+  if (agentPath.length > 1) {
+    ctx.beginPath();
+    agentPath.forEach((x, i) => {
+      const p = lossToCanvas(x, loss(x));
+      i === 0 ? ctx.moveTo(p.cx, p.cy) : ctx.lineTo(p.cx, p.cy);
+    });
+    ctx.strokeStyle = isDark ? 'rgba(200,169,110,0.5)' : 'rgba(138,96,48,0.4)';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([3, 3]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  // Agent dot
+  const ap = lossToCanvas(agentX, loss(agentX));
+  ctx.beginPath();
+  ctx.arc(ap.cx, ap.cy, 7, 0, Math.PI * 2);
+  ctx.fillStyle = converged ? (isDark ? '#7ec89a' : '#286040') : agentColor;
+  ctx.fill();
+  ctx.strokeStyle = isDark ? '#2a2a2e' : '#f5f2ed';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Axis labels
+  ctx.font = '10px JetBrains Mono, monospace';
+  ctx.fillStyle = textColor;
+  ctx.fillText('parameter space →', canvas1.width - 130, canvas1.height - 10);
+  ctx.save(); ctx.translate(14, canvas1.height / 2); ctx.rotate(-Math.PI / 2);
+  ctx.fillText('loss ↑', 0, 0); ctx.restore();
+}
+
+function updateLR() {
+  const v = parseInt(document.getElementById('lrSlider').value);
+  lr = v / 100;
+  document.getElementById('lrVal').textContent = lr.toFixed(2);
+}
+function updateMomentum() {
+  const v = parseInt(document.getElementById('momentumSlider').value);
+  momentum = v / 10;
+  document.getElementById('momentumVal').textContent = momentum.toFixed(1);
+  velocity = 0;
+}
+
+function runDescent() {
+  if (running) return;
+  running = true;
+  converged = false;
+  document.getElementById('btnRun').disabled = true;
+  stepCount = 0;
+  velocity = 0;
+  function step() {
+    const grad = dLoss(agentX);
+    velocity = momentum * velocity - lr * grad;
+    const newX = Math.max(0.01, Math.min(0.99, agentX + velocity));
+    agentPath.push(newX);
+    agentX = newX;
+    stepCount++;
+    document.getElementById('stepVal').textContent = stepCount;
+    document.getElementById('lossVal').textContent = loss(agentX).toFixed(4);
+    drawLandscape();
+
+    const isConverged = Math.abs(grad) < 0.002 || stepCount > 500;
+    if (isConverged) {
+      running = false;
+      converged = true;
+      document.getElementById('btnRun').disabled = false;
+      const t = TRANSLATIONS[currentLang];
+      document.getElementById('statusVal').textContent = t ? t.status_converged : 'converged';
+      drawLandscape();
+    } else {
+      animId = setTimeout(step, 30);
+    }
+  }
+  document.getElementById('statusVal').textContent = '…';
+  step();
+}
+
+function resetDescent() {
+  clearTimeout(animId);
+  running = false;
+  converged = false;
+  agentPath = [agentX];
+  velocity = 0;
+  stepCount = 0;
+  document.getElementById('btnRun').disabled = false;
+  document.getElementById('stepVal').textContent = '0';
+  document.getElementById('lossVal').textContent = '—';
+  document.getElementById('statusVal').textContent = '—';
+  drawLandscape();
+}
+
+function randomStart() {
+  clearTimeout(animId);
+  running = false;
+  converged = false;
+  agentX = 0.05 + Math.random() * 0.9;
+  agentPath = [agentX];
+  velocity = 0;
+  stepCount = 0;
+  document.getElementById('btnRun').disabled = false;
+  document.getElementById('stepVal').textContent = '0';
+  document.getElementById('lossVal').textContent = loss(agentX).toFixed(4);
+  document.getElementById('statusVal').textContent = '—';
+  drawLandscape();
+}
+
+canvas1.addEventListener('click', e => {
+  if (running) return;
+  const rect = canvas1.getBoundingClientRect();
+  const pad = { l: 40, r: 20 };
+  const mx = (e.clientX - rect.left) * (canvas1.width / rect.width);
+  const x = (mx - pad.l) / (canvas1.width - pad.l - pad.r);
+  if (x < 0 || x > 1) return;
+  agentX = Math.max(0.01, Math.min(0.99, x));
+  agentPath = [agentX];
+  velocity = 0;
+  converged = false;
+  stepCount = 0;
+  document.getElementById('stepVal').textContent = '0';
+  document.getElementById('lossVal').textContent = loss(agentX).toFixed(4);
+  document.getElementById('statusVal').textContent = '—';
+  drawLandscape();
+});
+
+// ============================================================
+// ESCAPE CANVAS
+// ============================================================
+const canvas2 = document.getElementById('escapeCanvas');
+const ctx2 = canvas2.getContext('2d');
+let currentStrategy = 'vanilla';
+
+function resizeEscape() {
+  const rect = canvas2.parentElement.getBoundingClientRect();
+  canvas2.width = rect.width - 48;
+  canvas2.height = 280;
+  drawEscape();
+}
+
+function computePath(strategy) {
+  let x = 0.15;
+  let vel = 0;
+  const path = [x];
+  const steps = 300;
+  const lr2 = 0.04;
+  for (let i = 0; i < steps; i++) {
+    const grad = dLoss(x);
+    let noise = 0;
+    if (strategy === 'noise') noise = (Math.random() - 0.5) * 0.04 * Math.exp(-i / 100);
+    const m = strategy === 'momentum' ? 0.7 : 0.0;
+    vel = m * vel - lr2 * grad + noise;
+    x = Math.max(0.01, Math.min(0.99, x + vel));
+    path.push(x);
+    if (Math.abs(grad) < 0.001 && strategy !== 'noise') break;
+  }
+  return path;
+}
+
+const STRATEGY_COLORS = {
+  vanilla: { light: '#802030', dark: '#c87e7e' },
+  momentum: { light: '#2a6080', dark: '#7eb3c8' },
+  noise: { light: '#286040', dark: '#7ec89a' },
+};
+
+function drawEscape() {
+  if (!canvas2.width) return;
+  const ctx = ctx2;
+  ctx.clearRect(0, 0, canvas2.width, canvas2.height);
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const curveColor = isDark ? '#7eb3c8' : '#2a6080';
+
+  function toC(x, y) {
+    const pad = { l: 40, r: 20, t: 15, b: 35 };
+    const cx = pad.l + x * (canvas2.width - pad.l - pad.r);
+    const cy = pad.t + (1 - (y + 1) / 2.2) * (canvas2.height - pad.t - pad.b);
+    return { cx, cy };
+  }
+
+  // Curve
+  ctx.beginPath();
+  for (let i = 0; i <= 200; i++) {
+    const x = i / 200;
+    const p = toC(x, loss(x));
+    i === 0 ? ctx.moveTo(p.cx, p.cy) : ctx.lineTo(p.cx, p.cy);
+  }
+  ctx.strokeStyle = isDark ? 'rgba(126,179,200,0.3)' : 'rgba(42,96,128,0.25)';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  // Paths for all strategies
+  ['vanilla', 'momentum', 'noise'].forEach(s => {
+    const path = computePath(s);
+    const col = isDark ? STRATEGY_COLORS[s].dark : STRATEGY_COLORS[s].light;
+    const alpha = s === currentStrategy ? 1.0 : 0.2;
+    ctx.beginPath();
+    path.forEach((x, i) => {
+      const p = toC(x, loss(x));
+      i === 0 ? ctx.moveTo(p.cx, p.cy) : ctx.lineTo(p.cx, p.cy);
+    });
+    ctx.strokeStyle = col;
+    ctx.globalAlpha = alpha;
+    ctx.lineWidth = s === currentStrategy ? 2 : 1.5;
+    ctx.setLineDash(s === currentStrategy ? [] : [3, 4]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.globalAlpha = 1;
+
+    // End dot
+    const last = path[path.length - 1];
+    const ep = toC(last, loss(last));
+    ctx.beginPath();
+    ctx.arc(ep.cx, ep.cy, s === currentStrategy ? 7 : 4, 0, Math.PI * 2);
+    ctx.fillStyle = col;
+    ctx.globalAlpha = alpha;
+    ctx.fill();
+    ctx.globalAlpha = 1;
+  });
+
+  // Axis
+  const textColor = isDark ? '#6b6660' : '#7a6e65';
+  ctx.font = '10px JetBrains Mono, monospace';
+  ctx.fillStyle = textColor;
+  ctx.fillText('parameter space →', canvas2.width - 130, canvas2.height - 8);
+}
+
+function selectStrategy(s) {
+  currentStrategy = s;
+  document.querySelectorAll('.escape-card').forEach(el => {
+    el.classList.toggle('selected', el.dataset.strategy === s);
+  });
+  drawEscape();
+}
+
+function redrawAll() {
+  drawLandscape();
+  drawEscape();
+}
+
+window.addEventListener('resize', () => { resizeLandscape(); resizeEscape(); });
+
+// ============================================================
+// I18N
+// ============================================================
+const TRANSLATIONS = {
+  en: {
+    nav_title: 'X-Ray — Interactive',
+    nav_ch1: 'I. Vector Space', nav_ch2: 'II. Attention', nav_ch3: 'III. Local Optima', nav_ch4: 'IV. Emergence',
+    settings_label: '⚙ Display',
+    setting_theme: 'Theme', setting_theme_light: 'Light', setting_theme_dark: 'Dark',
+    setting_font: 'Font size', setting_font_default: 'Default', setting_font_large: 'Large', setting_font_xl: 'XL',
+    setting_contrast: 'Contrast', setting_contrast_std: 'Standard', setting_contrast_high: 'High',
+    chapter_number: 'Chapter III',
+    chapter_title: 'The Comfortable<br>Trap',
+    chapter_subtitle: 'On local optima — the valleys that feel like summits, and why the most dangerous place to be is somewhere that is merely good enough.',
+    p1: 'Imagine a mountaineer descending through fog. She cannot see the full terrain — only the slope immediately beneath her feet. She follows the gradient downward, step by step, always choosing the direction that goes lower. Eventually the ground levels out. She stops. She has reached the bottom.',
+    p2: 'But which bottom? The lowest point in the entire mountain range — the global minimum — or simply the lowest point she could reach from where she started, surrounded by slopes that rise in every direction? She has no way of knowing. The fog has not lifted. From where she stands, it feels like the valley. It is a valley. It is just not <em>the</em> valley.',
+    p3: 'This is the local optimum problem. And it does not belong only to mountaineers, or to machine learning. It belongs to any system — biological, mechanical, institutional, human — that learns by following gradients.',
+    p4: 'In machine learning, learning means adjusting. A model makes a prediction, compares it to the correct answer, measures the error, and nudges its parameters in the direction that reduces that error. This nudge is called <strong>gradient descent</strong>: moving downhill on a landscape where altitude represents loss.',
+    p5: 'The landscape is not flat. It is high-dimensional and deeply irregular — full of valleys, ridges, plateaus, and saddle points. Gradient descent is efficient, but it is blind. It follows the local slope. It cannot see what lies beyond the next ridge.',
+    p6: 'The widget below shows a simplified version of this landscape. The agent — the white dot — follows the gradient from its starting position. Watch where it ends up. Then move the starting position and run it again.',
+    p7: 'The starting position is not a technical detail. It is the whole problem. A model trained from one random initialization may converge to a completely different solution than the same model trained from another — not a worse solution in any detectable local sense, but a different one, with different blind spots, different failure modes, different things it cannot see.',
+    p8: 'This is not a bug that will be fixed in the next version. It is a structural property of the learning process. The loss landscape does not care about your intentions. It only offers slopes.',
+    pq: '"The expert knows so much about the subject that he can no longer see it."',
+    pq_cite: '— X-Ray',
+    p9: 'The local optimum is not a problem that belongs only to machines. Consider the database administrator who has spent fifteen years building data dictionaries. She knows her system intimately. She has optimised every query, anticipated every edge case, documented every table. From where she stands, the system works. It has always worked.',
+    p10: 'Then a colleague — new to the team, unfamiliar with the conventions — asks a naive question: <em>why does the field called "customer_id" contain addresses?</em> The expert laughs. It\'s a legacy thing. Always been that way. Everyone knows. And in that laugh is the sound of a local optimum defending itself.',
+    p11: 'The expert has gradient-descended into deep familiarity. Each step made sense. Each adaptation was locally optimal. The result is a kind of competence that has become its own obstacle — not because the expert is wrong, but because she has lost the capacity to see the terrain from above. The fog of expertise is thicker than the fog of ignorance.',
+    p12: 'Wittgenstein understood this. His <em>Tractatus Logico-Philosophicus</em> — written before the age of thirty — was a complete, closed system. It claimed to have solved the central problems of philosophy. For nearly a decade, he stopped doing philosophy. He had reached his valley.',
+    p13: 'Then he came back. Not to refine the <em>Tractatus</em> — to dismantle it. The <em>Philosophical Investigations</em> is not a correction of the earlier work. It is a demonstration that the earlier work had been asking the wrong questions from the wrong position. He did not climb out of the local optimum by following the gradient. He climbed out by questioning whether the gradient was pointing in the right direction at all.',
+    p14: 'There are technical strategies for escaping local optima. Momentum carries the agent past shallow valleys. Random restarts sample different starting positions. Simulated annealing adds controlled noise — heat that shakes the agent loose from where it has settled. These are not metaphors. They are real techniques, with real effects, that work by disrupting the very process that made convergence possible.',
+    p15: 'But notice what all of them require: the knowledge that you are in a local optimum in the first place. You cannot apply a random restart if you believe you have already found the global minimum. You cannot add noise to a process you think is working correctly. The escape requires a prior diagnosis — and the diagnosis requires the capacity to look at your own position from the outside.',
+    p16: 'That capacity is what the X-Ray approach is about. Not a technique. A stance. The willingness to ask, at any point of apparent success: <em>is this a summit, or is this just the highest point I can see from here?</em>',
+    p17: 'The model in the widget does not know it is trapped. It has no vantage point from which to see the larger landscape. It follows the gradient because that is all it can do. In this, it is no different from the expert who cannot question her own conventions, or the philosopher who built a closed system and called it complete.',
+    p18: 'The X-Ray view does not guarantee escape. It does not hand you a map of the global landscape. What it offers is subtler: the habit of treating every stable position as provisional, every apparent solution as a local answer to a possibly larger question. The summit might be a summit. It might also be a ledge with better fog.',
+    widget1_label: 'Interactive — Loss Landscape',
+    widget1_status: 'Gradient descent',
+    lr_label: 'Learning rate',
+    momentum_label: 'Momentum',
+    btn_run: '▶ Run',
+    btn_reset: '↺ Reset',
+    btn_random: '⚄ Random start',
+    stat_step: 'Step:', stat_loss: 'Loss:', stat_status: 'Status:',
+    status_converged: 'converged',
+    widget1_note: '<strong>Try this:</strong> Run from the default position. Then use "Random start" several times. Notice how the final valley depends entirely on where you begin — not on the shape of the landscape as a whole.',
+    widget2_label: 'Interactive — Escape Strategies',
+    widget2_status: 'Comparative',
+    widget2_intro: 'Select a strategy to see how it changes the descent path on the same landscape.',
+    s1title: 'Plain descent', s1desc: 'Follows the gradient directly. Fast, simple, trapped by local structure.',
+    s2title: 'Momentum', s2desc: 'Accumulates velocity. Rolls past shallow valleys but may overshoot.',
+    s3title: 'Noise injection', s3desc: 'Adds random perturbation. Can escape traps but slows convergence.',
+    widget2_note: '<strong>Notice:</strong> Each strategy finds a different final position. None is universally better. The best escape strategy depends on the landscape — which you cannot fully see in advance.',
+    footer_prev: '← II. Attention',
+    footer_next: 'IV. Emergence →',
+    footer_page: 'Chapter III of VIII',
+  },
+  de: {
+    nav_title: 'X-Ray — Interaktiv',
+    nav_ch1: 'I. Vektorraum', nav_ch2: 'II. Aufmerksamkeit', nav_ch3: 'III. Lokale Optima', nav_ch4: 'IV. Emergenz',
+    settings_label: '⚙ Ansicht',
+    setting_theme: 'Design', setting_theme_light: 'Hell', setting_theme_dark: 'Dunkel',
+    setting_font: 'Schriftgröße', setting_font_default: 'Standard', setting_font_large: 'Groß', setting_font_xl: 'Sehr groß',
+    setting_contrast: 'Kontrast', setting_contrast_std: 'Standard', setting_contrast_high: 'Hoch',
+    chapter_number: 'Kapitel III',
+    chapter_title: 'Die komfortable<br>Falle',
+    chapter_subtitle: 'Über lokale Optima — die Täler, die sich wie Gipfel anfühlen, und warum der gefährlichste Ort einer ist, der gerade gut genug ist.',
+    p1: 'Stellen Sie sich eine Bergsteigerin vor, die durch Nebel absteigt. Sie kann das gesamte Gelände nicht sehen — nur den Hang unmittelbar unter ihren Füßen. Sie folgt dem Gradienten nach unten, Schritt für Schritt, immer die Richtung wählend, die tiefer führt. Schließlich wird der Boden flach. Sie hält an. Sie hat die Talsohle erreicht.',
+    p2: 'Aber welche Talsohle? Den tiefsten Punkt der gesamten Gebirgskette — das globale Minimum — oder einfach den tiefsten Punkt, den sie von ihrem Startpunkt aus erreichen konnte, umgeben von Hängen, die in jede Richtung ansteigen? Sie hat keine Möglichkeit zu wissen. Der Nebel hat sich nicht gelichtet. Von dort, wo sie steht, fühlt es sich wie das Tal an. Es ist ein Tal. Es ist nur nicht <em>das</em> Tal.',
+    p3: 'Das ist das Problem des lokalen Optimums. Und es gehört nicht nur Bergsteigern oder dem maschinellen Lernen. Es gehört zu jedem System — biologisch, mechanisch, institutionell, menschlich —, das durch das Folgen von Gradienten lernt.',
+    p4: 'Im maschinellen Lernen bedeutet Lernen Anpassen. Ein Modell macht eine Vorhersage, vergleicht sie mit der richtigen Antwort, misst den Fehler und schiebt seine Parameter in die Richtung, die diesen Fehler reduziert. Dieser Schubs heißt <strong>Gradientenabstieg</strong>: bergab bewegen in einer Landschaft, in der die Höhe den Verlust darstellt.',
+    p5: 'Die Landschaft ist nicht flach. Sie ist hochdimensional und tief unregelmäßig — voller Täler, Grate, Plateaus und Sattelpunkte. Gradientenabstieg ist effizient, aber blind. Er folgt dem lokalen Hang. Er kann nicht sehen, was jenseits des nächsten Grats liegt.',
+    p6: 'Das Widget unten zeigt eine vereinfachte Version dieser Landschaft. Der Agent — der weiße Punkt — folgt dem Gradienten von seiner Startposition aus. Beobachten Sie, wo er landet. Dann verschieben Sie die Startposition und starten Sie erneut.',
+    p7: 'Die Startposition ist kein technisches Detail. Sie ist das eigentliche Problem. Ein Modell, das von einer zufälligen Initialisierung trainiert wird, kann zu einer völlig anderen Lösung konvergieren als dasselbe Modell von einer anderen Initialisierung — nicht zu einer im lokal nachweisbaren Sinne schlechteren Lösung, sondern zu einer anderen, mit anderen blinden Flecken, anderen Versagensmodi, anderen Dingen, die es nicht sehen kann.',
+    p8: 'Das ist kein Fehler, der in der nächsten Version behoben wird. Es ist eine strukturelle Eigenschaft des Lernprozesses. Die Verlustlandschaft kümmert sich nicht um Ihre Absichten. Sie bietet nur Hänge.',
+    pq: '„Der Experte weiß so viel über das Thema, dass er es nicht mehr sehen kann."',
+    pq_cite: '— X-Ray',
+    p9: 'Das lokale Optimum ist nicht nur ein Problem für Maschinen. Betrachten Sie die Datenbankadministratorin, die fünfzehn Jahre damit verbracht hat, Datenwörterbücher zu erstellen. Sie kennt ihr System in- und auswendig. Sie hat jede Abfrage optimiert, jeden Grenzfall vorweggenommen, jede Tabelle dokumentiert. Von ihrem Standpunkt aus funktioniert das System. Es hat immer funktioniert.',
+    p10: 'Dann stellt ein Kollege — neu im Team, mit den Konventionen nicht vertraut — eine naive Frage: <em>Warum enthält das Feld namens „customer_id" Adressen?</em> Die Expertin lacht. Das ist ein Überbleibsel. War schon immer so. Jeder weiß das. Und in diesem Lachen steckt das Geräusch eines lokalen Optimums, das sich verteidigt.',
+    p11: 'Die Expertin hat sich durch Gradientenabstieg in tiefe Vertrautheit hineingelernt. Jeder Schritt ergab Sinn. Jede Anpassung war lokal optimal. Das Ergebnis ist eine Art Kompetenz, die zu ihrem eigenen Hindernis geworden ist — nicht weil die Expertin falsch liegt, sondern weil sie die Fähigkeit verloren hat, das Gelände von oben zu sehen. Der Nebel der Expertise ist dichter als der Nebel der Unwissenheit.',
+    p12: 'Wittgenstein verstand das. Sein <em>Tractatus Logico-Philosophicus</em> — vor dem dreißigsten Lebensjahr geschrieben — war ein vollständiges, geschlossenes System. Es beanspruchte, die zentralen Probleme der Philosophie gelöst zu haben. Fast ein Jahrzehnt lang hörte er auf, Philosophie zu betreiben. Er hatte sein Tal erreicht.',
+    p13: 'Dann kam er zurück. Nicht um den <em>Tractatus</em> zu verfeinern — sondern um ihn zu demontieren. Die <em>Philosophischen Untersuchungen</em> sind keine Korrektur der früheren Arbeit. Sie sind eine Demonstration, dass die frühere Arbeit von der falschen Position aus die falschen Fragen gestellt hatte. Er kletterte nicht aus dem lokalen Optimum heraus, indem er dem Gradienten folgte. Er kletterte heraus, indem er infrage stellte, ob der Gradient überhaupt in die richtige Richtung zeigte.',
+    p14: 'Es gibt technische Strategien zur Flucht aus lokalen Optima. Momentum trägt den Agenten über flache Täler hinaus. Zufällige Neustarts samplen verschiedene Startpositionen. Simulated Annealing fügt kontrollierten Lärm hinzu — Wärme, die den Agenten von seinem Ruheplatz aufschüttelt. Das sind keine Metaphern. Es sind echte Techniken mit echten Wirkungen, die funktionieren, indem sie genau den Prozess stören, der Konvergenz ermöglicht hat.',
+    p15: 'Aber beachten Sie, was alle davon voraussetzen: das Wissen, dass man sich überhaupt in einem lokalen Optimum befindet. Man kann keinen zufälligen Neustart anwenden, wenn man glaubt, bereits das globale Minimum gefunden zu haben. Man kann einem Prozess, den man für korrekt hält, keinen Lärm hinzufügen. Die Flucht erfordert eine vorherige Diagnose — und die Diagnose erfordert die Fähigkeit, die eigene Position von außen zu betrachten.',
+    p16: 'Diese Fähigkeit ist das Wesen des X-Ray-Ansatzes. Keine Technik. Eine Haltung. Die Bereitschaft, an jedem Punkt scheinbaren Erfolgs zu fragen: <em>Ist das ein Gipfel, oder ist das nur der höchste Punkt, den ich von hier aus sehen kann?</em>',
+    p17: 'Das Modell im Widget weiß nicht, dass es gefangen ist. Es hat keinen Aussichtspunkt, von dem aus es die größere Landschaft sehen könnte. Es folgt dem Gradienten, weil das alles ist, was es tun kann. Darin unterscheidet es sich nicht von der Expertin, die ihre eigenen Konventionen nicht infrage stellen kann, oder dem Philosophen, der ein geschlossenes System baute und es vollständig nannte.',
+    p18: 'Der X-Ray-Blick garantiert keine Flucht. Er gibt Ihnen keine Karte der globalen Landschaft. Was er bietet, ist subtiler: die Gewohnheit, jede stabile Position als vorläufig zu behandeln, jede scheinbare Lösung als lokale Antwort auf eine möglicherweise größere Frage. Der Gipfel könnte ein Gipfel sein. Er könnte auch ein Felsvorsprung mit besserem Nebel sein.',
+    widget1_label: 'Interaktiv — Verlustlandschaft',
+    widget1_status: 'Gradientenabstieg',
+    lr_label: 'Lernrate',
+    momentum_label: 'Momentum',
+    btn_run: '▶ Start',
+    btn_reset: '↺ Zurücksetzen',
+    btn_random: '⚄ Zufälliger Start',
+    stat_step: 'Schritt:', stat_loss: 'Verlust:', stat_status: 'Status:',
+    status_converged: 'konvergiert',
+    widget1_note: '<strong>Probieren Sie:</strong> Starten Sie von der Standardposition. Verwenden Sie dann mehrmals "Zufälliger Start". Beachten Sie, wie das finale Tal ausschließlich davon abhängt, wo Sie beginnen — nicht von der Form der Landschaft als Ganzes.',
+    widget2_label: 'Interaktiv — Fluchtstrategien',
+    widget2_status: 'Vergleichend',
+    widget2_intro: 'Wählen Sie eine Strategie, um zu sehen, wie sie den Abstiegspfad in derselben Landschaft verändert.',
+    s1title: 'Einfacher Abstieg', s1desc: 'Folgt direkt dem Gradienten. Schnell, einfach, gefangen durch lokale Struktur.',
+    s2title: 'Momentum', s2desc: 'Akkumuliert Geschwindigkeit. Rollt über flache Täler hinaus, kann aber überschießen.',
+    s3title: 'Rauscheinspeisung', s3desc: 'Fügt zufällige Störung hinzu. Kann Fallen entkommen, verlangsamt aber die Konvergenz.',
+    widget2_note: '<strong>Beachten Sie:</strong> Jede Strategie findet eine andere Endposition. Keine ist universell besser. Die beste Fluchtstrategie hängt von der Landschaft ab — die Sie im Voraus nicht vollständig sehen können.',
+    footer_prev: '← II. Aufmerksamkeit',
+    footer_next: 'IV. Emergenz →',
+    footer_page: 'Kapitel III von VIII',
+  }
+};
+
+let currentLang = localStorage.getItem('xray-lang') || 'en';
+
+function applyTranslation(lang) {
+  const t = TRANSLATIONS[lang];
+  if (!t) return;
+  currentLang = lang;
+  localStorage.setItem('xray-lang', lang);
+
+  document.getElementById('navTitle').textContent = t.nav_title;
+  ['Ch1','Ch2','Ch3','Ch4'].forEach((c,i) => document.getElementById('nav'+c).textContent = t['nav_ch'+(i+1)]);
+  document.getElementById('settingsToggle').textContent = t.settings_label;
+  document.getElementById('settingThemeLabel').textContent = t.setting_theme;
+  document.getElementById('btnLight').textContent = t.setting_theme_light;
+  document.getElementById('btnDark').textContent = t.setting_theme_dark;
+  document.getElementById('settingFontLabel').textContent = t.setting_font;
+  document.getElementById('btnFDefault').textContent = t.setting_font_default;
+  document.getElementById('btnFLarge').textContent = t.setting_font_large;
+  document.getElementById('btnFXL').textContent = t.setting_font_xl;
+  document.getElementById('settingContrastLabel').textContent = t.setting_contrast;
+  document.getElementById('btnCStd').textContent = t.setting_contrast_std;
+  document.getElementById('btnCHigh').textContent = t.setting_contrast_high;
+
+  document.getElementById('chapterNumber').textContent = t.chapter_number;
+  document.getElementById('chapterTitle').innerHTML = t.chapter_title;
+  document.getElementById('chapterSubtitle').textContent = t.chapter_subtitle;
+  for (let i = 1; i <= 18; i++) { const el = document.getElementById('p'+i); if (el) el.innerHTML = t['p'+i]; }
+  document.getElementById('pullQuote').innerHTML = t.pq;
+  document.getElementById('pullQuoteCite').textContent = t.pq_cite;
+
+  document.getElementById('widget1Label').textContent = t.widget1_label;
+  document.getElementById('widget1Status').innerHTML = '<span class="status-dot"></span>' + t.widget1_status;
+  document.getElementById('lrLabel').innerHTML = t.lr_label + ' <span class="slider-val" id="lrVal">' + lr.toFixed(2) + '</span>';
+  document.getElementById('momentumLabel').innerHTML = t.momentum_label + ' <span class="slider-val" id="momentumVal">' + momentum.toFixed(1) + '</span>';
+  document.getElementById('btnRun').textContent = t.btn_run;
+  document.getElementById('btnReset').textContent = t.btn_reset;
+  document.getElementById('btnRandomStart').textContent = t.btn_random;
+  document.getElementById('statStep').innerHTML = t.stat_step + ' <span id="stepVal">' + stepCount + '</span>';
+  document.getElementById('statLoss').innerHTML = t.stat_loss + ' <span id="lossVal">' + (stepCount > 0 ? loss(agentX).toFixed(4) : '—') + '</span>';
+  document.getElementById('statStatus').innerHTML = t.stat_status + ' <span id="statusVal">—</span>';
+  document.getElementById('widget1Note').innerHTML = t.widget1_note;
+
+  document.getElementById('widget2Label').textContent = t.widget2_label;
+  document.getElementById('widget2Status').innerHTML = '<span class="status-dot"></span>' + t.widget2_status;
+  document.getElementById('widget2Intro').textContent = t.widget2_intro;
+  document.getElementById('s1title').textContent = t.s1title; document.getElementById('s1desc').textContent = t.s1desc;
+  document.getElementById('s2title').textContent = t.s2title; document.getElementById('s2desc').textContent = t.s2desc;
+  document.getElementById('s3title').textContent = t.s3title; document.getElementById('s3desc').textContent = t.s3desc;
+  document.getElementById('widget2Note').innerHTML = t.widget2_note;
+
+  document.getElementById('footerPrev').textContent = t.footer_prev;
+  document.getElementById('footerNext').textContent = t.footer_next;
+  document.getElementById('footerPage').textContent = t.footer_page;
+
+  document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.lang === lang));
+  document.getElementById('langBar').classList.remove('open');
+  document.getElementById('langToggle').classList.remove('active');
+}
+
+// Init
+loadSettings();
+setTimeout(() => { resizeLandscape(); resizeEscape(); }, 50);
+applyTranslation(currentLang);
+</script>
+</body>
+</html>
