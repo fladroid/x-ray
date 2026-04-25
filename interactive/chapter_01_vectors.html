@@ -547,13 +547,16 @@
 
 <nav>
   <div class="nav-inner">
-    <span class="nav-title" id="navTitle" translate="no">X-Ray — Interactive</span>
+    <a href="index.html" class="nav-title" id="navTitle" translate="no" style="text-decoration:none;color:inherit;">X-Ray</a>
     <div class="nav-right">
-      <ul class="nav-chapters">
-        <li><a href="#" class="active" id="navCh1" translate="no">I. Vector Space</a></li>
+            <ul class="nav-chapters">
+        <li><a href="#" class="active" id="navCh1" translate="no">I. Vectors</a></li>
         <li><a href="chapter_02_attention.html" id="navCh2" translate="no">II. Attention</a></li>
         <li><a href="chapter_03_local_optima.html" id="navCh3" translate="no">III. Local Optima</a></li>
-        <li><a href="#" id="navCh4" translate="no">IV. Emergence</a></li>
+        <li><a href="chapter_04_emergence.html" id="navCh4" translate="no">IV. Emergence</a></li>
+        <li><a href="chapter_05_memory.html" id="navCh5" translate="no">V. Memory</a></li>
+        <li><a href="chapter_06_the_wall.html" id="navCh6" translate="no">VI. The Wall</a></li>
+        <li><a href="chapter_07_the_function.html" id="navCh7" translate="no">VII. The Function</a></li>
       </ul>
       <button class="settings-toggle" id="langToggle" onclick="toggleLang()">🌐 Lang</button>
       <button class="settings-toggle" id="settingsToggle" onclick="toggleSettings()">⚙ Display</button>
@@ -1192,7 +1195,7 @@ function computeAnalogy() {
 const TRANSLATIONS = {
   en: {
     nav_title: 'X-Ray — Interactive',
-    nav_ch1: 'I. Vector Space',
+    nav_ch1: 'I. Vectors',
     nav_ch2: 'II. Attention',
     nav_ch3: 'III. Local Optima',
     nav_ch4: 'IV. Emergence',

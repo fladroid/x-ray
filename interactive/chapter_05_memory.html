@@ -49,8 +49,8 @@
   nav { position: fixed; top: 0; left: 0; right: 0; background: rgba(245,242,237,0.96); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); z-index: 100; transition: background 0.2s; }
   [data-theme="dark"] nav { background: rgba(14,14,15,0.96); }
   .nav-inner { max-width: 800px; margin: 0 auto; padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 52px; }
-  .nav-title { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.15em; color: var(--text-dim); text-transform: uppercase; }
-  .nav-right { display: flex; align-items: center; }
+  .nav-title { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.15em; color: var(--text-dim); text-transform: uppercase; flex-shrink: 0; pointer-events: all; white-space: nowrap; }
+  .nav-right { display: flex; align-items: center; overflow: hidden; min-width: 0; flex: 1; }
   .nav-chapters { display: flex; list-style: none; }
   .nav-chapters a { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-dim); text-decoration: none; padding: 0 14px; height: 52px; display: flex; align-items: center; border-left: 1px solid var(--border); transition: color 0.2s, background 0.2s; }
   .nav-chapters a:hover, .nav-chapters a.active { color: var(--accent); background: rgba(138,96,48,0.06); }
@@ -72,48 +72,78 @@
   .prose strong { font-weight: 400; color: var(--accent); }
 
   .pull-quote { border-left: 2px solid var(--accent); margin: 3rem 0; padding: 1rem 0 1rem 2rem; font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.25rem; color: var(--text-bright); line-height: 1.5; }
-  .pull-quote cite { display: block; margin-top: 0.75rem; font-family: 'JetBrains Mono', monospace; font-style: normal; font-size: 11px; letter-spacing: 0.1em; color: var(--text-dim); }
 
   .section-break { display: flex; align-items: center; gap: 1rem; margin: 4rem 0; color: var(--text-dim); font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.15em; }
   .section-break::before, .section-break::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
+  /* widget */
   .widget { background: var(--bg2); border: 1px solid var(--border); border-radius: 4px; margin: 3rem 0; overflow: hidden; }
-  .widget-header { padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .widget-header { padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); }
   .widget-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.18em; color: var(--text-dim); text-transform: uppercase; }
   .widget-body { padding: 1.5rem; }
 
-  /* dual panel */
-  .dual-canvas-row { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
-  .dual-panel { display: flex; flex-direction: column; gap: 0.4rem; }
-  .dual-panel-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.15em; color: var(--text-dim); text-transform: uppercase; text-align: center; }
-  .dual-panel canvas { display: block; border: 1px solid var(--border); }
+  /* two-column layout */
+  .dual-col { display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; }
+  .agent-col { display: flex; flex-direction: column; gap: 0.5rem; flex: 1; min-width: 240px; max-width: 320px; }
+  .col-header { display: flex; align-items: baseline; gap: 0.5rem; }
+  .col-title { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.15em; color: var(--text-dim); text-transform: uppercase; }
+  .col-tag { font-family: 'JetBrains Mono', monospace; font-size: 9px; padding: 0.1rem 0.4rem; border-radius: 2px; }
+  .col-tag.random { background: rgba(122,110,101,0.15); color: var(--text-dim); }
+  .col-tag.ql { background: rgba(40,96,64,0.15); color: var(--accent4); }
+  canvas { display: block; border: 1px solid var(--border); width: 100%; aspect-ratio: 1; cursor: default; }
+  #qlCanvas { cursor: pointer; }
 
-  /* stats row */
-  .dual-stats-row { display: flex; gap: 2rem; flex-wrap: wrap; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); }
-  .stat-row { display: flex; flex-direction: column; gap: 0.15rem; }
-  .stat-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em; color: var(--text-dim); text-transform: uppercase; }
-  .stat-value { font-family: 'JetBrains Mono', monospace; font-size: 1.3rem; color: var(--text-bright); }
-  .stat-sub { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-dim); }
 
-  /* sliders */
-  .sliders-row { display: flex; gap: 1.5rem; flex-wrap: wrap; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); }
-  .slider-group { display: flex; flex-direction: column; gap: 0.3rem; flex: 1; min-width: 150px; }
-  .slider-header { display: flex; justify-content: space-between; align-items: baseline; }
-  .slider-name { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em; color: var(--text-dim); text-transform: uppercase; }
-  .slider-val { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent); }
-  input[type=range] { width: 100%; accent-color: var(--accent); cursor: pointer; }
-  .slider-desc { font-family: 'Source Serif 4', serif; font-size: 0.72rem; color: var(--text-dim); line-height: 1.4; font-style: italic; }
+  /* Q-data panel */
+  .q-data-toggle { margin: 0.75rem 1.5rem 0; }
+  .q-data-panel { display: none; margin: 0 1.5rem 0.75rem; border: 1px solid var(--border); border-radius: 2px; background: var(--bg2); }
+  .q-data-panel.open { display: block; }
+  .q-data-section { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); }
+  .q-data-section:last-child { border-bottom: none; }
+  .q-data-title { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.15em; color: var(--accent); text-transform: uppercase; margin-bottom: 0.6rem; }
+  .q-glossary { display: flex; flex-direction: column; gap: 0.5rem; }
+  .q-gloss-item { display: grid; grid-template-columns: 7rem 1fr; gap: 0.5rem; align-items: start; }
+  .q-gloss-term { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-bright); padding-top: 0.1rem; }
+  .q-gloss-live { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--accent4); padding-top: 0.1rem; }
+  .q-gloss-def { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--text-dim); line-height: 1.5; }
+  /* Q-grid (policy map) */
+  .q-grid-wrap { overflow-x: auto; }
+  #qGridTable { border-collapse: collapse; }
+  #qGridTable td { width: 32px; height: 32px; border: 1px solid var(--border); text-align: center; vertical-align: middle; font-size: 14px; cursor: pointer; position: relative; transition: background 0.2s; }
+  #qGridTable td:hover { border-color: var(--accent2); }
+  #qGridTable td.goal-cell { background: rgba(40,96,64,0.15); }
+  #qGridTable td.selected-cell { outline: 2px solid var(--accent2); outline-offset: -2px; }
+  #qGridTable td.unlearned { color: var(--text-dim); font-size: 9px; }
 
-  /* legend */
-  .legend-row { display: flex; gap: 1.5rem; margin-top: 1rem; flex-wrap: wrap; align-items: center; }
-  .legend-item { display: flex; align-items: center; gap: 0.4rem; }
-  .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-  .legend-text { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-dim); }
-  .q-scale-wrap { flex: 1; min-width: 120px; }
-  .q-scale-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em; color: var(--text-dim); text-transform: uppercase; margin-bottom: 0.25rem; }
-  .q-scale { display: flex; height: 8px; border-radius: 2px; overflow: hidden; border: 1px solid var(--border); }
-  .q-scale-labels { display: flex; justify-content: space-between; margin-top: 0.2rem; }
-  .q-scale-labels span { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--text-dim); }
+  /* per-agent stats */
+  .agent-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem 1rem; padding: 0.75rem; background: var(--bg3); border: 1px solid var(--border); border-radius: 2px; }
+  .astat { display: flex; flex-direction: column; gap: 0.05rem; }
+  .astat-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.1em; color: var(--text-dim); text-transform: uppercase; }
+  .astat-val { font-family: 'JetBrains Mono', monospace; font-size: 1rem; color: var(--text-bright); }
+  .astat-val.highlight { color: var(--accent4); }
+
+  /* Q inspector (QL only) */
+  .ql-secondary {
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--border);
+}
+.q-inspector { padding: 0.6rem 0.75rem; background: var(--bg3); border: 1px solid var(--border); border-radius: 2px; }
+  .q-cell-id { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--accent); margin-bottom: 0.4rem; }
+  .q-rows { display: flex; flex-direction: column; gap: 0.2rem; }
+  .q-row { display: flex; align-items: center; gap: 0.35rem; }
+  .q-arrow { font-size: 13px; width: 14px; text-align: center; flex-shrink: 0; color: var(--text-dim); }
+  .q-bar-wrap { flex: 1; height: 5px; background: var(--bg2); border: 1px solid var(--border); border-radius: 1px; overflow: hidden; }
+  .q-bar { height: 100%; border-radius: 1px; transition: width 0.25s; background: var(--accent2); opacity: 0.5; }
+  .q-val { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--text-dim); width: 36px; text-align: right; flex-shrink: 0; }
+  .q-row.best .q-arrow { color: var(--accent4); }
+  .q-row.best .q-val { color: var(--accent4); }
+  .q-row.best .q-bar { background: var(--accent4); opacity: 1; }
+  .q-hint { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--text-dim); margin-top: 0.35rem; font-style: italic; }
+
+  /* pause banner */
+  .pause-banner { display: none; padding: 0.75rem 1.5rem; background: rgba(40,96,64,0.12); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent4); letter-spacing: 0.05em; text-align: center; }
+  .pause-banner.visible { display: block; }
 
   /* controls */
   .widget-controls { padding: 1rem 1.5rem; border-top: 1px solid var(--border); display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; }
@@ -126,8 +156,13 @@
   .ctrl-spacer { flex: 1; }
   .speed-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-dim); letter-spacing: 0.1em; }
 
-  /* episode banner */
-  .episode-banner { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent4); letter-spacing: 0.08em; padding: 0.4rem 0; min-height: 1.6rem; }
+  /* second widget: policy inspector */
+  .widget2-body { padding: 1.5rem; }
+  .inspector-layout { display: flex; gap: 1.5rem; flex-wrap: wrap; justify-content: center; }
+  .inspector-left { display: flex; flex-direction: column; gap: 0.4rem; }
+  .inspector-right { flex: 1; min-width: 180px; max-width: 220px; display: flex; flex-direction: column; gap: 0.75rem; }
+  .panel-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.15em; color: var(--text-dim); text-transform: uppercase; text-align: center; margin-bottom: 0.2rem; }
+  canvas.fixed { width: 280px; height: 280px; }
 
   footer { padding: 4rem 0 6rem; border-top: 1px solid var(--border); margin-top: 6rem; display: flex; justify-content: space-between; align-items: center; }
   .footer-nav a { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.1em; color: var(--text-dim); text-decoration: none; transition: color 0.15s; }
@@ -138,7 +173,7 @@
 
 <nav>
   <div class="nav-inner">
-    <span class="nav-title" translate="no">X-Ray</span>
+    <a href="index.html" class="nav-title" translate="no" style="text-decoration:none;color:inherit;cursor:pointer;z-index:200;position:relative;">X-Ray</a>
     <div class="nav-right">
       <ul class="nav-chapters">
         <li><a href="chapter_01_vectors.html" id="navCh1" translate="no">I. Vectors</a></li>
@@ -146,6 +181,8 @@
         <li><a href="chapter_03_local_optima.html" id="navCh3" translate="no">III. Local Optima</a></li>
         <li><a href="chapter_04_emergence.html" id="navCh4" translate="no">IV. Emergence</a></li>
         <li><a href="#" class="active" id="navCh5" translate="no">V. Memory</a></li>
+        <li><a href="chapter_06_the_wall.html" id="navCh6" translate="no">VI. The Wall</a></li>
+        <li><a href="chapter_07_the_function.html" id="navCh7" translate="no">VII. The Function</a></li>
       </ul>
       <button class="settings-toggle" id="langToggle" onclick="toggleLang()" translate="no">🌐 Lang</button>
       <button class="settings-toggle" id="settingsToggle" onclick="toggleSettings()" translate="no">⚙ Display</button>
@@ -195,106 +232,141 @@
   </div>
 
   <div class="prose">
-    <p id="p1">The wanderer from the previous chapter had no memory. Each step was the first step. It could reach the goal a thousand times and still not know how to find it again. There was no accumulation — only noise.</p>
-    <p id="p2">Now we add one thing: a table. For every cell in the maze, the agent stores a number — its estimate of how valuable it is to be there. At first, all values are zero. The agent still explores randomly. But each time it reaches the goal, something propagates backward through its recent path. The cells that led to the reward become slightly more valuable. The table remembers.</p>
-    <p id="p3">This is Q-learning. The Q stands for quality — the quality of being in a given state. Over many episodes, the table fills with accurate estimates. The agent stops wandering and starts navigating.</p>
+    <p id="p1">The wanderer from the previous chapter had no memory. Each step was the first step. It could stumble across the goal and still not know how to find it again. There was no accumulation — only noise.</p>
+    <p id="p2">Now we run two agents on the same maze at the same time. The left one wanders randomly, exactly as before. The right one uses Q-learning: it keeps a table of four numbers per cell — one for each direction — and updates those numbers every time it receives a reward. Watch what happens when the Q-learning agent reaches the goal for the first time. The simulation pauses so you can compare the two sides.</p>
+    <p id="p3">Left: a heatmap of visits — where the random walker has been. Right: a policy map — what the Q-learning agent has <em>decided</em> to do in every cell it has visited. One agent has covered more ground. The other has learned something.</p>
   </div>
 
-  <div class="pull-quote">
-    <span id="pq1">"What fires together, wires together."</span>
-    <cite id="pq1cite">— Donald Hebb, <em>The Organization of Behavior</em>, 1949</cite>
-  </div>
-
-  <div class="prose">
-    <p id="p4">The right panel shows the Q-table as a heatmap. Each cell's color represents its current best estimated value — how useful it is to be there. At the start, everything is cold. Watch what happens after the agent reaches the goal for the first time: a warm signal appears at ★ and begins to spread. Cells near the goal warm up first. Cells far away take longer.</p>
-    <p id="p5">This is the X-Ray view of learning — not the agent's behavior on the surface, but the knowledge structure forming underneath.</p>
-  </div>
-
+  <!-- WIDGET 1: parallel comparison -->
   <div class="widget">
     <div class="widget-header">
-      <span class="widget-label" id="wLabel" translate="no">The Learner — agent behavior vs. Q-table</span>
+      <span class="widget-label" id="wLabel">Random Walker vs. Q-Learning — same maze, same start</span>
     </div>
+
+    <div class="pause-banner" id="pauseBanner">
+      QL reached the goal — simulation paused. Compare left and right, then continue.
+    </div>
+
     <div class="widget-body">
-      <div class="dual-canvas-row">
-        <div class="dual-panel">
-          <div class="dual-panel-label" id="panelLabelAgent">Agent view</div>
-          <canvas id="mazeCanvas" width="300" height="300"></canvas>
-        </div>
-        <div class="dual-panel">
-          <div class="dual-panel-label" id="panelLabelQ">Q-table (max per cell)</div>
-          <canvas id="qCanvas" width="300" height="300"></canvas>
-        </div>
-      </div>
+      <div class="dual-col">
 
-      <div class="dual-stats-row">
-        <div class="stat-row">
-          <span class="stat-label" id="statLabelEp">Episodes</span>
-          <span class="stat-value" id="statEp">0</span>
-        </div>
-        <div class="stat-row">
-          <span class="stat-label" id="statLabelSteps">Steps</span>
-          <span class="stat-value" id="statSteps">0</span>
-        </div>
-        <div class="stat-row">
-          <span class="stat-label" id="statLabelBest">Best episode</span>
-          <span class="stat-value" id="statBest">—</span>
-          <span class="stat-sub" id="statBestSub">steps to goal</span>
-        </div>
-        <div class="stat-row">
-          <span class="stat-label" id="statLabelEps">ε (epsilon)</span>
-          <span class="stat-value" id="statEpsilon">1.00</span>
-          <span class="stat-sub" id="statEpsSub">exploration rate</span>
-        </div>
-      </div>
-
-      <div class="episode-banner" id="episodeBanner"></div>
-
-      <div class="sliders-row">
-        <div class="slider-group">
-          <div class="slider-header">
-            <span class="slider-name" translate="no">α — learning rate</span>
-            <span class="slider-val" id="valAlpha">0.3</span>
+        <!-- LEFT: random walker -->
+        <div class="agent-col">
+          <div class="col-header">
+            <span class="col-title" id="colTitleRW">Random Walker</span>
+            <span class="col-tag random" id="colTagRW">no memory</span>
           </div>
-          <input type="range" id="sliderAlpha" min="0.05" max="0.9" step="0.05" value="0.3" oninput="updateSliders()">
-          <span class="slider-desc" id="descAlpha">How much new information overwrites old. High = fast but unstable.</span>
-        </div>
-        <div class="slider-group">
-          <div class="slider-header">
-            <span class="slider-name" translate="no">γ — discount</span>
-            <span class="slider-val" id="valGamma">0.9</span>
-          </div>
-          <input type="range" id="sliderGamma" min="0.5" max="0.99" step="0.01" value="0.9" oninput="updateSliders()">
-          <span class="slider-desc" id="descGamma">How much future rewards matter. High = patient, far-sighted agent.</span>
-        </div>
-        <div class="slider-group">
-          <div class="slider-header">
-            <span class="slider-name" translate="no">ε decay</span>
-            <span class="slider-val" id="valDecay">0.995</span>
-          </div>
-          <input type="range" id="sliderDecay" min="0.98" max="0.999" step="0.001" value="0.995" oninput="updateSliders()">
-          <span class="slider-desc" id="descDecay">How fast exploration shrinks. Slow = more wandering before exploiting.</span>
-        </div>
-      </div>
-
-      <div class="legend-row">
-        <div class="q-scale-wrap">
-          <div class="q-scale-label" id="qScaleLabel">Q-value scale</div>
-          <div class="q-scale" id="qScale"></div>
-          <div class="q-scale-labels">
-            <span id="qScaleLow">0 (unknown)</span>
-            <span id="qScaleHigh">high value</span>
+          <canvas id="rwCanvas" width="280" height="280"></canvas>
+          <div class="agent-stats">
+            <div class="astat">
+              <span class="astat-label" id="rwLabelSteps">Steps</span>
+              <span class="astat-val" id="rwSteps">0</span>
+            </div>
+            <div class="astat">
+              <span class="astat-label" id="rwLabelGoals">Goal reached</span>
+              <span class="astat-val" id="rwGoals">0 times</span>
+            </div>
+            <div class="astat">
+              <span class="astat-label" id="rwLabelFirst">First goal at step</span>
+              <span class="astat-val" id="rwFirst">—</span>
+            </div>
           </div>
         </div>
-        <div class="legend-item">
-          <div class="legend-dot" style="background:#c87e7e"></div>
-          <span class="legend-text" id="legendAgent">agent</span>
+
+        <!-- RIGHT: Q-learning -->
+        <div class="agent-col">
+          <div class="col-header">
+            <span class="col-title" id="colTitleQL">Q-Learning</span>
+            <span class="col-tag ql" id="colTagQL">with memory</span>
+          </div>
+          <canvas id="qlCanvas" width="280" height="280"></canvas>
+          <div class="agent-stats">
+            <div class="astat">
+              <span class="astat-label" id="qlLabelSteps">Steps</span>
+              <span class="astat-val" id="qlSteps">0</span>
+            </div>
+            <div class="astat">
+              <span class="astat-label" id="qlLabelGoals">Goal reached</span>
+              <span class="astat-val" id="qlGoals">0 times</span>
+            </div>
+            <div class="astat">
+              <span class="astat-label" id="qlLabelFirst">First goal at step</span>
+              <span class="astat-val" id="qlFirst">—</span>
+            </div>
+          </div>
+
+
         </div>
-        <div class="legend-item">
-          <div class="legend-dot" style="background:#7ec89a"></div>
-          <span class="legend-text" id="legendGoal">goal ★</span>
-        </div>
+
       </div>
     </div>
+
+
+    <!-- Q-data toggle -->
+    <div class="q-data-toggle">
+      <button class="ctrl-btn" id="btnQData" onclick="toggleQData()" translate="no">▶ Show Q-Learning Data</button>
+    </div>
+    <div class="q-data-panel" id="qDataPanel">
+
+      <!-- Glossary -->
+      <div class="q-data-section">
+        <div class="q-data-title" id="qdGlossTitle">What these numbers mean</div>
+        <div class="q-glossary">
+          <div class="q-gloss-item">
+            <span class="q-gloss-term">ε (exploration)</span>
+            <span class="q-gloss-def" id="qdEpsDef">Probability that the agent picks a random direction instead of its best known move. Starts at 1.0 (fully random) and decays toward 0.05 as learning progresses.</span>
+          </div>
+          <div class="q-gloss-item">
+            <span class="q-gloss-term" id="qdEpsLive" translate="no"></span>
+            <span class="q-gloss-live" id="qdEpsVal" translate="no">1.00</span>
+          </div>
+          <div class="q-gloss-item">
+            <span class="q-gloss-term" id="qdRandLabel">Random moves</span>
+            <span class="q-gloss-live" id="qdRandVal" translate="no">0</span>
+          </div>
+          <div class="q-gloss-item">
+            <span class="q-gloss-term" id="qdGreedyLabel">Greedy moves</span>
+            <span class="q-gloss-live" id="qdGreedyVal" translate="no">0</span>
+          </div>
+          <div class="q-gloss-item">
+            <span class="q-gloss-term">Episodes</span>
+            <span class="q-gloss-def" id="qdEpisDef">Each time the agent finds the goal and resets to the start, one episode ends. The agent reuses everything it learned in the Q-table.</span>
+          </div>
+          <div class="q-gloss-item">
+            <span class="q-gloss-term" id="qdEpisLive" translate="no"></span>
+            <span class="q-gloss-live" id="qdEpisVal" translate="no">0</span>
+          </div>
+          <div class="q-gloss-item">
+            <span class="q-gloss-term" id="qdBestLabel">Best episode</span>
+            <span class="q-gloss-live" id="qdBestVal" translate="no">—</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Policy map -->
+      <div class="q-data-section">
+        <div class="q-data-title" id="qdPolicyTitle">Q-Table — policy map</div>
+        <div class="q-data-title" style="font-size:8px; color:var(--text-dim); margin-top:-0.4rem; margin-bottom:0.6rem;" id="qdPolicySub">Arrow = best action per cell · Grey dot = not yet learned · Click cell for Q-values</div>
+        <div class="q-grid-wrap">
+          <table id="qGridTable"></table>
+        </div>
+      </div>
+
+      <!-- Q inspector (moved here) -->
+      <div class="q-data-section">
+        <div class="q-data-title" id="qdInspTitle">Q-Values for selected cell</div>
+        <div class="q-cell-id" id="qCellId" translate="no">click a cell in the policy map →</div>
+        <div class="q-rows">
+          <div class="q-row" id="qRowN"><span class="q-arrow">↑</span><div class="q-bar-wrap"><div class="q-bar" id="qBarN" style="width:0%"></div></div><span class="q-val" id="qValN">0.000</span></div>
+          <div class="q-row" id="qRowS"><span class="q-arrow">↓</span><div class="q-bar-wrap"><div class="q-bar" id="qBarS" style="width:0%"></div></div><span class="q-val" id="qValS">0.000</span></div>
+          <div class="q-row" id="qRowE"><span class="q-arrow">→</span><div class="q-bar-wrap"><div class="q-bar" id="qBarE" style="width:0%"></div></div><span class="q-val" id="qValE">0.000</span></div>
+          <div class="q-row" id="qRowW"><span class="q-arrow">←</span><div class="q-bar-wrap"><div class="q-bar" id="qBarW" style="width:0%"></div></div><span class="q-val" id="qValW">0.000</span></div>
+        </div>
+        <div class="q-hint" id="qHint">Click any cell in the policy map</div>
+      </div>
+
+    </div>
+
     <div class="widget-controls">
       <button class="ctrl-btn primary" id="btnRun" onclick="toggleRun()" translate="no">Run</button>
       <button class="ctrl-btn" onclick="resetAll()" translate="no">Reset</button>
@@ -310,413 +382,543 @@
   <div class="section-break" id="secBreak1">memory</div>
 
   <div class="prose">
-    <p id="p6">Notice the asymmetry: the agent does not plan. It does not reason about paths. It only consults its table at each step and asks: which direction has the highest estimated value? The intelligence is in the table — not in the agent. The table is the memory. The agent is just the body that carries it.</p>
-    <p id="p7">This is what makes Q-learning an X-Ray tool: it externalizes knowledge into a structure we can inspect. We are not guessing what the agent has learned. We can see it — cell by cell, value by value.</p>
-    <p id="p8">But there is a limit waiting ahead. The maze here has 81 cells. A real problem — say, a game of chess, or a robot navigating a building — has millions of possible states. The table would need a row for each one. At some point, the table becomes too large to exist. That is where the next chapter begins.</p>
+    <p id="p6">The right side paused when Q-learning first reached the goal. At that moment, the random walker may have also passed through the goal — perhaps many times. But it has no policy. It cannot reliably find the goal again. It will find it again only by accident.</p>
+    <p id="p7">The Q-learning agent has something different. Look at the arrows in the cells it has visited. They are not yet complete — many cells are still blank, not yet explored. But the cells near the goal already have confident arrows pointing toward it. Knowledge is propagating backward from the reward.</p>
+    <p id="p8">This is the X-Ray view of learning: not what the agent did, but what it knows. The table is readable. Click any cell in the right maze and you see four numbers — the estimated value of moving north, south, east, west from that position. The brightest bar is the agent's current best guess. You can trace the reasoning behind every future decision before it is made.</p>
   </div>
+
+  <blockquote class="pull-quote">
+    <p id="pq1">"What fires together, wires together."</p>
+  </blockquote>
+
+  <div class="prose">
+    <p id="p9">Continue the simulation after pausing. Watch the arrows fill in. Watch the policy crystallize. Then ask: what happens if the maze is ten times larger? The table needs ten times more rows. A hundred times larger? A hundred times more rows. There is a point where the table becomes too large to exist. That point is the subject of the next chapter.</p>
+  </div>
+
 </main>
 
 <footer>
   <div class="footer-nav"><a href="chapter_04_emergence.html" id="footerPrev">← IV. Emergence</a></div>
-  <div class="footer-nav"><a href="#" id="footerNext">VI. The Wall →</a></div>
+  <div class="footer-nav"><a href="chapter_06_the_wall.html" id="footerNext">VI. The Wall →</a></div>
 </footer>
 
 <script>
 // ─── Constants ───────────────────────────────────────────────────────────────
-const COLS = 7, ROWS = 7;
-const CELL = 300 / COLS;
-const goalR = ROWS - 1, goalC = COLS - 1;
-const ACTIONS = [{dr:-1,dc:0},{dr:1,dc:0},{dr:0,dc:1},{dr:0,dc:-1}]; // N S E W
+const ROWS = 7, COLS = 7;
+const CS = 280; // canvas size in pixels
+const CELL = CS / COLS;
+const GOAL_R = ROWS-1, GOAL_C = COLS-1;
+const ACTIONS = [{dr:-1,dc:0},{dr:1,dc:0},{dr:0,dc:1},{dr:0,dc:-1}];
+const ARROWS = ['↑','↓','→','←'];
 
 // ─── Settings ────────────────────────────────────────────────────────────────
-function setTheme(t, skipRedraw) {
-  document.documentElement.dataset.theme = t === 'dark' ? 'dark' : '';
+function setTheme(t, skip) {
+  document.documentElement.dataset.theme = t==='dark'?'dark':'';
   localStorage.setItem('xray-theme', t);
-  document.getElementById('btnLight').classList.toggle('active', t === 'light');
-  document.getElementById('btnDark').classList.toggle('active', t === 'dark');
-  if (!skipRedraw) redrawAll();
+  document.getElementById('btnLight').classList.toggle('active', t==='light');
+  document.getElementById('btnDark').classList.toggle('active', t==='dark');
+  if (!skip) redrawAll();
 }
 function setFsize(s) {
-  document.documentElement.dataset.fsize = s === 'default' ? '' : s;
+  document.documentElement.dataset.fsize = s==='default'?'':s;
   localStorage.setItem('xray-fsize', s);
-  ['btnFsDef','btnFsLg','btnFsXl'].forEach(id => document.getElementById(id).classList.remove('active'));
-  document.getElementById(s === 'default' ? 'btnFsDef' : s === 'large' ? 'btnFsLg' : 'btnFsXl').classList.add('active');
+  ['btnFsDef','btnFsLg','btnFsXl'].forEach(id=>document.getElementById(id).classList.remove('active'));
+  document.getElementById(s==='default'?'btnFsDef':s==='large'?'btnFsLg':'btnFsXl').classList.add('active');
 }
 function setContrast(c) {
-  document.documentElement.dataset.contrast = c === 'high' ? 'high' : '';
+  document.documentElement.dataset.contrast = c==='high'?'high':'';
   localStorage.setItem('xray-contrast', c);
-  document.getElementById('btnCnStd').classList.toggle('active', c === 'standard');
-  document.getElementById('btnCnHi').classList.toggle('active', c === 'high');
+  document.getElementById('btnCnStd').classList.toggle('active', c==='standard');
+  document.getElementById('btnCnHi').classList.toggle('active', c==='high');
 }
 function toggleSettings() {
-  const sb = document.getElementById('settingsBar'), lb = document.getElementById('langBar');
+  const sb=document.getElementById('settingsBar'), lb=document.getElementById('langBar');
   lb.classList.remove('open'); document.getElementById('langToggle').classList.remove('active');
   sb.classList.toggle('open');
   document.getElementById('settingsToggle').classList.toggle('active', sb.classList.contains('open'));
 }
 function toggleLang() {
-  const lb = document.getElementById('langBar'), sb = document.getElementById('settingsBar');
+  const lb=document.getElementById('langBar'), sb=document.getElementById('settingsBar');
   sb.classList.remove('open'); document.getElementById('settingsToggle').classList.remove('active');
   lb.classList.toggle('open');
   document.getElementById('langToggle').classList.toggle('active', lb.classList.contains('open'));
 }
 
-// ─── Maze generation ─────────────────────────────────────────────────────────
+// ─── Maze ────────────────────────────────────────────────────────────────────
 function generateMaze() {
-  const visited = Array.from({length:ROWS}, () => new Array(COLS).fill(false));
-  const walls = Array.from({length:ROWS}, () =>
-    Array.from({length:COLS}, () => ({N:true,S:true,E:true,W:true})));
-  const dirs = [{dr:-1,dc:0,d:'N',opp:'S'},{dr:1,dc:0,d:'S',opp:'N'},{dr:0,dc:1,d:'E',opp:'W'},{dr:0,dc:-1,d:'W',opp:'E'}];
-  function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
-  let r=0,c=0; visited[r][c]=true;
-  const stack=[[r,c]];
-  while(stack.length){
-    const[cr,cc]=stack[stack.length-1];
-    const nbrs=shuffle(dirs.map(d=>({nr:cr+d.dr,nc:cc+d.dc,d:d.d,opp:d.opp}))).filter(({nr,nc})=>nr>=0&&nr<ROWS&&nc>=0&&nc<COLS&&!visited[nr][nc]);
-    if(nbrs.length){const{nr,nc,d,opp}=nbrs[0];walls[cr][cc][d]=false;walls[nr][nc][opp]=false;visited[nr][nc]=true;stack.push([nr,nc]);}
-    else stack.pop();
+  const vis=Array.from({length:ROWS},()=>new Array(COLS).fill(false));
+  const w=Array.from({length:ROWS},()=>Array.from({length:COLS},()=>({N:true,S:true,E:true,W:true})));
+  const dirs=[{dr:-1,dc:0,d:'N',o:'S'},{dr:1,dc:0,d:'S',o:'N'},{dr:0,dc:1,d:'E',o:'W'},{dr:0,dc:-1,d:'W',o:'E'}];
+  function sh(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+  vis[0][0]=true; const stk=[[0,0]];
+  while(stk.length){
+    const[cr,cc]=stk[stk.length-1];
+    const nb=sh(dirs.map(d=>({nr:cr+d.dr,nc:cc+d.dc,...d}))).filter(({nr,nc})=>nr>=0&&nr<ROWS&&nc>=0&&nc<COLS&&!vis[nr][nc]);
+    if(nb.length){const{nr,nc,d,o}=nb[0];w[cr][cc][d]=false;w[nr][nc][o]=false;vis[nr][nc]=true;stk.push([nr,nc]);}
+    else stk.pop();
   }
-  return walls;
+  return w;
 }
 
-// ─── State ───────────────────────────────────────────────────────────────────
 let maze = generateMaze();
-// Q[r][c][a] where a: 0=N,1=S,2=E,3=W
-let Q = Array.from({length:ROWS}, () => Array.from({length:COLS}, () => new Array(4).fill(0)));
-let agentR = 0, agentC = 0;
-let epsilon = 1.0;
-let episodes = 0, totalSteps = 0, bestEpisode = Infinity;
-let episodeSteps = 0;
-let running = false, animHandle = null;
-let stepsPerFrame = 5;
-let alpha = 0.3, gamma = 0.9, epsilonDecay = 0.995;
-const epsilonMin = 0.05;
 
-function resetAll() {
-  Q = Array.from({length:ROWS}, () => Array.from({length:COLS}, () => new Array(4).fill(0)));
-  agentR = 0; agentC = 0; epsilon = 1.0;
-  episodes = 0; totalSteps = 0; bestEpisode = Infinity; episodeSteps = 0;
-  running = false;
-  if (animHandle) { cancelAnimationFrame(animHandle); animHandle = null; }
-  document.getElementById('btnRun').textContent = currentLang === 'de' ? 'Start' : 'Run';
-  document.getElementById('btnRun').classList.add('primary');
-  document.getElementById('btnRun').classList.remove('danger');
-  document.getElementById('episodeBanner').textContent = '';
-  updateStats();
-  redrawAll();
+function canMove(r,c,a){
+  const w=maze[r][c];
+  if(a===0)return r>0&&!w.N;
+  if(a===1)return r<ROWS-1&&!w.S;
+  if(a===2)return c<COLS-1&&!w.E;
+  if(a===3)return c>0&&!w.W;
+  return false;
+}
+function validActions(r,c){return[0,1,2,3].filter(a=>canMove(r,c,a));}
+
+// ─── Random Walker state ─────────────────────────────────────────────────────
+let RW = {
+  r:0, c:0, steps:0, goals:0, firstGoal:null,
+  visits: null,
+  init() {
+    this.r=0; this.c=0; this.steps=0; this.goals=0; this.firstGoal=null;
+    this.visits=Array.from({length:ROWS},()=>new Array(COLS).fill(0));
+    this.visits[0][0]=1;
+  },
+  step() {
+    const v=validActions(this.r,this.c);
+    const act=ACTIONS[v[Math.floor(Math.random()*v.length)]];const dr=act.dr,dc=act.dc;
+    this.r+=dr; this.c+=dc; this.steps++;
+    this.visits[this.r][this.c]++;
+    if(this.r===GOAL_R&&this.c===GOAL_C){
+      this.goals++;
+      if(this.firstGoal===null) this.firstGoal=this.steps;
+    }
+  }
+};
+
+// ─── Q-Learning state ────────────────────────────────────────────────────────
+const alpha=0.3, gamma=0.9, epsilonDecay=0.995, epsilonMin=0.05;
+
+let QL = {
+  r:0, c:0, steps:0, episodes:0, best:Infinity, epSteps:0,
+  eps:1.0, Q:null, firstGoalStep:null, randomMoves:0, greedyMoves:0,
+  init() {
+    this.r=0; this.c=0; this.steps=0; this.episodes=0;
+    this.best=Infinity; this.epSteps=0; this.eps=1.0; this.firstGoalStep=null; this.randomMoves=0; this.greedyMoves=0;
+    this.Q=Array.from({length:ROWS},()=>Array.from({length:COLS},()=>new Array(4).fill(0)));
+  },
+  choose(r,c) {
+    const v=validActions(r,c);
+    if(Math.random()<this.eps){this.randomMoves++;return v[Math.floor(Math.random()*v.length)];}
+    this.greedyMoves++;
+    let best=-Infinity, ba=v[0];
+    for(const a of v) if(this.Q[r][c][a]>best){best=this.Q[r][c][a];ba=a;}
+    return ba;
+  },
+  step() {
+    const a=this.choose(this.r,this.c);
+    const nr=this.r+ACTIONS[a].dr, nc=this.c+ACTIONS[a].dc;
+    const done=(nr===GOAL_R&&nc===GOAL_C);
+    const reward=done?1.0:-0.01;
+    const maxN=done?0:Math.max(...validActions(nr,nc).map(na=>this.Q[nr][nc][na]));
+    this.Q[this.r][this.c][a]+=alpha*(reward+gamma*maxN-this.Q[this.r][this.c][a]);
+    this.r=nr; this.c=nc; this.steps++; this.epSteps++;
+    if(done){
+      if(this.epSteps<this.best) this.best=this.epSteps;
+      if(this.firstGoalStep===null) this.firstGoalStep=this.steps;
+      this.episodes++;
+      this.eps=Math.max(epsilonMin,this.eps*epsilonDecay);
+      this.epSteps=0; this.r=0; this.c=0;
+      return true;
+    }
+    return false;
+  }
+};
+
+// ─── Selected cell ───────────────────────────────────────────────────────────
+let selR=-1, selC=-1;
+
+document.getElementById('qlCanvas').addEventListener('click', function(e) {
+  const rect=this.getBoundingClientRect();
+  const scaleX=CS/rect.width, scaleY=CS/rect.height;
+  const x=(e.clientX-rect.left)*scaleX, y=(e.clientY-rect.top)*scaleY;
+  const c=Math.floor(x/CELL), r=Math.floor(y/CELL);
+  if(r>=0&&r<ROWS&&c>=0&&c<COLS){selR=r;selC=c;updateInspector();drawQL();}
+});
+
+function updateInspector() {
+  if(selR<0) return;
+  const vals=QL.Q[selR][selC];
+  const maxV=Math.max(...vals);
+  document.getElementById('qCellId').textContent=`row ${selR+1}, col ${selC+1}`;
+  let bestA=0; for(let i=1;i<4;i++) if(vals[i]>vals[bestA]) bestA=i;
+  ['N','S','E','W'].forEach((d,i)=>{
+    const row=document.getElementById('qRow'+d);
+    const bar=document.getElementById('qBar'+d);
+    const val=document.getElementById('qVal'+d);
+    const pct=maxV>0.001?Math.max(0,vals[i]/maxV*100):0;
+    bar.style.width=pct+'%';
+    val.textContent=vals[i].toFixed(3);
+    row.classList.toggle('best', i===bestA&&maxV>0.001);
+  });
+  const t=currentLang==='de';
+  document.getElementById('qHint').textContent = maxV>0.001
+    ? (t?`Beste: ${ARROWS[bestA]}`:`Best: ${ARROWS[bestA]}`)
+    : (t?'Noch nicht gelernt':'Not learned yet');
 }
 
-function newMaze() { maze = generateMaze(); resetAll(); }
+// ─── Drawing helpers ─────────────────────────────────────────────────────────
+function getCSSVar(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
 
-function updateSliders() {
-  alpha = parseFloat(document.getElementById('sliderAlpha').value);
-  gamma = parseFloat(document.getElementById('sliderGamma').value);
-  epsilonDecay = parseFloat(document.getElementById('sliderDecay').value);
-  document.getElementById('valAlpha').textContent = alpha.toFixed(2);
-  document.getElementById('valGamma').textContent = gamma.toFixed(2);
-  document.getElementById('valDecay').textContent = epsilonDecay.toFixed(3);
+function drawMazeBase(ctx, size) {
+  const cell=size/COLS;
+  ctx.clearRect(0,0,size,size);
+  ctx.fillStyle=getCSSVar('--bg3');
+  ctx.fillRect(0,0,size,size);
+  // goal
+  ctx.fillStyle=getCSSVar('--accent4');
+  ctx.font=`${Math.floor(cell*0.48)}px serif`;
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText('★',(GOAL_C+0.5)*cell,(GOAL_R+0.5)*cell);
+  // walls
+  ctx.strokeStyle=getCSSVar('--border');
+  ctx.lineWidth=1.5;
+  ctx.strokeRect(0.75,0.75,size-1.5,size-1.5);
+  for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++){
+    const x=c*cell,y=r*cell,w=maze[r][c];
+    ctx.beginPath();
+    if(w.S&&r<ROWS-1){ctx.moveTo(x,y+cell);ctx.lineTo(x+cell,y+cell);}
+    if(w.E&&c<COLS-1){ctx.moveTo(x+cell,y);ctx.lineTo(x+cell,y+cell);}
+    ctx.stroke();
+  }
 }
 
-function setSpeed(s) {
-  stepsPerFrame = s === 1 ? 1 : s === 5 ? 8 : 40;
-  ['spd1','spd5','spd20'].forEach(id => document.getElementById(id).classList.remove('active'));
+function drawArrow(ctx, cx, cy, dir, opacity, color) {
+  const len=CELL*0.27, hw=CELL*0.08;
+  ctx.globalAlpha=opacity;
+  ctx.strokeStyle=color; ctx.fillStyle=color; ctx.lineWidth=1.5;
+  let x1,y1,x2,y2;
+  if(dir===0){x1=cx;y1=cy+len*.5;x2=cx;y2=cy-len*.5;}
+  else if(dir===1){x1=cx;y1=cy-len*.5;x2=cx;y2=cy+len*.5;}
+  else if(dir===2){x1=cx-len*.5;y1=cy;x2=cx+len*.5;y2=cy;}
+  else{x1=cx+len*.5;y1=cy;x2=cx-len*.5;y2=cy;}
+  ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+  const ang=Math.atan2(y2-y1,x2-x1);
+  ctx.beginPath();
+  ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-hw*1.6*Math.cos(ang-.5),y2-hw*1.6*Math.sin(ang-.5));
+  ctx.lineTo(x2-hw*1.6*Math.cos(ang+.5),y2-hw*1.6*Math.sin(ang+.5));
+  ctx.closePath();ctx.fill();
+  ctx.globalAlpha=1;
+}
+
+// ─── Draw random walker ───────────────────────────────────────────────────────
+function drawRW() {
+  const canvas=document.getElementById('rwCanvas');
+  const ctx=canvas.getContext('2d');
+  const isDark=document.documentElement.dataset.theme==='dark';
+  drawMazeBase(ctx, CS);
+  // heatmap
+  let maxV=0;
+  for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++) maxV=Math.max(maxV,RW.visits[r][c]);
+  if(maxV>0) {
+    for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++){
+      const v=Math.pow(RW.visits[r][c]/maxV,.5);
+      if(v>0.001){
+        let col;
+        if(isDark) col=`rgb(${Math.round(42+v*(200-42))},${Math.round(60+v*(169-60))},${Math.round(128+v*(40-128))})`;
+        else col=`rgb(${Math.round(228+v*(160-228))},${Math.round(221+v*(110-221))},${Math.round(212+v*(30-212))})`;
+        ctx.fillStyle=col; ctx.fillRect(c*CELL,r*CELL,CELL,CELL);
+      }
+    }
+    // redraw walls over heatmap
+    ctx.strokeStyle=getCSSVar('--text'); ctx.lineWidth=0.8;
+    for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++){
+      const x=c*CELL,y=r*CELL,w=maze[r][c];
+      ctx.beginPath();
+      if(w.S&&r<ROWS-1){ctx.moveTo(x,y+CELL);ctx.lineTo(x+CELL,y+CELL);}
+      if(w.E&&c<COLS-1){ctx.moveTo(x+CELL,y);ctx.lineTo(x+CELL,y+CELL);}
+      ctx.stroke();
+    }
+    // goal star on top
+    ctx.fillStyle=getCSSVar('--accent4');
+    ctx.font=`${Math.floor(CELL*0.48)}px serif`;
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText('★',(GOAL_C+0.5)*CELL,(GOAL_R+0.5)*CELL);
+  }
+  // agent
+  ctx.beginPath();
+  ctx.arc((RW.c+0.5)*CELL,(RW.r+0.5)*CELL,CELL*0.22,0,Math.PI*2);
+  ctx.fillStyle=isDark?'rgba(200,126,126,0.7)':'rgba(128,32,48,0.75)';
+  ctx.fill();
+}
+
+// ─── Draw Q-learning ─────────────────────────────────────────────────────────
+function drawQL() {
+  const canvas=document.getElementById('qlCanvas');
+  const ctx=canvas.getContext('2d');
+  const isDark=document.documentElement.dataset.theme==='dark';
+  drawMazeBase(ctx, CS);
+
+  let maxQ=0;
+  for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++) maxQ=Math.max(maxQ,...QL.Q[r][c]);
+
+  for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++){
+    if(r===GOAL_R&&c===GOAL_C) continue;
+    const vals=QL.Q[r][c];
+    const cellMax=Math.max(...vals);
+    const valid=validActions(r,c);
+    let bestA=valid[0];
+    for(const a of valid) if(vals[a]>vals[bestA]) bestA=a;
+
+    let opacity, color;
+    if(maxQ<0.001){
+      opacity=0.12; color=getCSSVar('--text-dim');
+    } else {
+      const avg=vals.reduce((s,v)=>s+v,0)/4;
+      const conf=maxQ>0?Math.max(0,(cellMax-avg)/maxQ):0;
+      opacity=0.12+conf*0.82;
+      if(isDark){
+        const t=Math.min(1,conf*1.3);
+        color=`rgb(${Math.round(107+t*(126-107))},${Math.round(102+t*(200-102))},${Math.round(96+t*(154-96))})`;
+      } else {
+        const t=Math.min(1,conf*1.3);
+        color=`rgb(${Math.round(122+t*(40-122))},${Math.round(110+t*(96-110))},${Math.round(101+t*(64-101))})`;
+      }
+    }
+    drawArrow(ctx, (c+0.5)*CELL, (r+0.5)*CELL, bestA, opacity, color);
+  }
+
+  // selected cell highlight
+  if(selR>=0){
+    ctx.strokeStyle=isDark?'#7eb3c8':'#2a6080';
+    ctx.lineWidth=2;
+    ctx.strokeRect(selC*CELL+1,selR*CELL+1,CELL-2,CELL-2);
+  }
+
+  // agent
+  ctx.beginPath();
+  ctx.arc((QL.c+0.5)*CELL,(QL.r+0.5)*CELL,CELL*0.22,0,Math.PI*2);
+  ctx.fillStyle=isDark?'rgba(126,200,154,0.85)':'rgba(40,96,64,0.8)';
+  ctx.fill();
+}
+
+function redrawAll(){drawRW();drawQL();}
+
+// ─── Stats ────────────────────────────────────────────────────────────────────
+function updateStats() {
+  // RW
+  document.getElementById('rwSteps').textContent=RW.steps.toLocaleString();
+  document.getElementById('rwGoals').textContent=RW.goals+' times';
+  document.getElementById('rwFirst').textContent=RW.firstGoal===null?'—':RW.firstGoal.toLocaleString();
+  // QL
+  document.getElementById('qlSteps').textContent=QL.steps.toLocaleString();
+  document.getElementById('qlGoals').textContent=QL.episodes+' times';
+  document.getElementById('qlFirst').textContent=QL.firstGoalStep===null?'—':QL.firstGoalStep.toLocaleString();
+}
+
+
+// ─── Q-data panel ────────────────────────────────────────────────────────────
+let qDataOpen = false;
+function toggleQData() {
+  qDataOpen = !qDataOpen;
+  document.getElementById('qDataPanel').classList.toggle('open', qDataOpen);
+  const btn = document.getElementById('btnQData');
+  const t = currentLang === 'de';
+  btn.textContent = qDataOpen
+    ? (t ? '▼ Q-Learning Daten ausblenden' : '▼ Hide Q-Learning Data')
+    : (t ? '▶ Q-Learning Daten anzeigen' : '▶ Show Q-Learning Data');
+}
+
+function buildQGrid() {
+  const tbl = document.getElementById('qGridTable');
+  tbl.innerHTML = '';
+  for (let r = 0; r < ROWS; r++) {
+    const tr = document.createElement('tr');
+    for (let c = 0; c < COLS; c++) {
+      const td = document.createElement('td');
+      if (r === GOAL_R && c === GOAL_C) { td.classList.add('goal-cell'); td.textContent = '★'; }
+      td.dataset.r = r; td.dataset.c = c;
+      td.addEventListener('click', function() {
+        selR = +this.dataset.r; selC = +this.dataset.c;
+        document.querySelectorAll('#qGridTable td').forEach(x => x.classList.remove('selected-cell'));
+        this.classList.add('selected-cell');
+        updateInspector();
+        drawQL();
+      });
+      tr.appendChild(td);
+    }
+    tbl.appendChild(tr);
+  }
+}
+
+function updateQGrid() {
+  if (!qDataOpen) return;
+  const cells = document.querySelectorAll('#qGridTable td');
+  cells.forEach(td => {
+    const r = +td.dataset.r, c = +td.dataset.c;
+    if (r === GOAL_R && c === GOAL_C) return;
+    const vals = QL.Q[r][c];
+    const maxV = Math.max(...vals);
+    if (maxV < 0.001) {
+      td.textContent = '·'; td.classList.add('unlearned'); td.classList.remove('unlearned');
+      td.textContent = '·'; td.style.color = 'var(--text-dim)'; td.style.fontSize = '10px';
+    } else {
+      let bestA = 0;
+      for (let i = 1; i < 4; i++) if (vals[i] > vals[bestA]) bestA = i;
+      td.textContent = ARROWS[bestA]; td.style.color = ''; td.style.fontSize = '';
+      // heat bg: intensity from 0→max
+      const intensity = Math.min(1, maxV * 2);
+      td.style.background = `rgba(126,179,200,${intensity * 0.35})`;
+    }
+    if (selR === r && selC === c) td.classList.add('selected-cell');
+    else td.classList.remove('selected-cell');
+  });
+  // live glossary values
+  document.getElementById('qdEpsVal').textContent = QL.eps.toFixed(2);
+  document.getElementById('qdEpisVal').textContent = QL.episodes.toLocaleString();
+  document.getElementById('qdRandVal').textContent = QL.randomMoves.toLocaleString();
+  document.getElementById('qdGreedyVal').textContent = QL.greedyMoves.toLocaleString();
+  document.getElementById('qdBestVal').textContent = QL.best===Infinity?'—':QL.best.toLocaleString()+'  steps';
+}
+
+// ─── Control ─────────────────────────────────────────────────────────────────
+let running=false, animHandle=null, stepsPerFrame=8, firstGoalPaused=false;
+
+function resetAll(){
+  running=false; firstGoalPaused=false;
+  if(animHandle){cancelAnimationFrame(animHandle);animHandle=null;}
+  RW.init(); QL.init();
+  selR=-1; selC=-1;
+  buildQGrid(); updateQGrid();
+  document.getElementById('pauseBanner').classList.remove('visible');
+  const btn=document.getElementById('btnRun');
+  btn.textContent=currentLang==='de'?'Start':'Run';
+  btn.classList.add('primary'); btn.classList.remove('danger');
+  updateStats(); updateInspector(); redrawAll();
+}
+
+function newMaze(){maze=generateMaze();resetAll();}
+
+function setSpeed(s){
+  stepsPerFrame=s===1?1:s===5?8:40;
+  ['spd1','spd5','spd20'].forEach(id=>document.getElementById(id).classList.remove('active'));
   document.getElementById('spd'+s).classList.add('active');
 }
 
-// ─── Q-learning step ─────────────────────────────────────────────────────────
-function canMove(r, c, a) {
-  const w = maze[r][c];
-  if (a === 0) return r > 0 && !w.N;
-  if (a === 1) return r < ROWS-1 && !w.S;
-  if (a === 2) return c < COLS-1 && !w.E;
-  if (a === 3) return c > 0 && !w.W;
-  return false;
-}
-
-function validActions(r, c) {
-  return ACTIONS.map((_,i) => i).filter(a => canMove(r, c, a));
-}
-
-function chooseAction(r, c) {
-  const valid = validActions(r, c);
-  if (Math.random() < epsilon) {
-    return valid[Math.floor(Math.random() * valid.length)];
-  }
-  let best = -Infinity, bestA = valid[0];
-  for (const a of valid) { if (Q[r][c][a] > best) { best = Q[r][c][a]; bestA = a; } }
-  return bestA;
-}
-
-function step() {
-  const a = chooseAction(agentR, agentC);
-  const nr = agentR + ACTIONS[a].dr, nc = agentC + ACTIONS[a].dc;
-  const reward = (nr === goalR && nc === goalC) ? 1.0 : -0.01;
-  const maxNextQ = nr === goalR && nc === goalC ? 0 :
-    Math.max(...validActions(nr, nc).map(na => Q[nr][nc][na]));
-  Q[agentR][agentC][a] += alpha * (reward + gamma * maxNextQ - Q[agentR][agentC][a]);
-  agentR = nr; agentC = nc;
-  totalSteps++; episodeSteps++;
-
-  if (agentR === goalR && agentC === goalC) {
-    if (episodeSteps < bestEpisode) bestEpisode = episodeSteps;
-    episodes++;
-    epsilon = Math.max(epsilonMin, epsilon * epsilonDecay);
-    const banner = document.getElementById('episodeBanner');
-    banner.textContent = `Episode ${episodes} — reached goal in ${episodeSteps} steps`;
-    episodeSteps = 0;
-    agentR = 0; agentC = 0;
-  }
-}
-
-// ─── Drawing ─────────────────────────────────────────────────────────────────
-function getCSSVar(name) {
-  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-}
-
-function drawMaze() {
-  const canvas = document.getElementById('mazeCanvas');
-  const ctx = canvas.getContext('2d');
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  ctx.fillStyle = getCSSVar('--bg3');
-  ctx.fillRect(0,0,canvas.width,canvas.height);
-
-  // goal
-  ctx.fillStyle = getCSSVar('--accent4');
-  ctx.font = `${Math.floor(CELL*0.45)}px serif`;
-  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  ctx.fillText('★', (goalC+0.5)*CELL, (goalR+0.5)*CELL);
-
-  // walls
-  ctx.strokeStyle = getCSSVar('--border');
-  ctx.lineWidth = 1.5;
-  ctx.strokeRect(0.75, 0.75, canvas.width-1.5, canvas.height-1.5);
-  for (let r=0;r<ROWS;r++) for (let c=0;c<COLS;c++) {
-    const x=c*CELL, y=r*CELL, w=maze[r][c];
-    ctx.beginPath();
-    if (w.S && r<ROWS-1) { ctx.moveTo(x,y+CELL); ctx.lineTo(x+CELL,y+CELL); }
-    if (w.E && c<COLS-1) { ctx.moveTo(x+CELL,y); ctx.lineTo(x+CELL,y+CELL); }
-    ctx.stroke();
-  }
-
-  // start marker
-  ctx.font = `${Math.floor(CELL*0.28)}px JetBrains Mono, monospace`;
-  ctx.fillStyle = getCSSVar('--text-dim');
-  ctx.fillText('S', CELL*0.5, CELL*0.5);
-
-  // agent
-  const isDark = document.documentElement.dataset.theme === 'dark';
-  const ax = (agentC+0.5)*CELL, ay = (agentR+0.5)*CELL;
-  ctx.beginPath();
-  ctx.arc(ax, ay, CELL*0.28, 0, Math.PI*2);
-  ctx.fillStyle = isDark ? '#c87e7e' : '#802030';
-  ctx.fill();
-}
-
-function drawQ() {
-  const canvas = document.getElementById('qCanvas');
-  const ctx = canvas.getContext('2d');
-  const isDark = document.documentElement.dataset.theme === 'dark';
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  ctx.fillStyle = getCSSVar('--bg3');
-  ctx.fillRect(0,0,canvas.width,canvas.height);
-
-  // find global max for normalisation
-  let maxQ = 0;
-  for (let r=0;r<ROWS;r++) for (let c=0;c<COLS;c++)
-    maxQ = Math.max(maxQ, ...Q[r][c]);
-  if (maxQ < 0.001) maxQ = 1;
-
-  for (let r=0;r<ROWS;r++) {
-    for (let c=0;c<COLS;c++) {
-      const v = Math.max(0, Math.max(...Q[r][c])) / maxQ;
-      if (v > 0.001) {
-        let col;
-        if (isDark) {
-          // cold blue → warm amber
-          const rr = Math.round(42 + v*(200-42));
-          const g  = Math.round(60 + v*(169-60));
-          const b  = Math.round(128 + v*(40-128));
-          col = `rgb(${rr},${g},${b})`;
-        } else {
-          // pale → warm brown-gold
-          const rr = Math.round(228 + v*(160-228));
-          const g  = Math.round(221 + v*(110-221));
-          const b  = Math.round(212 + v*(30-212));
-          col = `rgb(${rr},${g},${b})`;
-        }
-        ctx.fillStyle = col;
-        ctx.fillRect(c*CELL, r*CELL, CELL, CELL);
-      }
-    }
-  }
-
-  // goal
-  ctx.fillStyle = getCSSVar('--accent4');
-  ctx.font = `${Math.floor(CELL*0.45)}px serif`;
-  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  ctx.fillText('★', (goalC+0.5)*CELL, (goalR+0.5)*CELL);
-
-  // walls
-  ctx.strokeStyle = getCSSVar('--text');
-  ctx.lineWidth = 1;
-  ctx.strokeRect(0.5, 0.5, canvas.width-1, canvas.height-1);
-  for (let r=0;r<ROWS;r++) for (let c=0;c<COLS;c++) {
-    const x=c*CELL, y=r*CELL, w=maze[r][c];
-    ctx.beginPath();
-    if (w.S && r<ROWS-1) { ctx.moveTo(x,y+CELL); ctx.lineTo(x+CELL,y+CELL); }
-    if (w.E && c<COLS-1) { ctx.moveTo(x+CELL,y); ctx.lineTo(x+CELL,y+CELL); }
-    ctx.stroke();
-  }
-
-  // agent dot (small)
-  const ax = (agentC+0.5)*CELL, ay = (agentR+0.5)*CELL;
-  ctx.beginPath();
-  ctx.arc(ax, ay, CELL*0.18, 0, Math.PI*2);
-  ctx.fillStyle = isDark ? 'rgba(200,126,126,0.7)' : 'rgba(128,32,48,0.6)';
-  ctx.fill();
-}
-
-function buildQScale() {
-  const scale = document.getElementById('qScale');
-  const isDark = document.documentElement.dataset.theme === 'dark';
-  scale.innerHTML = '';
-  for (let i=0;i<20;i++) {
-    const v = i/19;
-    let col;
-    if (isDark) {
-      col = `rgb(${Math.round(42+v*(200-42))},${Math.round(60+v*(169-60))},${Math.round(128+v*(40-128))})`;
-    } else {
-      col = `rgb(${Math.round(228+v*(160-228))},${Math.round(221+v*(110-221))},${Math.round(212+v*(30-212))})`;
-    }
-    const seg = document.createElement('div');
-    seg.style.cssText = `flex:1;background:${col};`;
-    scale.appendChild(seg);
-  }
-}
-
-function redrawAll() { drawMaze(); drawQ(); buildQScale(); }
-
-function updateStats() {
-  document.getElementById('statEp').textContent = episodes.toLocaleString();
-  document.getElementById('statSteps').textContent = totalSteps.toLocaleString();
-  document.getElementById('statBest').textContent = bestEpisode === Infinity ? '—' : bestEpisode.toLocaleString();
-  document.getElementById('statEpsilon').textContent = epsilon.toFixed(2);
-}
-
-// ─── Animation loop ───────────────────────────────────────────────────────────
-function toggleRun() {
-  running = !running;
-  const btn = document.getElementById('btnRun');
-  if (running) {
-    btn.textContent = 'Pause';
+function toggleRun(){
+  running=!running;
+  const btn=document.getElementById('btnRun');
+  if(running){
+    btn.textContent='Pause';
     btn.classList.remove('primary'); btn.classList.add('danger');
     animate();
   } else {
-    btn.textContent = currentLang === 'de' ? 'Weiter' : 'Continue';
+    btn.textContent=currentLang==='de'?'Weiter':'Continue';
     btn.classList.remove('danger'); btn.classList.add('primary');
   }
 }
 
-let frameCount = 0;
-function animate() {
-  if (!running) return;
-  for (let i=0; i<stepsPerFrame; i++) step();
+let frameCount=0;
+function animate(){
+  if(!running) return;
+  let qlGoal=false;
+  for(let i=0;i<stepsPerFrame;i++){
+    RW.step();
+    if(QL.step()) qlGoal=true;
+  }
+  // auto-pause on first QL goal
+  if(qlGoal && !firstGoalPaused && QL.episodes===1){
+    firstGoalPaused=true;
+    running=false;
+    const btn=document.getElementById('btnRun');
+    btn.textContent=currentLang==='de'?'Weiter':'Continue';
+    btn.classList.remove('danger'); btn.classList.add('primary');
+    const t=currentLang==='de';
+    document.getElementById('pauseBanner').textContent = t
+      ? `QL hat das Ziel erreicht (${QL.firstGoalStep} Schritte) — vergleiche links und rechts, dann weitermachen.`
+      : `QL reached the goal (${QL.firstGoalStep} steps) — compare left and right, then continue.`;
+    document.getElementById('pauseBanner').classList.add('visible');
+  }
   frameCount++;
-  if (frameCount % 2 === 0) { redrawAll(); updateStats(); }
-  animHandle = requestAnimationFrame(animate);
+  if(frameCount%2===0){ redrawAll(); updateStats(); if(selR>=0) updateInspector(); updateQGrid(); }
+  animHandle=requestAnimationFrame(animate);
 }
 
 // ─── i18n ─────────────────────────────────────────────────────────────────────
-let currentLang = localStorage.getItem('xray-lang') || 'en';
+let currentLang=localStorage.getItem('xray-lang')||'en';
 
-const TRANSLATIONS = {
-  en: {
-    chNum: 'Chapter V', chTitle: 'Memory', chSub: 'What changes when wandering becomes learning',
-    p1: 'The wanderer from the previous chapter had no memory. Each step was the first step. It could reach the goal a thousand times and still not know how to find it again. There was no accumulation — only noise.',
-    p2: 'Now we add one thing: a table. For every cell in the maze, the agent stores a number — its estimate of how valuable it is to be there. At first, all values are zero. The agent still explores randomly. But each time it reaches the goal, something propagates backward through its recent path. The cells that led to the reward become slightly more valuable. The table remembers.',
-    p3: 'This is Q-learning. The Q stands for quality — the quality of being in a given state. Over many episodes, the table fills with accurate estimates. The agent stops wandering and starts navigating.',
-    pq1: '"What fires together, wires together."',
-    pq1cite: '— Donald Hebb, The Organization of Behavior, 1949',
-    p4: "The right panel shows the Q-table as a heatmap. Each cell's color represents its current best estimated value — how useful it is to be there. At the start, everything is cold. Watch what happens after the agent reaches the goal for the first time: a warm signal appears at ★ and begins to spread. Cells near the goal warm up first. Cells far away take longer.",
-    p5: "This is the X-Ray view of learning — not the agent's behavior on the surface, but the knowledge structure forming underneath.",
-    wLabel: 'The Learner — agent behavior vs. Q-table',
-    panelLabelAgent: 'Agent view', panelLabelQ: 'Q-table (max per cell)',
-    statLabelEp: 'Episodes', statLabelSteps: 'Steps',
-    statLabelBest: 'Best episode', statBestSub: 'steps to goal',
-    statLabelEps: 'ε (epsilon)', statEpsSub: 'exploration rate',
-    descAlpha: 'How much new information overwrites old. High = fast but unstable.',
-    descGamma: 'How much future rewards matter. High = patient, far-sighted agent.',
-    descDecay: 'How fast exploration shrinks. Slow = more wandering before exploiting.',
-    qScaleLabel: 'Q-value scale', qScaleLow: '0 (unknown)', qScaleHigh: 'high value',
-    legendAgent: 'agent', legendGoal: 'goal ★',
-    p6: "Notice the asymmetry: the agent does not plan. It does not reason about paths. It only consults its table at each step and asks: which direction has the highest estimated value? The intelligence is in the table — not in the agent. The table is the memory. The agent is just the body that carries it.",
-    p7: "This is what makes Q-learning an X-Ray tool: it externalizes knowledge into a structure we can inspect. We are not guessing what the agent has learned. We can see it — cell by cell, value by value.",
-    p8: "But there is a limit waiting ahead. The maze here has 81 cells. A real problem — say, a game of chess, or a robot navigating a building — has millions of possible states. The table would need a row for each one. At some point, the table becomes too large to exist. That is where the next chapter begins.",
-    footer_prev: '← IV. Emergence', footer_next: 'VI. The Wall →',
+const T={
+  en:{
+    chNum:'Chapter V', chTitle:'Memory', chSub:'What changes when wandering becomes learning',
+    p1:'The wanderer from the previous chapter had no memory. Each step was the first step. It could stumble across the goal and still not know how to find it again. There was no accumulation — only noise.',
+    p2:'Now we run two agents on the same maze at the same time. The left one wanders randomly, exactly as before. The right one uses Q-learning: it keeps a table of four numbers per cell — one for each direction — and updates those numbers every time it receives a reward. Watch what happens when the Q-learning agent reaches the goal for the first time. The simulation pauses so you can compare the two sides.',
+    p3:'Left: a heatmap of visits — where the random walker has been. Right: a policy map — what the Q-learning agent has decided to do in every cell it has visited. One agent has covered more ground. The other has learned something.',
+    wLabel:'Random Walker vs. Q-Learning — same maze, same start',
+    colTitleRW:'Random Walker', colTagRW:'no memory',
+    colTitleQL:'Q-Learning', colTagQL:'with memory',
+    rwLabelSteps:'Steps', rwLabelGoals:'Goal reached', rwLabelFirst:'First goal at step',
+    qdGlossTitle:'What these numbers mean', qdEpsLive:'Current ε', qdRandLabel:'Random moves (ε triggered)', qdGreedyLabel:'Greedy moves (Q-table used)', qdBestLabel:'Best episode (steps)', qdEpisLive:'Current episodes', qdPolicyTitle:'Q-Table — policy map', qdPolicySub:'Arrow = best action per cell · Grey dot = not yet learned · Click cell for Q-values', qdInspTitle:'Q-Values for selected cell', qlLabelSteps:'Steps', qlLabelGoals:'Goal reached', qlLabelFirst:'First goal at step', qlLabelEpisodes:'Episodes', qlLabelBest:'Best episode', qlLabelEps:'ε (exploration)',
+    p6:'The right side paused when Q-learning first reached the goal. At that moment, the random walker may have also passed through the goal — perhaps many times. But it has no policy. It cannot reliably find the goal again. It will find it again only by accident.',
+    p7:'The Q-learning agent has something different. Look at the arrows in the cells it has visited. They are not yet complete — many cells are still blank, not yet explored. But the cells near the goal already have confident arrows pointing toward it. Knowledge is propagating backward from the reward.',
+    p8:'This is the X-Ray view of learning: not what the agent did, but what it knows. The table is readable. Click any cell in the right maze and you see four numbers — the estimated value of moving in each direction. The brightest bar is the agent\'s current best guess.',
+    pq1:'"What fires together, wires together."',
+    p9:'Continue the simulation after pausing. Watch the arrows fill in. Watch the policy crystallize. Then ask: what happens if the maze is ten times larger? The table needs ten times more rows. There is a point where the table becomes too large to exist. That point is the subject of the next chapter.',
+    footer_prev:'← IV. Emergence', footer_next:'VI. The Wall →',
   },
-  de: {
-    chNum: 'Kapitel V', chTitle: 'Gedächtnis', chSub: 'Was sich ändert, wenn Wandern zu Lernen wird',
-    p1: 'Der Wanderer aus dem vorherigen Kapitel hatte kein Gedächtnis. Jeder Schritt war der erste Schritt. Er konnte das Ziel tausendmal erreichen und trotzdem nicht wissen, wie er es wieder findet. Es gab keine Akkumulation — nur Rauschen.',
-    p2: 'Jetzt fügen wir eine Sache hinzu: eine Tabelle. Für jede Zelle im Labyrinth speichert der Agent eine Zahl — seine Schätzung, wie wertvoll es ist, dort zu sein. Zunächst sind alle Werte null. Der Agent erkundet noch zufällig. Aber jedes Mal, wenn er das Ziel erreicht, propagiert sich etwas rückwärts durch seinen jüngsten Pfad. Die Zellen, die zur Belohnung führten, werden etwas wertvoller. Die Tabelle erinnert sich.',
-    p3: 'Das ist Q-Learning. Das Q steht für Qualität — die Qualität, sich in einem bestimmten Zustand zu befinden. Über viele Episoden füllt sich die Tabelle mit genauen Schätzungen. Der Agent hört auf zu wandern und beginnt zu navigieren.',
-    pq1: '„Was zusammen feuert, verbindet sich."',
-    pq1cite: '— Donald Hebb, The Organization of Behavior, 1949',
-    p4: 'Das rechte Panel zeigt die Q-Tabelle als Heatmap. Die Farbe jeder Zelle repräsentiert ihren aktuell besten geschätzten Wert — wie nützlich es ist, dort zu sein. Am Anfang ist alles kalt. Beobachte, was passiert, nachdem der Agent das Ziel zum ersten Mal erreicht: Ein warmes Signal erscheint bei ★ und beginnt sich auszubreiten.',
-    p5: 'Das ist die X-Ray-Sicht auf das Lernen — nicht das Oberflächenverhalten des Agenten, sondern die sich darunter bildende Wissensstruktur.',
-    wLabel: 'Der Lerner — Agentenverhalten vs. Q-Tabelle',
-    panelLabelAgent: 'Agentensicht', panelLabelQ: 'Q-Tabelle (Max pro Zelle)',
-    statLabelEp: 'Episoden', statLabelSteps: 'Schritte',
-    statLabelBest: 'Beste Episode', statBestSub: 'Schritte zum Ziel',
-    statLabelEps: 'ε (Epsilon)', statEpsSub: 'Erkundungsrate',
-    descAlpha: 'Wie viel neue Information alte überschreibt. Hoch = schnell, aber instabil.',
-    descGamma: 'Wie viel zukünftige Belohnungen zählen. Hoch = geduldiger, weitsichtiger Agent.',
-    descDecay: 'Wie schnell die Erkundung schrumpft. Langsam = mehr Wandern vor dem Ausnutzen.',
-    qScaleLabel: 'Q-Wert-Skala', qScaleLow: '0 (unbekannt)', qScaleHigh: 'hoher Wert',
-    legendAgent: 'Agent', legendGoal: 'Ziel ★',
-    p6: 'Beachte die Asymmetrie: Der Agent plant nicht. Er denkt nicht über Pfade nach. Er konsultiert bei jedem Schritt nur seine Tabelle und fragt: Welche Richtung hat den höchsten geschätzten Wert? Die Intelligenz liegt in der Tabelle — nicht im Agenten. Die Tabelle ist das Gedächtnis. Der Agent ist nur der Körper, der sie trägt.',
-    p7: 'Das macht Q-Learning zu einem X-Ray-Werkzeug: Es externalisiert Wissen in eine Struktur, die wir inspizieren können. Wir raten nicht, was der Agent gelernt hat. Wir können es sehen — Zelle für Zelle, Wert für Wert.',
-    p8: 'Aber es wartet eine Grenze. Das Labyrinth hier hat 81 Zellen. Ein reales Problem — etwa ein Schachspiel oder ein Roboter in einem Gebäude — hat Millionen möglicher Zustände. Die Tabelle bräuchte eine Zeile für jeden. Irgendwann wird die Tabelle zu groß, um zu existieren. Dort beginnt das nächste Kapitel.',
-    footer_prev: '← IV. Emergenz', footer_next: 'VI. Die Wand →',
+  de:{
+    chNum:'Kapitel V', chTitle:'Gedächtnis', chSub:'Was sich ändert, wenn Wandern zu Lernen wird',
+    p1:'Der Wanderer aus dem vorherigen Kapitel hatte kein Gedächtnis. Jeder Schritt war der erste Schritt. Er konnte über das Ziel stolpern und trotzdem nicht wissen, wie er es wieder findet. Es gab keine Akkumulation — nur Rauschen.',
+    p2:'Jetzt lassen wir zwei Agenten gleichzeitig auf demselben Labyrinth laufen. Der linke wandert zufällig, genau wie zuvor. Der rechte verwendet Q-Learning: Er führt eine Tabelle mit vier Zahlen pro Zelle — eine für jede Richtung — und aktualisiert diese Zahlen jedes Mal, wenn er eine Belohnung erhält. Beobachte, was passiert, wenn der Q-Learning-Agent das Ziel zum ersten Mal erreicht.',
+    p3:'Links: eine Heatmap der Besuche — wo der Wanderer war. Rechts: eine Strategiekarte — was der Q-Learning-Agent in jeder besuchten Zelle zu tun beschlossen hat.',
+    wLabel:'Zufallswanderer vs. Q-Learning — gleiches Labyrinth, gleicher Start',
+    colTitleRW:'Zufallswanderer', colTagRW:'kein Gedächtnis',
+    colTitleQL:'Q-Learning', colTagQL:'mit Gedächtnis',
+    rwLabelSteps:'Schritte', rwLabelGoals:'Ziel erreicht', rwLabelFirst:'Erstes Ziel bei Schritt',
+    qdGlossTitle:'Was diese Zahlen bedeuten', qdEpsLive:'Aktuelles ε', qdRandLabel:'Zufällige Züge (ε ausgelöst)', qdGreedyLabel:'Greedy-Züge (Q-Tabelle genutzt)', qdBestLabel:'Beste Episode (Schritte)', qdEpisLive:'Aktuelle Episoden', qdPolicyTitle:'Q-Tabelle — Policy-Karte', qdPolicySub:'Pfeil = beste Aktion · Punkt = noch nicht gelernt · Zelle klicken für Q-Werte', qdInspTitle:'Q-Werte der gewählten Zelle', qlLabelSteps:'Schritte', qlLabelGoals:'Ziel erreicht', qlLabelFirst:'Erstes Ziel bei Schritt', qlLabelEpisodes:'Episoden', qlLabelBest:'Beste Episode', qlLabelEps:'ε (Erkundung)',
+    p6:'Die rechte Seite pausierte, als Q-Learning das Ziel zum ersten Mal erreichte. In diesem Moment hat der Zufallswanderer möglicherweise auch das Ziel passiert — vielleicht mehrmals. Aber er hat keine Strategie.',
+    p7:'Der Q-Learning-Agent hat etwas anderes. Schau auf die Pfeile in den Zellen, die er besucht hat. Sie sind noch nicht vollständig — viele Zellen sind noch leer. Aber die Zellen nahe dem Ziel haben bereits sichere Pfeile, die darauf zeigen.',
+    p8:'Das ist die X-Ray-Sicht auf das Lernen: nicht was der Agent getan hat, sondern was er weiß. Die Tabelle ist lesbar. Klicke auf eine Zelle im rechten Labyrinth und du siehst vier Zahlen — den geschätzten Wert der Bewegung in jede Richtung.',
+    pq1:'"Was zusammen feuert, verbindet sich."',
+    p9:'Setze die Simulation nach der Pause fort. Beobachte, wie die Pfeile sich füllen. Beobachte, wie die Strategie kristallisiert. Dann frage: Was passiert, wenn das Labyrinth zehnmal größer ist?',
+    footer_prev:'← IV. Emergenz', footer_next:'VI. Die Wand →',
   }
 };
 
-function applyTranslation(lang) {
-  currentLang = lang;
-  localStorage.setItem('xray-lang', lang);
-  const t = TRANSLATIONS[lang];
-  const set = (id, val) => { const el = document.getElementById(id); if (el && val !== undefined) el.textContent = val; };
+function applyTranslation(lang){
+  currentLang=lang;
+  localStorage.setItem('xray-lang',lang);
+  const t=T[lang];
+  const set=(id,v)=>{const el=document.getElementById(id);if(el&&v!==undefined)el.textContent=v;};
   set('chNum',t.chNum); set('chTitle',t.chTitle); set('chSub',t.chSub);
   set('p1',t.p1); set('p2',t.p2); set('p3',t.p3);
-  set('pq1',t.pq1); set('pq1cite',t.pq1cite);
-  set('p4',t.p4); set('p5',t.p5);
-  set('wLabel',t.wLabel); set('panelLabelAgent',t.panelLabelAgent); set('panelLabelQ',t.panelLabelQ);
-  set('statLabelEp',t.statLabelEp); set('statLabelSteps',t.statLabelSteps);
-  set('statLabelBest',t.statLabelBest); set('statBestSub',t.statBestSub);
-  set('statLabelEps',t.statLabelEps); set('statEpsSub',t.statEpsSub);
-  set('descAlpha',t.descAlpha); set('descGamma',t.descGamma); set('descDecay',t.descDecay);
-  set('qScaleLabel',t.qScaleLabel); set('qScaleLow',t.qScaleLow); set('qScaleHigh',t.qScaleHigh);
-  set('legendAgent',t.legendAgent); set('legendGoal',t.legendGoal);
+  set('wLabel',t.wLabel);
+  set('colTitleRW',t.colTitleRW); set('colTagRW',t.colTagRW);
+  set('colTitleQL',t.colTitleQL); set('colTagQL',t.colTagQL);
+  set('rwLabelSteps',t.rwLabelSteps); set('rwLabelGoals',t.rwLabelGoals);
+  set('rwLabelFirst',t.rwLabelFirst);
+  set('qdGlossTitle',t.qdGlossTitle); set('qdEpsLive',t.qdEpsLive); set('qdRandLabel',t.qdRandLabel); set('qdGreedyLabel',t.qdGreedyLabel); set('qdBestLabel',t.qdBestLabel); set('qdEpisLive',t.qdEpisLive); set('qdPolicyTitle',t.qdPolicyTitle); set('qdPolicySub',t.qdPolicySub); set('qdInspTitle',t.qdInspTitle); set('qlLabelSteps',t.qlLabelSteps); set('qlLabelGoals',t.qlLabelGoals); set('qlLabelFirst',t.qlLabelFirst); set('qlLabelEps',t.qlLabelEps);
+  set('qlLabelEpisodes',t.qlLabelEpisodes); set('qlLabelBest',t.qlLabelBest);
   set('p6',t.p6); set('p7',t.p7); set('p8',t.p8);
+  set('pq1',t.pq1); set('p9',t.p9);
   set('footerPrev',t.footer_prev); set('footerNext',t.footer_next);
-  const btn = document.getElementById('btnRun');
-  if (!running) btn.textContent = lang === 'de' ? 'Start' : 'Run';
-  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
+  const btn=document.getElementById('btnRun');
+  if(!running) btn.textContent=lang==='de'?'Start':'Run';
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.dataset.lang===lang));
   document.getElementById('langBar').classList.remove('open');
   document.getElementById('langToggle').classList.remove('active');
+  updateInspector();
 }
 
 // ─── Init ─────────────────────────────────────────────────────────────────────
-(function() {
-  const theme = localStorage.getItem('xray-theme') || 'light';
-  const fsize = localStorage.getItem('xray-fsize') || 'default';
-  const contrast = localStorage.getItem('xray-contrast') || 'standard';
-  setTheme(theme, true); setFsize(fsize); setContrast(contrast);
+(function(){
+  const theme=localStorage.getItem('xray-theme')||'light';
+  const fsize=localStorage.getItem('xray-fsize')||'default';
+  const contrast=localStorage.getItem('xray-contrast')||'standard';
+  setTheme(theme,true); setFsize(fsize); setContrast(contrast);
 })();
 
+RW.init(); QL.init();
+buildQGrid(); updateQGrid();
 applyTranslation(currentLang);
-buildQScale();
-drawMaze();
-drawQ();
+redrawAll();
 updateStats();
 </script>
 </body>
