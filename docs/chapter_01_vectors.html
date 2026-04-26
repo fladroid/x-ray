@@ -122,20 +122,16 @@
     color: var(--bg);
   }
 
-  /* ── NAV ── */
     nav{position:sticky;top:0;z-index:100;height:52px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0;}
     .nav-title{font-family:var(--mono);font-size:11px;letter-spacing:0.15em;color:var(--text-dim);text-transform:uppercase;padding:0 16px;text-decoration:none;color:inherit;cursor:pointer;white-space:nowrap;}
-    .nav-right{display:flex;align-items:center;}
-    .nav-chapters{display:flex;list-style:none;}
+    .nav-right{display:flex;align-items:center;overflow:hidden;}
+    .nav-chapters{display:flex;list-style:none;overflow:hidden;}
     .nav-chapters a{font-family:var(--mono);font-size:10px;color:var(--text-dim);text-decoration:none;padding:0 9px;height:52px;display:flex;align-items:center;border-left:1px solid var(--border);transition:color 0.2s,background 0.2s;white-space:nowrap;}
     .nav-chapters a:hover,.nav-chapters a.active{color:var(--accent);background:rgba(138,96,48,0.06);}
     [data-theme="dark"] .nav-chapters a:hover,[data-theme="dark"] .nav-chapters a.active{background:rgba(200,169,110,0.05);}
     .settings-toggle{font-family:var(--mono);font-size:10px;letter-spacing:0.12em;color:var(--text-dim);background:transparent;border:none;border-left:1px solid var(--border);padding:0 12px;height:52px;cursor:pointer;text-transform:uppercase;transition:color 0.15s;white-space:nowrap;}
     .settings-toggle:hover,.settings-toggle.active{color:var(--accent);}
     @media(max-width:900px){.nav-chapters{display:none;}}
-  .settings-toggle:hover { color: var(--accent); }
-  .settings-toggle.active { color: var(--accent); }
-
   /* ── LAYOUT ── */
   main { padding-top: 52px; }
 
@@ -481,7 +477,7 @@
 <body>
 
 <nav>
-  <a href="index.html" class="nav-title" translate="no">X-RAY — v1</a>
+  <a href="index.html" class="nav-title" translate="no">X-RAY — v1.1</a>
   <div class="nav-right">
     <ul class="nav-chapters">
       <li><a href="chapter_01_vectors.html" class="active" translate="no">I. Vectors</a></li>
@@ -1128,7 +1124,7 @@ function computeAnalogy() {
 // ============================================================
 const TRANSLATIONS = {
   en: {
-    nav_title: 'X-RAY — v1',
+    nav_title: 'X-RAY — v1.1',
     nav_ch1: 'I. Vectors',
     nav_ch2: 'II. Attention',
     nav_ch3: 'III. Local Optima',
@@ -1182,7 +1178,7 @@ const TRANSLATIONS = {
     footer_page: 'Chapter I of VIII',
   },
   de: {
-    nav_title: 'X-RAY — v1',
+    nav_title: 'X-RAY — v1.1',
     nav_ch1: 'I. Vektorraum',
     nav_ch2: 'II. Aufmerksamkeit',
     nav_ch3: 'III. Lokale Optima',
