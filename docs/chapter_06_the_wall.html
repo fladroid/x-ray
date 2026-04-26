@@ -44,16 +44,6 @@
   .lang-btn{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.12em;padding:0.3rem 1rem;border:1px solid var(--border);background:transparent;color:var(--text-dim);cursor:pointer;text-transform:uppercase;transition:all 0.15s;}
   .lang-btn:hover{color:var(--text-bright);border-color:var(--text-dim);}
   .lang-btn.active{background:var(--accent2);border-color:var(--accent2);color:var(--bg);}
-    nav{position:fixed;top:0;left:0;right:0;width:100%;z-index:100;height:52px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0;box-sizing:border-box;}
-    .nav-title{font-family:var(--mono);font-size:11px;letter-spacing:0.15em;color:var(--text-dim);text-transform:uppercase;padding:0 16px;text-decoration:none;color:inherit;cursor:pointer;white-space:nowrap;flex-shrink:0;}
-    .nav-right{display:flex;align-items:center;}
-    .nav-chapters{display:flex;list-style:none;}
-    .nav-chapters a{font-family:var(--mono);font-size:11px;color:var(--text-dim);text-decoration:none;padding:0 12px;height:52px;display:flex;align-items:center;border-left:1px solid var(--border);transition:color 0.2s,background 0.2s;white-space:nowrap;flex-shrink:1;min-width:0;overflow:hidden;}
-    .nav-chapters a:hover,.nav-chapters a.active{color:var(--accent);background:rgba(138,96,48,0.06);}
-    [data-theme="dark"] .nav-chapters a:hover,[data-theme="dark"] .nav-chapters a.active{background:rgba(200,169,110,0.05);}
-    .settings-toggle{font-family:var(--mono);font-size:11px;letter-spacing:0.12em;color:var(--text-dim);background:transparent;border:none;border-left:1px solid var(--border);padding:0 14px;height:52px;cursor:pointer;text-transform:uppercase;transition:color 0.15s;white-space:nowrap;flex-shrink:0;}
-    .settings-toggle:hover,.settings-toggle.active{color:var(--accent);}
-    @media(max-width:900px){.nav-chapters{display:none;}}
   main{padding-top:52px;}
   .chapter-header{padding:8rem 0 4rem;border-bottom:1px solid var(--border);margin-bottom:4rem;}
   .chapter-number{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.2em;color:var(--accent);text-transform:uppercase;margin-bottom:1.5rem;display:block;}
@@ -155,26 +145,11 @@
   .footer-nav a{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.1em;color:var(--text-dim);text-decoration:none;transition:color 0.15s;}
   .footer-nav a:hover{color:var(--accent);}
 </style>
+  <script src="nav.js"></script>
 </head>
 <body>
 
-<nav>
-  <a href="index.html" class="nav-title" translate="no">X-RAY — v1.8</a>
-  <div class="nav-right">
-    <ul class="nav-chapters">
-      <li><a href="chapter_01_vectors.html" translate="no">I. Vectors</a></li>
-      <li><a href="chapter_02_attention.html" translate="no">II. Attention</a></li>
-      <li><a href="chapter_03_local_optima.html" translate="no">III. Local Optima</a></li>
-      <li><a href="chapter_04_emergence.html" translate="no">IV. Emergence</a></li>
-      <li><a href="chapter_05_memory.html" translate="no">V. Memory</a></li>
-      <li><a href="chapter_06_the_wall.html" class="active" translate="no">VI. The Wall</a></li>
-      <li><a href="chapter_07_the_function.html" translate="no">VII. The Function</a></li>
-      <li><a href="chapter_08_looking_inside.html" translate="no">VIII. Looking Inside</a></li>
-    </ul>
-    <button class="settings-toggle" id="langToggle" onclick="toggleLang()" translate="no">&#127760; Lang</button>
-    <button class="settings-toggle" id="settingsToggle" onclick="toggleSettings()" translate="no">&#9881; Display</button>
-  </div>
-</nav>
+
 
 <div class="lang-bar" id="langBar">
   <div class="lang-inner">
