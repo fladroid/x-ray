@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IV. Emergence</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@300;400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;1,8..60,300&display=swap');
+
+  :root {
+    --bg: #f5f2ed; --bg2: #ede8e0; --bg3: #e4ddd4;
+    --border: #c8c0b4; --text: #2a2520; --text-dim: #7a6e65;
+    --text-bright: #1a1210; --accent: #8a6030; --accent2: #2a6080;
+    --accent3: #802030; --accent4: #286040;
+  }
+  [data-theme="dark"] {
+    --bg: #0e0e0f; --bg2: #141416; --bg3: #1a1a1d;
+    --border: #2a2a2e; --text: #d4cfc8; --text-dim: #6b6660;
+    --text-bright: #ede8e0; --accent: #c8a96e; --accent2: #7eb3c8;
+    --accent3: #c87e7e; --accent4: #7ec89a;
+  }
+  [data-contrast="high"] { --text: #000; --text-dim: #444; --text-bright: #000; --border: #666; }
+  [data-theme="dark"][data-contrast="high"] { --text: #fff; --text-dim: #bbb; --text-bright: #fff; --border: #888; }
+
+  html { font-size: 18px; }
+  html[data-fsize="large"] { font-size: 21px; }
+  html[data-fsize="xl"] { font-size: 25px; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: 'Source Serif 4', Georgia, serif; line-height: 1.8; max-width: 800px; margin: 0 auto; padding: 0 2rem; transition: background 0.2s, color 0.2s; }
+
+  .settings-bar { position: fixed; top: 52px; left: 0; right: 0; background: var(--bg2); border-bottom: 1px solid var(--border); z-index: 90; display: none; }
+  .settings-bar.open { display: block; }
+  .settings-inner { max-width: 800px; margin: 0 auto; padding: 1rem 2rem; display: flex; gap: 2.5rem; align-items: flex-start; flex-wrap: wrap; }
+  .setting-group { display: flex; flex-direction: column; gap: 0.5rem; }
+  .setting-group-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.15em; color: var(--text-dim); text-transform: uppercase; }
+  .setting-btns { display: flex; gap: 0.4rem; }
+  .set-btn { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em; padding: 0.3rem 0.75rem; border: 1px solid var(--border); background: transparent; color: var(--text-dim); cursor: pointer; transition: all 0.15s; }
+  .set-btn:hover { color: var(--text-bright); border-color: var(--text-dim); }
+  .set-btn.active { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+
+  .lang-bar { position: fixed; top: 52px; left: 0; right: 0; background: var(--bg2); border-bottom: 1px solid var(--border); z-index: 89; display: none; }
+  .lang-bar.open { display: block; }
+  .lang-inner { max-width: 800px; margin: 0 auto; padding: 0.75rem 2rem; display: flex; gap: 0.5rem; }
+  .lang-btn { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.12em; padding: 0.3rem 1rem; border: 1px solid var(--border); background: transparent; color: var(--text-dim); cursor: pointer; text-transform: uppercase; transition: all 0.15s; }
+  .lang-btn:hover { color: var(--text-bright); border-color: var(--text-dim); }
+  .lang-btn.active { background: var(--accent2); border-color: var(--accent2); color: var(--bg); }
+
+  nav { position: fixed; top: 0; left: 0; right: 0; background: rgba(245,242,237,0.96); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); z-index: 100; transition: background 0.2s; }
+  [data-theme="dark"] nav { background: rgba(14,14,15,0.96); }
+  .nav-inner { max-width: 800px; margin: 0 auto; padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 52px; }
+  .nav-title { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.15em; color: var(--text-dim); text-transform: uppercase; }
+  .nav-right { display: flex; align-items: center; }
+  .nav-chapters { display: flex; list-style: none; }
+  .nav-chapters a { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-dim); text-decoration: none; padding: 0 14px; height: 52px; display: flex; align-items: center; border-left: 1px solid var(--border); transition: color 0.2s, background 0.2s; }
+  .nav-chapters a:hover, .nav-chapters a.active { color: var(--accent); background: rgba(138,96,48,0.06); }
+  [data-theme="dark"] .nav-chapters a:hover, [data-theme="dark"] .nav-chapters a.active { background: rgba(200,169,110,0.05); }
+  .settings-toggle { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.12em; color: var(--text-dim); background: transparent; border: none; border-left: 1px solid var(--border); padding: 0 14px; height: 52px; cursor: pointer; text-transform: uppercase; transition: color 0.15s; }
+  .settings-toggle:hover, .settings-toggle.active { color: var(--accent); }
+
+  @media (max-width: 640px) {
+    .nav-chapters { display: none; }
+  }
+
+  main { padding-top: 52px; }
+  .chapter-header { padding: 8rem 0 4rem; border-bottom: 1px solid var(--border); margin-bottom: 4rem; }
+  .chapter-number { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.2em; color: var(--accent); text-transform: uppercase; margin-bottom: 1.5rem; display: block; }
+  h1 { font-family: 'Playfair Display', Georgia, serif; font-size: clamp(2.2rem, 5vw, 3.2rem); font-weight: 700; color: var(--text-bright); line-height: 1.15; letter-spacing: -0.01em; margin-bottom: 1.5rem; }
+  .chapter-subtitle { font-family: 'Source Serif 4', serif; font-style: italic; font-size: 1.1rem; color: var(--text-dim); font-weight: 300; }
+
+  .prose { margin-bottom: 2.5rem; }
+  .prose p { margin-bottom: 1.4rem; }
+  .prose p:last-child { margin-bottom: 0; }
+  .prose em { font-style: italic; color: var(--text-bright); }
+  .prose strong { font-weight: 400; color: var(--accent); }
+
+  .pull-quote { border-left: 2px solid var(--accent); margin: 3rem 0; padding: 1rem 0 1rem 2rem; font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.25rem; color: var(--text-bright); line-height: 1.5; }
+  .pull-quote cite { display: block; margin-top: 0.75rem; font-family: 'JetBrains Mono', monospace; font-style: normal; font-size: 11px; letter-spacing: 0.1em; color: var(--text-dim); }
+
+  .section-break { display: flex; align-items: center; gap: 1rem; margin: 4rem 0; color: var(--text-dim); font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.15em; }
+  .section-break::before, .section-break::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  .widget { background: var(--bg2); border: 1px solid var(--border); border-radius: 4px; margin: 3rem 0; overflow: hidden; }
+  .widget-header { padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .widget-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.18em; color: var(--text-dim); text-transform: uppercase; }
+  .widget-body { padding: 1.5rem; }
+
+
+  .dual-canvas-row { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+  .dual-panel { display: flex; flex-direction: column; gap: 0.4rem; }
+  .dual-panel-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.15em; color: var(--text-dim); text-transform: uppercase; text-align: center; }
+  .dual-panel canvas { display: block; border: 1px solid var(--border); }
+  .dual-stats-row { display: flex; gap: 2rem; flex-wrap: wrap; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); }
+  .dual-stats-row .stat-row { display: flex; flex-direction: column; gap: 0.15rem; }
+  .trail-legend { margin-top: 1rem; }
+
+  .maze-container { display: flex; gap: 1.5rem; align-items: flex-start; flex-wrap: wrap; }
+  .maze-wrap { flex: 0 0 auto; }
+  canvas#mazeCanvas { display: block; border: 1px solid var(--border); background: var(--bg3); }
+  .maze-stats { flex: 1; min-width: 180px; display: flex; flex-direction: column; gap: 1rem; }
+  .stat-row { display: flex; flex-direction: column; gap: 0.2rem; }
+  .stat-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em; color: var(--text-dim); text-transform: uppercase; }
+  .stat-value { font-family: 'JetBrains Mono', monospace; font-size: 1.4rem; color: var(--text-bright); }
+  .stat-value.large { font-size: 2rem; }
+  .stat-sub { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-dim); }
+
+  .trail-legend { margin-top: 1.5rem; }
+  .trail-legend-title { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em; color: var(--text-dim); text-transform: uppercase; margin-bottom: 0.5rem; }
+  .trail-scale { display: flex; height: 8px; border-radius: 2px; overflow: hidden; border: 1px solid var(--border); }
+  .trail-scale-labels { display: flex; justify-content: space-between; margin-top: 0.25rem; }
+  .trail-scale-labels span { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--text-dim); }
+
+  .widget-controls { padding: 1rem 1.5rem; border-top: 1px solid var(--border); display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; }
+  .ctrl-btn { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em; padding: 0.35rem 1rem; border: 1px solid var(--border); background: transparent; color: var(--text-dim); cursor: pointer; transition: all 0.15s; }
+  .ctrl-btn:hover { color: var(--text-bright); border-color: var(--text-dim); }
+  .ctrl-btn.primary { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+  .ctrl-btn.primary:hover { opacity: 0.85; }
+  .ctrl-btn.danger { border-color: var(--accent3); color: var(--accent3); }
+  .ctrl-btn.danger:hover { background: var(--accent3); color: var(--bg); }
+  .ctrl-spacer { flex: 1; }
+  .speed-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-dim); letter-spacing: 0.1em; }
+
+  /* heatmap widget */
+  .heatmap-wrap { position: relative; }
+  canvas#heatCanvas { display: block; border: 1px solid var(--border); }
+  .heatmap-note { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-dim); margin-top: 0.5rem; letter-spacing: 0.05em; }
+
+  footer { padding: 4rem 0 6rem; border-top: 1px solid var(--border); margin-top: 6rem; display: flex; justify-content: space-between; align-items: center; }
+  .footer-nav a { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.1em; color: var(--text-dim); text-decoration: none; transition: color 0.15s; }
+  .footer-nav a:hover { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-title" translate="no" style="text-decoration:none;color:inherit;">X-Ray</a>
+    <div class="nav-right">
+          <ul class="nav-chapters">
+      <li><a href="chapter_01_vectors.html" translate="no">I. Vectors</a></li>
+      <li><a href="chapter_02_attention.html" translate="no">II. Attention</a></li>
+      <li><a href="chapter_03_local_optima.html" translate="no">III. Local Optima</a></li>
+      <li><a href="chapter_04_emergence.html" class="active" translate="no">IV. Emergence</a></li>
+      <li><a href="chapter_05_memory.html" translate="no">V. Memory</a></li>
+      <li><a href="chapter_06_the_wall.html" translate="no">VI. The Wall</a></li>
+      <li><a href="chapter_07_the_function.html" translate="no">VII. The Function</a></li>
+      <li><a href="chapter_08_looking_inside.html" translate="no">VIII. Looking Inside</a></li>
+    </ul>
+      <button class="settings-toggle" id="langToggle" onclick="toggleLang()" translate="no">🌐 Lang</button>
+      <button class="settings-toggle" id="settingsToggle" onclick="toggleSettings()" translate="no">⚙ Display</button>
+    </div>
+  </div>
+</nav>
+
+<div class="lang-bar" id="langBar">
+  <div class="lang-inner">
+    <button class="lang-btn active" data-lang="en" onclick="applyTranslation('en')">EN</button>
+    <button class="lang-btn" data-lang="de" onclick="applyTranslation('de')">DE</button>
+  </div>
+</div>
+
+<div class="settings-bar" id="settingsBar">
+  <div class="settings-inner">
+    <div class="setting-group">
+      <span class="setting-group-label" translate="no">Theme</span>
+      <div class="setting-btns">
+        <button class="set-btn active" id="btnLight" onclick="setTheme('light')" translate="no">Light</button>
+        <button class="set-btn" id="btnDark" onclick="setTheme('dark')" translate="no">Dark</button>
+      </div>
+    </div>
+    <div class="setting-group">
+      <span class="setting-group-label" translate="no">Font size</span>
+      <div class="setting-btns">
+        <button class="set-btn active" id="btnFsDef" onclick="setFsize('default')" translate="no">Default</button>
+        <button class="set-btn" id="btnFsLg" onclick="setFsize('large')" translate="no">Large</button>
+        <button class="set-btn" id="btnFsXl" onclick="setFsize('xl')" translate="no">XL</button>
+      </div>
+    </div>
+    <div class="setting-group">
+      <span class="setting-group-label" translate="no">Contrast</span>
+      <div class="setting-btns">
+        <button class="set-btn active" id="btnCnStd" onclick="setContrast('standard')" translate="no">Standard</button>
+        <button class="set-btn" id="btnCnHi" onclick="setContrast('high')" translate="no">High</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main>
+  <div class="chapter-header">
+    <span class="chapter-number" id="chNum">Chapter IV</span>
+    <h1 id="chTitle">Emergence</h1>
+    <p class="chapter-subtitle" id="chSub">What arises when nothing plans to arrive</p>
+  </div>
+
+  <div class="prose">
+    <p id="p1">Consider an ant. A single ant knows almost nothing. It cannot build anything. It has no blueprint, no foreman, no long-term plan. It follows a few chemical signals and responds to what is immediately around it. That is all.</p>
+    <p id="p2">Now watch a colony. Half a million of these simple creatures produce something no individual intended: a ventilated structure, maintained at constant temperature, with food storage, nurseries, and waste management. The colony appears intelligent. The individual ants are not.</p>
+    <p id="p3">This is emergence. Complex, organized behavior arising from simple local rules — with no central planner, no global design. The structure is real. No one designed it.</p>
+  </div>
+
+  <div class="pull-quote">
+    <span id="pq1">"The whole is something other than the sum of its parts."</span>
+    <cite id="pq1cite">— Aristotle, <em>Metaphysics</em></cite>
+  </div>
+
+  <div class="prose">
+    <p id="p4">Now consider an agent in a maze. It has no map. It does not know where the exit is. It does not even know that an exit exists. It can only observe its current position and choose among four directions.</p>
+    <p id="p5">Watch what happens when it moves randomly. No structure, no purpose — just noise. The agent visits some cells many times and never finds others. There is no learning here, only wandering. The maze is as opaque at step 10,000 as it was at step 1.</p>
+  </div>
+
+  <div class="widget">
+    <div class="widget-header">
+      <span class="widget-label" id="w1label" translate="no">The Wanderer — two views of the same agent</span>
+    </div>
+    <div class="widget-body">
+      <div class="dual-canvas-row">
+        <div class="dual-panel">
+          <div class="dual-panel-label" id="panelLabelAgent" translate="no">Agent view</div>
+          <canvas id="mazeCanvas" width="300" height="300"></canvas>
+        </div>
+        <div class="dual-panel">
+          <div class="dual-panel-label" id="panelLabelHeat" translate="no">X-Ray view</div>
+          <canvas id="heatCanvas" width="300" height="300"></canvas>
+        </div>
+      </div>
+      <div class="dual-stats-row">
+        <div class="stat-row">
+          <span class="stat-label" id="statLabelSteps">Steps taken</span>
+          <span class="stat-value" id="statSteps">0</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label" id="statLabelVisited">Cells visited</span>
+          <span class="stat-value" id="statVisited">1 / 81</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label" id="statLabelRevisits">Revisit rate</span>
+          <span class="stat-value" id="statRevisits">0%</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label" id="statLabelGoal">Goal reached</span>
+          <span class="stat-value" id="statGoal">—</span>
+        </div>
+      </div>
+      <div class="trail-legend">
+        <div class="trail-legend-title" id="trailLegendTitle">X-Ray frequency scale</div>
+        <div class="trail-scale" id="trailScale"></div>
+        <div class="trail-scale-labels">
+          <span id="trailLow">never</span>
+          <span id="trailHigh">many times</span>
+        </div>
+      </div>
+    </div>
+    <div class="widget-controls">
+      <button class="ctrl-btn primary" id="btnRun" onclick="toggleRun()" translate="no">Run</button>
+      <button class="ctrl-btn" onclick="resetMaze()" translate="no">Reset</button>
+      <button class="ctrl-btn" onclick="newMaze()" translate="no">New maze</button>
+      <span class="ctrl-spacer"></span>
+      <span class="speed-label" id="speedLabel">Speed:</span>
+      <button class="set-btn" id="spd1" onclick="setSpeed(1)" translate="no">1×</button>
+      <button class="set-btn active" id="spd5" onclick="setSpeed(5)" translate="no">5×</button>
+      <button class="set-btn" id="spd20" onclick="setSpeed(20)" translate="no">20×</button>
+    </div>
+  </div>
+
+  <div class="prose">
+    <p id="p6">This is the question that emergence poses: how does something organized arise from something that does not plan? The ant colony answers it with chemistry and time. But our agent has neither pheromones nor a colony. It is alone, without signal, without memory.</p>
+    <p id="p7">What the agent lacks is exactly what the next chapter introduces: the ability to remember which paths led somewhere useful. Not intelligence — just <em>memory of outcomes</em>. That single addition transforms wandering into something that begins to resemble learning.</p>
+  </div>
+
+  <div class="section-break" id="secBreak1">emergence</div>
+
+  <div class="prose">
+    <p id="p8">The heatmap does not belong to the agent. The agent does not see it. Only we see it — from outside, looking in. Some regions are explored more than others, not by plan but by the topology of the maze itself. The walls guide the wandering even without the agent knowing they exist.</p>
+    <p id="p9">This is what X-Ray vision reveals: even apparent randomness has shape. The structure is there — you simply cannot see it from the inside.</p>
+  </div>
+
+  <div class="prose">
+    <p id="p10" style="display:none"></p>
+    <p id="p11">In the next chapter, we give the agent a small piece of this view. We let it remember. And from that single change, something emerges that the wanderer could never produce.</p>
+  </div>
+</main>
+
+<footer>
+  <div class="footer-nav"><a href="chapter_03_local_optima.html" id="footerPrev">← III. Local Optima</a></div>
+  <div class="footer-nav"><a href="chapter_05_memory.html" id="footerNext">V. Memory →</a></div>
+</footer>
+
+<script>
+// ─── Settings persistence ───────────────────────────────────────────────────
+function setTheme(t, skipRedraw) {
+  document.documentElement.dataset.theme = t === 'dark' ? 'dark' : '';
+  localStorage.setItem('xray-theme', t);
+  document.getElementById('btnLight').classList.toggle('active', t === 'light');
+  document.getElementById('btnDark').classList.toggle('active', t === 'dark');
+  if (!skipRedraw) redrawAll();
+}
+function setFsize(s) {
+  document.documentElement.dataset.fsize = s === 'default' ? '' : s;
+  localStorage.setItem('xray-fsize', s);
+  ['btnFsDef','btnFsLg','btnFsXl'].forEach(id => document.getElementById(id).classList.remove('active'));
+  document.getElementById(s === 'default' ? 'btnFsDef' : s === 'large' ? 'btnFsLg' : 'btnFsXl').classList.add('active');
+}
+function setContrast(c) {
+  document.documentElement.dataset.contrast = c === 'high' ? 'high' : '';
+  localStorage.setItem('xray-contrast', c);
+  document.getElementById('btnCnStd').classList.toggle('active', c === 'standard');
+  document.getElementById('btnCnHi').classList.toggle('active', c === 'high');
+}
+function toggleSettings() {
+  const sb = document.getElementById('settingsBar');
+  const lb = document.getElementById('langBar');
+  lb.classList.remove('open');
+  document.getElementById('langToggle').classList.remove('active');
+  sb.classList.toggle('open');
+  document.getElementById('settingsToggle').classList.toggle('active', sb.classList.contains('open'));
+}
+function toggleLang() {
+  const lb = document.getElementById('langBar');
+  const sb = document.getElementById('settingsBar');
+  sb.classList.remove('open');
+  document.getElementById('settingsToggle').classList.remove('active');
+  lb.classList.toggle('open');
+  document.getElementById('langToggle').classList.toggle('active', lb.classList.contains('open'));
+}
+
+// restoreSettings called at bottom after maze init
+
+// ─── Maze engine ─────────────────────────────────────────────────────────────
+const COLS = 9, ROWS = 9;
+const CELL = 300 / COLS;
+const goalR = ROWS-1, goalC = COLS-1;
+
+// Maze generation: recursive backtracker
+function generateMaze() {
+  const visited = Array.from({length: ROWS}, () => new Array(COLS).fill(false));
+  // walls[r][c] = {N, S, E, W} true = wall present
+  const walls = Array.from({length: ROWS}, () =>
+    Array.from({length: COLS}, () => ({N:true, S:true, E:true, W:true}))
+  );
+  const stack = [];
+  const dirs = [{dr:-1,dc:0,d:'N',opp:'S'},{dr:1,dc:0,d:'S',opp:'N'},{dr:0,dc:1,d:'E',opp:'W'},{dr:0,dc:-1,d:'W',opp:'E'}];
+  function shuffle(a) { for (let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+  let r=0,c=0;
+  visited[r][c]=true;
+  stack.push([r,c]);
+  while(stack.length){
+    const [cr,cc]=stack[stack.length-1];
+    const nbrs=shuffle(dirs.map(d=>({nr:cr+d.dr,nc:cc+d.dc,d:d.d,opp:d.opp}))).filter(({nr,nc})=>nr>=0&&nr<ROWS&&nc>=0&&nc<COLS&&!visited[nr][nc]);
+    if(nbrs.length){
+      const {nr,nc,d,opp}=nbrs[0];
+      walls[cr][cc][d]=false;
+      walls[nr][nc][opp]=false;
+      visited[nr][nc]=true;
+      stack.push([nr,nc]);
+    } else { stack.pop(); }
+  }
+  return walls;
+}
+
+let maze = generateMaze();
+let agentR = 0, agentC = 0;
+let visitCount = Array.from({length: ROWS}, () => new Array(COLS).fill(0));
+let steps = 0;
+let goalReachedAt = null;
+let running = false;
+let animHandle = null;
+let speedMultiplier = 5;
+let stepsPerFrame = 5;
+
+function setSpeed(s) {
+  speedMultiplier = s;
+  stepsPerFrame = s === 1 ? 1 : s === 5 ? 5 : 30;
+  ['spd1','spd5','spd20'].forEach(id => document.getElementById(id).classList.remove('active'));
+  document.getElementById('spd'+s).classList.add('active');
+}
+
+function resetMaze() {
+  agentR = 0; agentC = 0;
+  visitCount = Array.from({length: ROWS}, () => new Array(COLS).fill(0));
+  visitCount[0][0] = 1;
+  steps = 0; goalReachedAt = null;
+  running = false;
+  if (animHandle) { cancelAnimationFrame(animHandle); animHandle = null; }
+  document.getElementById('btnRun').textContent = currentLang === 'de' ? 'Start' : 'Run';
+  updateStats();
+  drawMaze();
+  drawHeat();
+}
+
+function newMaze() {
+  maze = generateMaze();
+  resetMaze();
+}
+
+function moveAgent() {
+  const dirs = [];
+  const w = maze[agentR][agentC];
+  if (!w.N && agentR > 0) dirs.push([-1, 0]);
+  if (!w.S && agentR < ROWS-1) dirs.push([1, 0]);
+  if (!w.E && agentC < COLS-1) dirs.push([0, 1]);
+  if (!w.W && agentC > 0) dirs.push([0, -1]);
+  if (dirs.length === 0) return;
+  const [dr, dc] = dirs[Math.floor(Math.random() * dirs.length)];
+  agentR += dr; agentC += dc;
+  visitCount[agentR][agentC]++;
+  steps++;
+  if (agentR === goalR && agentC === goalC && goalReachedAt === null) {
+    goalReachedAt = steps;
+  }
+}
+
+function updateStats() {
+  document.getElementById('statSteps').textContent = steps.toLocaleString();
+  let visited = 0;
+  for (let r=0;r<ROWS;r++) for (let c=0;c<COLS;c++) if (visitCount[r][c]>0) visited++;
+  document.getElementById('statVisited').textContent = visited + ' / ' + (ROWS*COLS);
+  const revisitSteps = steps > 0 ? Math.max(0, steps - visited) : 0;
+  const rate = steps > 0 ? Math.round(revisitSteps / steps * 100) : 0;
+  document.getElementById('statRevisits').textContent = rate + '%';
+  if (goalReachedAt !== null) {
+    document.getElementById('statGoal').textContent = goalReachedAt.toLocaleString();
+    document.getElementById('statGoal').style.color = 'var(--accent4)';
+  } else {
+    document.getElementById('statGoal').textContent = '—';
+    document.getElementById('statGoal').style.color = '';
+  }
+}
+
+function getCSSVar(name) {
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+}
+
+function hexToRgb(hex) {
+  const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+  return [r,g,b];
+}
+
+function drawMaze() {
+  const canvas = document.getElementById('mazeCanvas');
+  const ctx = canvas.getContext('2d');
+  const isDark = document.documentElement.dataset.theme === 'dark';
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle = getCSSVar('--bg3');
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  // goal cell
+  ctx.fillStyle = isDark ? 'rgba(126,200,154,0.18)' : 'rgba(40,96,64,0.12)';
+  ctx.fillRect(goalC*CELL+1, goalR*CELL+1, CELL-2, CELL-2);
+  ctx.fillStyle = getCSSVar('--accent4');
+  ctx.font = `${Math.floor(CELL*0.45)}px serif`;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText('★', (goalC+0.5)*CELL, (goalR+0.5)*CELL);
+
+  // walls
+  ctx.strokeStyle = getCSSVar('--border');
+  ctx.lineWidth = 1.5;
+  // outer border
+  ctx.strokeRect(0.75,0.75,canvas.width-1.5,canvas.height-1.5);
+  for (let r=0;r<ROWS;r++) {
+    for (let c=0;c<COLS;c++) {
+      const x=c*CELL, y=r*CELL, w=maze[r][c];
+      ctx.beginPath();
+      if (w.S && r<ROWS-1) { ctx.moveTo(x,y+CELL); ctx.lineTo(x+CELL,y+CELL); }
+      if (w.E && c<COLS-1) { ctx.moveTo(x+CELL,y); ctx.lineTo(x+CELL,y+CELL); }
+      ctx.stroke();
+    }
+  }
+
+  // trail: last 20 positions shown as fading dots
+  // (simplified: just draw agent)
+  // agent
+  const ax = (agentC+0.5)*CELL, ay = (agentR+0.5)*CELL, rad = CELL*0.28;
+  ctx.beginPath();
+  ctx.arc(ax,ay,rad,0,Math.PI*2);
+  ctx.fillStyle = isDark ? '#c87e7e' : '#802030';
+  ctx.fill();
+  // start marker
+  if (!(agentR===0&&agentC===0)) {
+    ctx.font = `${Math.floor(CELL*0.3)}px JetBrains Mono, monospace`;
+    ctx.fillStyle = getCSSVar('--text-dim');
+    ctx.fillText('S', CELL*0.5, CELL*0.5);
+  }
+}
+
+function drawHeat() {
+  const canvas = document.getElementById('heatCanvas');
+  const ctx = canvas.getContext('2d');
+  const isDark = document.documentElement.dataset.theme === 'dark';
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle = getCSSVar('--bg3');
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  let maxV = 0;
+  for (let r=0;r<ROWS;r++) for (let c=0;c<COLS;c++) maxV = Math.max(maxV, visitCount[r][c]);
+
+  if (maxV === 0) {
+    ctx.fillStyle = getCSSVar('--text-dim');
+    ctx.font = '13px JetBrains Mono, monospace';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('Run the wanderer above', canvas.width/2, canvas.height/2 - 10);
+    ctx.fillText('to populate this map', canvas.width/2, canvas.height/2 + 10);
+    return;
+  }
+
+  for (let r=0;r<ROWS;r++) {
+    for (let c=0;c<COLS;c++) {
+      if (visitCount[r][c] === 0) continue;
+      const t = Math.pow(visitCount[r][c] / maxV, 0.5);
+      let col;
+      if (isDark) {
+        // dark: deep blue → warm amber
+        const rr = Math.round(42 + t*(200-42));
+        const g  = Math.round(60 + t*(169-60));
+        const b  = Math.round(128 + t*(110-128));
+        col = `rgb(${rr},${g},${b})`;
+      } else {
+        // light: pale parchment → rich brown
+        const rr = Math.round(228 + t*(138-228));
+        const g  = Math.round(221 + t*(96-221));
+        const b  = Math.round(212 + t*(48-212));
+        col = `rgb(${rr},${g},${b})`;
+      }
+      ctx.fillStyle = col;
+      ctx.fillRect(c*CELL, r*CELL, CELL, CELL);
+      if (visitCount[r][c] > 0) {
+        ctx.strokeStyle = getCSSVar('--bg3');
+        ctx.lineWidth = 0.5;
+        ctx.strokeRect(c*CELL, r*CELL, CELL, CELL);
+      }
+    }
+  }
+
+  // goal marker
+  ctx.fillStyle = getCSSVar('--accent4');
+  ctx.font = `${Math.floor(CELL*0.45)}px serif`;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText('★', (goalC+0.5)*CELL, (goalR+0.5)*CELL);
+
+  // draw maze walls over heatmap (thin)
+  ctx.strokeStyle = getCSSVar('--text');
+  ctx.lineWidth = 1;
+  ctx.strokeRect(0.5,0.5,canvas.width-1,canvas.height-1);
+  for (let r=0;r<ROWS;r++) {
+    for (let c=0;c<COLS;c++) {
+      const x=c*CELL, y=r*CELL, w=maze[r][c];
+      ctx.beginPath();
+      if (w.S && r<ROWS-1) { ctx.moveTo(x,y+CELL); ctx.lineTo(x+CELL,y+CELL); }
+      if (w.E && c<COLS-1) { ctx.moveTo(x+CELL,y); ctx.lineTo(x+CELL,y+CELL); }
+      ctx.stroke();
+    }
+  }
+}
+
+function redrawAll() {
+  drawMaze();
+  drawHeat();
+  buildTrailScale();
+}
+
+function buildTrailScale() {
+  const scale = document.getElementById('trailScale');
+  const isDark = document.documentElement.dataset.theme === 'dark';
+  scale.innerHTML = '';
+  const steps = 20;
+  for (let i=0;i<steps;i++) {
+    const t = i/(steps-1);
+    let col;
+    if (isDark) {
+      const rr = Math.round(42 + t*(200-42));
+      const g  = Math.round(60 + t*(169-60));
+      const b  = Math.round(128 + t*(110-128));
+      col = `rgb(${rr},${g},${b})`;
+    } else {
+      const rr = Math.round(228 + t*(138-228));
+      const g  = Math.round(221 + t*(96-221));
+      const b  = Math.round(212 + t*(48-212));
+      col = `rgb(${rr},${g},${b})`;
+    }
+    const seg = document.createElement('div');
+    seg.style.cssText = `flex:1;background:${col};`;
+    scale.appendChild(seg);
+  }
+}
+
+function toggleRun() {
+  running = !running;
+  const btn = document.getElementById('btnRun');
+  if (running) {
+    btn.textContent = currentLang === 'de' ? 'Pause' : 'Pause';
+    btn.classList.remove('primary');
+    btn.classList.add('danger');
+    animate();
+  } else {
+    btn.textContent = currentLang === 'de' ? 'Weiter' : 'Continue';
+    btn.classList.remove('danger');
+    btn.classList.add('primary');
+  }
+}
+
+let frameCount = 0;
+function animate() {
+  if (!running) return;
+  for (let i = 0; i < stepsPerFrame; i++) moveAgent();
+  frameCount++;
+  if (frameCount % 2 === 0) {
+    drawMaze();
+    drawHeat();
+    updateStats();
+  }
+  animHandle = requestAnimationFrame(animate);
+}
+
+// ─── i18n ─────────────────────────────────────────────────────────────────────
+let currentLang = localStorage.getItem('xray-lang') || 'en';
+
+const TRANSLATIONS = {
+  en: {
+    chNum: 'Chapter IV',
+    chTitle: 'Emergence',
+    chSub: 'What arises when nothing plans to arrive',
+    p1: 'Consider an ant. A single ant knows almost nothing. It cannot build anything. It has no blueprint, no foreman, no long-term plan. It follows a few chemical signals and responds to what is immediately around it. That is all.',
+    p2: 'Now watch a colony. Half a million of these simple creatures produce something no individual intended: a ventilated structure, maintained at constant temperature, with food storage, nurseries, and waste management. The colony appears intelligent. The individual ants are not.',
+    p3: 'This is emergence. Complex, organized behavior arising from simple local rules — with no central planner, no global design. The structure is real. No one designed it.',
+    pq1: '"The whole is something other than the sum of its parts."',
+    pq1cite: '— Aristotle, Metaphysics',
+    p4: 'Now consider an agent in a maze. It has no map. It does not know where the exit is. It does not even know that an exit exists. It can only observe its current position and choose among four directions.',
+    p5: 'Watch what happens when it moves randomly. No structure, no purpose — just noise. The agent visits some cells many times and never finds others. There is no learning here, only wandering. The maze is as opaque at step 10,000 as it was at step 1.',
+    w1label: 'The Wanderer — two views of the same agent',
+    panelLabelAgent: 'Agent view',
+    panelLabelHeat: 'X-Ray view',
+    statLabelSteps: 'Steps taken',
+    statLabelVisited: 'Cells visited',
+    statLabelRevisits: 'Revisit rate',
+    statRevisitsSub: 'steps on already-seen cells',
+    statLabelGoal: 'Goal reached',
+    statGoalSub: 'by chance, not by learning',
+    trailLegendTitle: 'Visit frequency',
+    trailLow: 'never',
+    trailHigh: 'many times',
+    p6: 'This is the question that emergence poses: how does something organized arise from something that does not plan? The ant colony answers it with chemistry and time. But our agent has neither pheromones nor a colony. It is alone, without signal, without memory.',
+    p7: 'What the agent lacks is exactly what the next chapter introduces: the ability to remember which paths led somewhere useful. Not intelligence — just memory of outcomes. That single addition transforms wandering into something that begins to resemble learning.',
+    secBreak1: 'emergence',
+    p8: "There is a deeper point here. The agent's random walk is not entirely without structure — it produces a heatmap. Some regions are explored more than others, not by plan but by the topology of the maze itself. The walls guide the wandering even without the agent knowing they exist.",
+    p9: 'This is what X-Ray vision reveals: even apparent randomness has shape. The structure is there — you simply cannot see it from the inside.',
+    w2label: 'Widget II — Heat Map',
+    heatNote: 'Run the wanderer above to populate. The brighter the cell, the more times it was visited.',
+    p10: 'The heatmap does not belong to the agent. The agent does not see it. Only we see it — from outside, looking in. This is the X-Ray position: not inside the system, not fooled by its surface behavior, but reading the structure the system itself cannot perceive.',
+    p11: 'In the next chapter, we give the agent a small piece of this view. We let it remember. And from that single change, something emerges that the wanderer could never produce.',
+    footer_prev: '← III. Local Optima',
+    footer_next: 'V. Memory →',
+  },
+  de: {
+    chNum: 'Kapitel IV',
+    chTitle: 'Emergenz',
+    chSub: 'Was entsteht, wenn nichts plant zu entstehen',
+    p1: 'Betrachte eine einzelne Ameise. Sie weiß fast nichts. Sie kann nichts bauen. Sie hat keinen Bauplan, keinen Vorarbeiter, keinen langfristigen Plan. Sie folgt einigen chemischen Signalen und reagiert auf das, was unmittelbar um sie herum ist. Das ist alles.',
+    p2: 'Beobachte nun eine Kolonie. Eine halbe Million dieser einfachen Lebewesen erzeugt etwas, das kein einzelnes Individuum beabsichtigt hat: eine belüftete Struktur, auf konstanter Temperatur gehalten, mit Nahrungslagerung, Brutkammern und Abfallentsorgung. Die Kolonie wirkt intelligent. Die einzelnen Ameisen sind es nicht.',
+    p3: 'Das ist Emergenz. Komplexes, organisiertes Verhalten entsteht aus einfachen lokalen Regeln — ohne zentralen Planer, ohne globales Design. Die Struktur ist real. Niemand hat sie entworfen.',
+    pq1: '„Das Ganze ist etwas anderes als die Summe seiner Teile."',
+    pq1cite: '— Aristoteles, Metaphysik',
+    p4: 'Betrachte nun einen Agenten in einem Labyrinth. Er hat keine Karte. Er weiß nicht, wo der Ausgang ist. Er weiß nicht einmal, dass ein Ausgang existiert. Er kann nur seine aktuelle Position beobachten und zwischen vier Richtungen wählen.',
+    p5: 'Beobachte, was passiert, wenn er sich zufällig bewegt. Keine Struktur, kein Ziel — nur Rauschen. Der Agent besucht manche Felder viele Male und findet andere nie. Hier gibt es kein Lernen, nur Wandern. Das Labyrinth ist bei Schritt 10.000 genauso undurchsichtig wie bei Schritt 1.',
+    w1label: 'Der Wanderer — zwei Sichten auf denselben Agenten',
+    panelLabelAgent: 'Agentensicht',
+    panelLabelHeat: 'X-Ray-Sicht',
+    statLabelSteps: 'Schritte',
+    statLabelVisited: 'Besuchte Felder',
+    statLabelRevisits: 'Wiederholungsrate',
+    statRevisitsSub: 'Schritte auf bereits gesehenen Feldern',
+    statLabelGoal: 'Ziel erreicht',
+    statGoalSub: 'durch Zufall, nicht durch Lernen',
+    trailLegendTitle: 'Besuchshäufigkeit',
+    trailLow: 'nie',
+    trailHigh: 'viele Male',
+    p6: 'Das ist die Frage, die Emergenz stellt: Wie entsteht etwas Organisiertes aus etwas, das nicht plant? Die Ameisenkolonie beantwortet sie mit Chemie und Zeit. Aber unser Agent hat weder Pheromone noch eine Kolonie. Er ist allein, ohne Signal, ohne Gedächtnis.',
+    p7: 'Was dem Agenten fehlt, ist genau das, was das nächste Kapitel einführt: die Fähigkeit, sich zu merken, welche Wege irgendwohin nützlich waren. Nicht Intelligenz — nur Gedächtnis für Ergebnisse. Diese eine Ergänzung verwandelt das Wandern in etwas, das beginnt, dem Lernen zu ähneln.',
+    secBreak1: 'Emergenz',
+    p8: 'Es gibt einen tieferen Punkt hier. Der zufällige Weg des Agenten ist nicht völlig ohne Struktur — er erzeugt eine Heatmap. Manche Regionen werden mehr erkundet als andere, nicht nach Plan, sondern durch die Topologie des Labyrinths selbst. Die Wände leiten das Wandern, ohne dass der Agent weiß, dass sie existieren.',
+    p9: 'Das ist es, was X-Ray-Vision offenbart: Selbst scheinbare Zufälligkeit hat eine Form. Die Struktur ist da — man kann sie von innen einfach nicht sehen.',
+    w2label: 'Widget II — Heatmap',
+    heatNote: 'Starte den Wanderer oben, um die Karte zu füllen. Je heller das Feld, desto öfter wurde es besucht.',
+    p10: 'Die Heatmap gehört nicht dem Agenten. Der Agent sieht sie nicht. Nur wir sehen sie — von außen, hineinschauend. Das ist die X-Ray-Position: nicht im System, nicht getäuscht von seinem Oberflächenverhalten, sondern die Struktur lesend, die das System selbst nicht wahrnehmen kann.',
+    p11: 'Im nächsten Kapitel geben wir dem Agenten ein kleines Stück dieser Sicht. Wir lassen ihn sich erinnern. Und aus dieser einen Veränderung entsteht etwas, das der Wanderer nie hätte erzeugen können.',
+    footer_prev: '← III. Die bequeme Falle',
+    footer_next: 'V. Gedächtnis →',
+  }
+};
+
+function applyTranslation(lang) {
+  currentLang = lang;
+  localStorage.setItem('xray-lang', lang);
+  const t = TRANSLATIONS[lang];
+  const set = (id, val) => { const el = document.getElementById(id); if (el && val !== undefined) el.textContent = val; };
+  set('chNum', t.chNum); set('chTitle', t.chTitle); set('chSub', t.chSub);
+  set('p1',t.p1); set('p2',t.p2); set('p3',t.p3);
+  set('pq1',t.pq1); set('pq1cite',t.pq1cite);
+  set('p4',t.p4); set('p5',t.p5);
+  set('w1label',t.w1label);
+  set('panelLabelAgent',t.panelLabelAgent); set('panelLabelHeat',t.panelLabelHeat);
+  set('statLabelSteps',t.statLabelSteps); set('statLabelVisited',t.statLabelVisited);
+  set('statLabelRevisits',t.statLabelRevisits); set('statRevisitsSub',t.statRevisitsSub);
+  set('statLabelGoal',t.statLabelGoal); set('statGoalSub',t.statGoalSub);
+  set('trailLegendTitle',t.trailLegendTitle); set('trailLow',t.trailLow); set('trailHigh',t.trailHigh);
+  set('p6',t.p6); set('p7',t.p7); set('secBreak1',t.secBreak1);
+  set('p8',t.p8); set('p9',t.p9);
+  set('w2label',t.w2label); set('heatNote',t.heatNote);
+  set('p10',t.p10); set('p11',t.p11);
+  set('footerPrev',t.footer_prev); set('footerNext',t.footer_next);
+  // update run button if paused
+  const btn = document.getElementById('btnRun');
+  if (!running) btn.textContent = lang === 'de' ? 'Start' : 'Run';
+  // lang buttons
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
+  // close lang bar
+  document.getElementById('langBar').classList.remove('open');
+  document.getElementById('langToggle').classList.remove('active');
+}
+
+
+// ─── Restore settings & init ─────────────────────────────────────────────────
+(function() {
+  const theme = localStorage.getItem('xray-theme') || 'light';
+  const fsize = localStorage.getItem('xray-fsize') || 'default';
+  const contrast = localStorage.getItem('xray-contrast') || 'standard';
+  setTheme(theme, true); setFsize(fsize); setContrast(contrast);
+})();
+
+// init
+visitCount[0][0] = 1;
+applyTranslation(currentLang);
+buildTrailScale();
+drawMaze();
+drawHeat();
+updateStats();
+</script>
+</body>
+</html>
