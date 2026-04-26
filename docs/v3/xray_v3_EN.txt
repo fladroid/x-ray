@@ -1,0 +1,1 @@
+$(cat /home/claude/xray_v3_EN.txt)
