@@ -46,7 +46,7 @@
   .lang-btn:hover { color: var(--text-bright); border-color: var(--text-dim); }
   .lang-btn.active { background: var(--accent2); border-color: var(--accent2); color: var(--bg); }
 
-    nav{position:sticky;top:0;z-index:100;height:52px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0;}
+    nav{position:sticky;top:0;z-index:100;height:52px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0;max-width:none;width:100%;margin:0;left:0;right:0;box-sizing:border-box;}
     .nav-title{font-family:var(--mono);font-size:11px;letter-spacing:0.15em;color:var(--text-dim);text-transform:uppercase;padding:0 16px;text-decoration:none;color:inherit;cursor:pointer;white-space:nowrap;flex-shrink:0;}
     .nav-right{display:flex;align-items:center;flex:1;min-width:0;}
     .nav-chapters{display:flex;list-style:none;flex:1;min-width:0;}
@@ -129,7 +129,7 @@
 <body>
 
 <nav>
-  <a href="index.html" class="nav-title" translate="no">X-RAY — v1.6</a>
+  <a href="index.html" class="nav-title" translate="no">X-RAY — v1.7</a>
   <div class="nav-right">
     <ul class="nav-chapters">
       <li><a href="chapter_01_vectors.html" translate="no">I. Vectors</a></li>
@@ -248,7 +248,7 @@
 
   <div class="pull-quote">
     <span id="pullQuote">"The expert knows so much about the subject that he can no longer see it."</span>
-    <cite id="pullQuoteCite">— X-RAY — v1.6</cite>
+    <cite id="pullQuoteCite">— X-RAY — v1.7</cite>
   </div>
 
   <div class="prose">
@@ -264,7 +264,7 @@
   <div class="prose">
     <p id="p14">There are technical strategies for escaping local optima. Momentum carries the agent past shallow valleys. Random restarts sample different starting positions. Simulated annealing adds controlled noise — heat that shakes the agent loose from where it has settled. These are not metaphors. They are real techniques, with real effects, that work by disrupting the very process that made convergence possible.</p>
     <p id="p15">But notice what all of them require: the knowledge that you are in a local optimum in the first place. You cannot apply a random restart if you believe you have already found the global minimum. You cannot add noise to a process you think is working correctly. The escape requires a prior diagnosis — and the diagnosis requires the capacity to look at your own position from the outside.</p>
-    <p id="p16">That capacity is what the X-RAY — v1.6 approach is about. Not a technique. A stance. The willingness to ask, at any point of apparent success: <em>is this a summit, or is this just the highest point I can see from here?</em></p>
+    <p id="p16">That capacity is what the X-RAY — v1.7 approach is about. Not a technique. A stance. The willingness to ask, at any point of apparent success: <em>is this a summit, or is this just the highest point I can see from here?</em></p>
   </div>
 
   <!-- WIDGET 2: Escape Strategies -->
@@ -301,7 +301,7 @@
 
   <div class="prose">
     <p id="p17">The model in the widget does not know it is trapped. It has no vantage point from which to see the larger landscape. It follows the gradient because that is all it can do. In this, it is no different from the expert who cannot question her own conventions, or the philosopher who built a closed system and called it complete.</p>
-    <p id="p18">The X-RAY — v1.6 view does not guarantee escape. It does not hand you a map of the global landscape. What it offers is subtler: the habit of treating every stable position as provisional, every apparent solution as a local answer to a possibly larger question. The summit might be a summit. It might also be a ledge with better fog.</p>
+    <p id="p18">The X-RAY — v1.7 view does not guarantee escape. It does not hand you a map of the global landscape. What it offers is subtler: the habit of treating every stable position as provisional, every apparent solution as a local answer to a possibly larger question. The summit might be a summit. It might also be a ledge with better fog.</p>
   </div>
 
 </main>
@@ -688,7 +688,7 @@ window.addEventListener('resize', () => { resizeLandscape(); resizeEscape(); });
 // ============================================================
 const TRANSLATIONS = {
   en: {
-    nav_title: 'X-RAY — v1.6',
+    nav_title: 'X-RAY — v1.7',
     nav_ch1: 'I. Vectors', nav_ch2: 'II. Attention', nav_ch3: 'III. Local Optima', nav_ch4: 'IV. Emergence',
     settings_label: '⚙ Display',
     setting_theme: 'Theme', setting_theme_light: 'Light', setting_theme_dark: 'Dark',
@@ -706,7 +706,7 @@ const TRANSLATIONS = {
     p7: 'The starting position is not a technical detail. It is the whole problem. A model trained from one random initialization may converge to a completely different solution than the same model trained from another — not a worse solution in any detectable local sense, but a different one, with different blind spots, different failure modes, different things it cannot see.',
     p8: 'This is not a bug that will be fixed in the next version. It is a structural property of the learning process. The loss landscape does not care about your intentions. It only offers slopes.',
     pq: '"The expert knows so much about the subject that he can no longer see it."',
-    pq_cite: '— X-RAY — v1.6',
+    pq_cite: '— X-RAY — v1.7',
     p9: 'The local optimum is not a problem that belongs only to machines. Consider the database administrator who has spent fifteen years building data dictionaries. She knows her system intimately. She has optimised every query, anticipated every edge case, documented every table. From where she stands, the system works. It has always worked.',
     p10: 'Then a colleague — new to the team, unfamiliar with the conventions — asks a naive question: <em>why does the field called "customer_id" contain addresses?</em> The expert laughs. It\'s a legacy thing. Always been that way. Everyone knows. And in that laugh is the sound of a local optimum defending itself.',
     p11: 'The expert has gradient-descended into deep familiarity. Each step made sense. Each adaptation was locally optimal. The result is a kind of competence that has become its own obstacle — not because the expert is wrong, but because she has lost the capacity to see the terrain from above. The fog of expertise is thicker than the fog of ignorance.',
@@ -714,9 +714,9 @@ const TRANSLATIONS = {
     p13: 'Then he came back. Not to refine the <em>Tractatus</em> — to dismantle it. The <em>Philosophical Investigations</em> is not a correction of the earlier work. It is a demonstration that the earlier work had been asking the wrong questions from the wrong position. He did not climb out of the local optimum by following the gradient. He climbed out by questioning whether the gradient was pointing in the right direction at all.',
     p14: 'There are technical strategies for escaping local optima. Momentum carries the agent past shallow valleys. Random restarts sample different starting positions. Simulated annealing adds controlled noise — heat that shakes the agent loose from where it has settled. These are not metaphors. They are real techniques, with real effects, that work by disrupting the very process that made convergence possible.',
     p15: 'But notice what all of them require: the knowledge that you are in a local optimum in the first place. You cannot apply a random restart if you believe you have already found the global minimum. You cannot add noise to a process you think is working correctly. The escape requires a prior diagnosis — and the diagnosis requires the capacity to look at your own position from the outside.',
-    p16: 'That capacity is what the X-RAY — v1.6 approach is about. Not a technique. A stance. The willingness to ask, at any point of apparent success: <em>is this a summit, or is this just the highest point I can see from here?</em>',
+    p16: 'That capacity is what the X-RAY — v1.7 approach is about. Not a technique. A stance. The willingness to ask, at any point of apparent success: <em>is this a summit, or is this just the highest point I can see from here?</em>',
     p17: 'The model in the widget does not know it is trapped. It has no vantage point from which to see the larger landscape. It follows the gradient because that is all it can do. In this, it is no different from the expert who cannot question her own conventions, or the philosopher who built a closed system and called it complete.',
-    p18: 'The X-RAY — v1.6 view does not guarantee escape. It does not hand you a map of the global landscape. What it offers is subtler: the habit of treating every stable position as provisional, every apparent solution as a local answer to a possibly larger question. The summit might be a summit. It might also be a ledge with better fog.',
+    p18: 'The X-RAY — v1.7 view does not guarantee escape. It does not hand you a map of the global landscape. What it offers is subtler: the habit of treating every stable position as provisional, every apparent solution as a local answer to a possibly larger question. The summit might be a summit. It might also be a ledge with better fog.',
     widget1_label: 'Interactive — Loss Landscape',
     widget1_status: 'Gradient descent',
     lr_label: 'Learning rate',
@@ -739,7 +739,7 @@ const TRANSLATIONS = {
     footer_page: 'Chapter III of VIII',
   },
   de: {
-    nav_title: 'X-RAY — v1.6',
+    nav_title: 'X-RAY — v1.7',
     nav_ch1: 'I. Vektorraum', nav_ch2: 'II. Aufmerksamkeit', nav_ch3: 'III. Lokale Optima', nav_ch4: 'IV. Emergenz',
     settings_label: '⚙ Ansicht',
     setting_theme: 'Design', setting_theme_light: 'Hell', setting_theme_dark: 'Dunkel',
@@ -757,7 +757,7 @@ const TRANSLATIONS = {
     p7: 'Die Startposition ist kein technisches Detail. Sie ist das eigentliche Problem. Ein Modell, das von einer zufälligen Initialisierung trainiert wird, kann zu einer völlig anderen Lösung konvergieren als dasselbe Modell von einer anderen Initialisierung — nicht zu einer im lokal nachweisbaren Sinne schlechteren Lösung, sondern zu einer anderen, mit anderen blinden Flecken, anderen Versagensmodi, anderen Dingen, die es nicht sehen kann.',
     p8: 'Das ist kein Fehler, der in der nächsten Version behoben wird. Es ist eine strukturelle Eigenschaft des Lernprozesses. Die Verlustlandschaft kümmert sich nicht um Ihre Absichten. Sie bietet nur Hänge.',
     pq: '„Der Experte weiß so viel über das Thema, dass er es nicht mehr sehen kann."',
-    pq_cite: '— X-RAY — v1.6',
+    pq_cite: '— X-RAY — v1.7',
     p9: 'Das lokale Optimum ist nicht nur ein Problem für Maschinen. Betrachten Sie die Datenbankadministratorin, die fünfzehn Jahre damit verbracht hat, Datenwörterbücher zu erstellen. Sie kennt ihr System in- und auswendig. Sie hat jede Abfrage optimiert, jeden Grenzfall vorweggenommen, jede Tabelle dokumentiert. Von ihrem Standpunkt aus funktioniert das System. Es hat immer funktioniert.',
     p10: 'Dann stellt ein Kollege — neu im Team, mit den Konventionen nicht vertraut — eine naive Frage: <em>Warum enthält das Feld namens „customer_id" Adressen?</em> Die Expertin lacht. Das ist ein Überbleibsel. War schon immer so. Jeder weiß das. Und in diesem Lachen steckt das Geräusch eines lokalen Optimums, das sich verteidigt.',
     p11: 'Die Expertin hat sich durch Gradientenabstieg in tiefe Vertrautheit hineingelernt. Jeder Schritt ergab Sinn. Jede Anpassung war lokal optimal. Das Ergebnis ist eine Art Kompetenz, die zu ihrem eigenen Hindernis geworden ist — nicht weil die Expertin falsch liegt, sondern weil sie die Fähigkeit verloren hat, das Gelände von oben zu sehen. Der Nebel der Expertise ist dichter als der Nebel der Unwissenheit.',
@@ -765,9 +765,9 @@ const TRANSLATIONS = {
     p13: 'Dann kam er zurück. Nicht um den <em>Tractatus</em> zu verfeinern — sondern um ihn zu demontieren. Die <em>Philosophischen Untersuchungen</em> sind keine Korrektur der früheren Arbeit. Sie sind eine Demonstration, dass die frühere Arbeit von der falschen Position aus die falschen Fragen gestellt hatte. Er kletterte nicht aus dem lokalen Optimum heraus, indem er dem Gradienten folgte. Er kletterte heraus, indem er infrage stellte, ob der Gradient überhaupt in die richtige Richtung zeigte.',
     p14: 'Es gibt technische Strategien zur Flucht aus lokalen Optima. Momentum trägt den Agenten über flache Täler hinaus. Zufällige Neustarts samplen verschiedene Startpositionen. Simulated Annealing fügt kontrollierten Lärm hinzu — Wärme, die den Agenten von seinem Ruheplatz aufschüttelt. Das sind keine Metaphern. Es sind echte Techniken mit echten Wirkungen, die funktionieren, indem sie genau den Prozess stören, der Konvergenz ermöglicht hat.',
     p15: 'Aber beachten Sie, was alle davon voraussetzen: das Wissen, dass man sich überhaupt in einem lokalen Optimum befindet. Man kann keinen zufälligen Neustart anwenden, wenn man glaubt, bereits das globale Minimum gefunden zu haben. Man kann einem Prozess, den man für korrekt hält, keinen Lärm hinzufügen. Die Flucht erfordert eine vorherige Diagnose — und die Diagnose erfordert die Fähigkeit, die eigene Position von außen zu betrachten.',
-    p16: 'Diese Fähigkeit ist das Wesen des X-RAY — v1.6-Ansatzes. Keine Technik. Eine Haltung. Die Bereitschaft, an jedem Punkt scheinbaren Erfolgs zu fragen: <em>Ist das ein Gipfel, oder ist das nur der höchste Punkt, den ich von hier aus sehen kann?</em>',
+    p16: 'Diese Fähigkeit ist das Wesen des X-RAY — v1.7-Ansatzes. Keine Technik. Eine Haltung. Die Bereitschaft, an jedem Punkt scheinbaren Erfolgs zu fragen: <em>Ist das ein Gipfel, oder ist das nur der höchste Punkt, den ich von hier aus sehen kann?</em>',
     p17: 'Das Modell im Widget weiß nicht, dass es gefangen ist. Es hat keinen Aussichtspunkt, von dem aus es die größere Landschaft sehen könnte. Es folgt dem Gradienten, weil das alles ist, was es tun kann. Darin unterscheidet es sich nicht von der Expertin, die ihre eigenen Konventionen nicht infrage stellen kann, oder dem Philosophen, der ein geschlossenes System baute und es vollständig nannte.',
-    p18: 'Der X-RAY — v1.6-Blick garantiert keine Flucht. Er gibt Ihnen keine Karte der globalen Landschaft. Was er bietet, ist subtiler: die Gewohnheit, jede stabile Position als vorläufig zu behandeln, jede scheinbare Lösung als lokale Antwort auf eine möglicherweise größere Frage. Der Gipfel könnte ein Gipfel sein. Er könnte auch ein Felsvorsprung mit besserem Nebel sein.',
+    p18: 'Der X-RAY — v1.7-Blick garantiert keine Flucht. Er gibt Ihnen keine Karte der globalen Landschaft. Was er bietet, ist subtiler: die Gewohnheit, jede stabile Position als vorläufig zu behandeln, jede scheinbare Lösung als lokale Antwort auf eine möglicherweise größere Frage. Der Gipfel könnte ein Gipfel sein. Er könnte auch ein Felsvorsprung mit besserem Nebel sein.',
     widget1_label: 'Interaktiv — Verlustlandschaft',
     widget1_status: 'Gradientenabstieg',
     lr_label: 'Lernrate',
