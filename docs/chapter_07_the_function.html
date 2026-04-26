@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VII. The Function</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@300;400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;1,8..60,300&display=swap');
+  :root{--bg:#f5f2ed;--bg2:#ede8e0;--bg3:#e4ddd4;--border:#c8c0b4;--text:#2a2520;--text-dim:#7a6e65;--text-bright:#1a1210;--accent:#8a6030;--accent2:#2a6080;--accent3:#802030;--accent4:#286040;}
+  [data-theme="dark"]{--bg:#0e0e0f;--bg2:#141416;--bg3:#1a1a1d;--border:#2a2a2e;--text:#d4cfc8;--text-dim:#6b6660;--text-bright:#ede8e0;--accent:#c8a96e;--accent2:#7eb3c8;--accent3:#c87e7e;--accent4:#7ec89a;}
+  [data-contrast="high"]{--text:#000;--text-dim:#444;--text-bright:#000;--border:#666;}
+  [data-theme="dark"][data-contrast="high"]{--text:#fff;--text-dim:#bbb;--text-bright:#fff;--border:#888;}
+  html{font-size:18px;}html[data-fsize="large"]{font-size:21px;}html[data-fsize="xl"]{font-size:25px;}
+  *{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--text);font-family:'Source Serif 4',Georgia,serif;line-height:1.8;max-width:800px;margin:0 auto;padding:0 2rem;transition:background 0.2s,color 0.2s;}
+  .settings-bar{position:fixed;top:52px;left:0;right:0;background:var(--bg2);border-bottom:1px solid var(--border);z-index:90;display:none;}
+  .settings-bar.open{display:block;}
+  .settings-inner{max-width:800px;margin:0 auto;padding:1rem 2rem;display:flex;gap:2.5rem;align-items:flex-start;flex-wrap:wrap;}
+  .setting-group{display:flex;flex-direction:column;gap:0.5rem;}
+  .setting-group-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.15em;color:var(--text-dim);text-transform:uppercase;}
+  .setting-btns{display:flex;gap:0.4rem;}
+  .set-btn{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.08em;padding:0.3rem 0.75rem;border:1px solid var(--border);background:transparent;color:var(--text-dim);cursor:pointer;transition:all 0.15s;}
+  .set-btn:hover{color:var(--text-bright);border-color:var(--text-dim);}
+  .set-btn.active{background:var(--accent);border-color:var(--accent);color:var(--bg);}
+  .lang-bar{position:fixed;top:52px;left:0;right:0;background:var(--bg2);border-bottom:1px solid var(--border);z-index:89;display:none;}
+  .lang-bar.open{display:block;}
+  .lang-inner{max-width:800px;margin:0 auto;padding:0.75rem 2rem;display:flex;gap:0.5rem;}
+  .lang-btn{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.12em;padding:0.3rem 1rem;border:1px solid var(--border);background:transparent;color:var(--text-dim);cursor:pointer;text-transform:uppercase;transition:all 0.15s;}
+  .lang-btn:hover{color:var(--text-bright);border-color:var(--text-dim);}
+  .lang-btn.active{background:var(--accent2);border-color:var(--accent2);color:var(--bg);}
+  nav{position:fixed;top:0;left:0;right:0;background:rgba(245,242,237,0.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);z-index:100;transition:background 0.2s;}
+  [data-theme="dark"] nav{background:rgba(14,14,15,0.96);}
+  .nav-inner{max-width:800px;margin:0 auto;padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:52px;}
+  .nav-title{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.15em;color:var(--text-dim);text-transform:uppercase;}
+  .nav-right{display:flex;align-items:center;}
+  .nav-chapters{display:flex;list-style:none;}
+  .nav-chapters a{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-dim);text-decoration:none;padding:0 14px;height:52px;display:flex;align-items:center;border-left:1px solid var(--border);transition:color 0.2s,background 0.2s;}
+  .nav-chapters a:hover,.nav-chapters a.active{color:var(--accent);background:rgba(138,96,48,0.06);}
+  [data-theme="dark"] .nav-chapters a:hover,[data-theme="dark"] .nav-chapters a.active{background:rgba(200,169,110,0.05);}
+  .settings-toggle{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.12em;color:var(--text-dim);background:transparent;border:none;border-left:1px solid var(--border);padding:0 14px;height:52px;cursor:pointer;text-transform:uppercase;transition:color 0.15s;}
+  .settings-toggle:hover,.settings-toggle.active{color:var(--accent);}
+  @media(max-width:640px){.nav-chapters{display:none;}}
+  main{padding-top:52px;}
+  .chapter-header{padding:8rem 0 4rem;border-bottom:1px solid var(--border);margin-bottom:4rem;}
+  .chapter-number{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.2em;color:var(--accent);text-transform:uppercase;margin-bottom:1.5rem;display:block;}
+  h1{font-family:'Playfair Display',Georgia,serif;font-size:clamp(2.2rem,5vw,3.2rem);font-weight:700;color:var(--text-bright);line-height:1.15;letter-spacing:-0.01em;margin-bottom:1.5rem;}
+  .chapter-subtitle{font-family:'Source Serif 4',serif;font-style:italic;font-size:1.1rem;color:var(--text-dim);font-weight:300;}
+  .prose{margin-bottom:2.5rem;}.prose p{margin-bottom:1.4rem;}.prose p:last-child{margin-bottom:0;}
+  .prose em{font-style:italic;color:var(--text-bright);}.prose strong{font-weight:400;color:var(--accent);}
+  .pull-quote{border-left:2px solid var(--accent);margin:3rem 0;padding:1rem 0 1rem 2rem;font-family:'Playfair Display',serif;font-style:italic;font-size:1.25rem;color:var(--text-bright);line-height:1.5;}
+  .section-break{display:flex;align-items:center;gap:1rem;margin:4rem 0;color:var(--text-dim);font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.15em;}
+  .section-break::before,.section-break::after{content:'';flex:1;height:1px;background:var(--border);}
+  .widget{background:var(--bg2);border:1px solid var(--border);border-radius:4px;margin:3rem 0;overflow:hidden;}
+  .widget-header{padding:1rem 1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;}
+  .widget-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.18em;color:var(--text-dim);text-transform:uppercase;}
+
+  /* dual layout */
+  .dual-col{display:flex;gap:1.5rem;flex-wrap:wrap;}
+  .agent-col{flex:1;min-width:240px;display:flex;flex-direction:column;gap:0.6rem;align-items:center;}
+  .col-header{width:100%;display:flex;align-items:baseline;gap:0.75rem;}
+  .col-title{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.12em;color:var(--text-bright);text-transform:uppercase;}
+  .col-tag{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.1em;padding:0.1rem 0.5rem;border-radius:2px;}
+  .col-tag.ql{background:rgba(42,96,128,0.15);color:var(--accent2);border:1px solid rgba(42,96,128,0.25);}
+  .col-tag.dqn{background:rgba(128,32,48,0.15);color:var(--accent3);border:1px solid rgba(128,32,48,0.25);}
+
+  /* stats */
+  .agent-stats{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 1rem;padding:0.75rem;background:var(--bg3);border:1px solid var(--border);border-radius:2px;width:100%;}
+  .astat{display:flex;flex-direction:column;gap:0.05rem;}
+  .astat-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.1em;color:var(--text-dim);text-transform:uppercase;}
+  .astat-val{font-family:'JetBrains Mono',monospace;font-size:1rem;color:var(--text-bright);}
+  .astat-val.highlight{color:var(--accent4);}
+
+  /* pause banner */
+  .pause-banner{display:none;padding:0.75rem 1.5rem;background:rgba(40,96,64,0.12);border-top:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent4);letter-spacing:0.05em;text-align:center;}
+  .pause-banner.visible{display:block;}
+
+  /* Q-data panel */
+  .q-data-toggle{margin:0.75rem 1.5rem 0;}
+  .q-data-panel{display:none;margin:0 1.5rem 0.75rem;border:1px solid var(--border);border-radius:2px;background:var(--bg2);}
+  .q-data-panel.open{display:block;}
+  .q-data-section{padding:0.75rem 1rem;border-bottom:1px solid var(--border);}
+  .q-data-section:last-child{border-bottom:none;}
+  .q-data-title{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.15em;color:var(--accent);text-transform:uppercase;margin-bottom:0.6rem;}
+  .q-data-title.dqn-title{color:var(--accent3);}
+
+  /* two-col data layout */
+  .data-dual{display:flex;gap:1.5rem;flex-wrap:wrap;}
+  .data-half{flex:1;min-width:200px;}
+  .data-half-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.15em;color:var(--accent);text-transform:uppercase;margin-bottom:0.5rem;padding-bottom:0.35rem;border-bottom:1px solid var(--border);}
+  .data-half-label.dqn{color:var(--accent3);}
+
+  /* glossary */
+  .q-glossary{display:flex;flex-direction:column;gap:0.45rem;}
+  .q-gloss-item{display:grid;grid-template-columns:9rem 1fr;gap:0.5rem;align-items:start;}
+  .q-gloss-term{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-bright);padding-top:0.1rem;}
+  .q-gloss-live{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent4);padding-top:0.1rem;}
+  .q-gloss-def{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-dim);line-height:1.5;}
+
+  /* Q-grid */
+  .q-grid-wrap{overflow-x:auto;}
+  .qGridTable{border-collapse:collapse;}
+  .qGridTable td{width:30px;height:30px;border:1px solid var(--border);text-align:center;vertical-align:middle;font-size:13px;cursor:pointer;transition:background 0.2s;}
+  .qGridTable td:hover{border-color:var(--accent2);}
+  .qGridTable td.goal-cell{background:rgba(40,96,64,0.15);}
+  .qGridTable td.selected-cell{outline:2px solid var(--accent2);outline-offset:-2px;}
+
+  /* DQN network viz */
+  .dqn-network{padding:0.5rem 0;}
+  .dqn-arch{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-dim);margin-bottom:0.5rem;}
+  .dqn-blackbox{padding:0.75rem 1rem;background:var(--bg3);border:1px solid var(--border);border-radius:2px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-dim);line-height:1.7;}
+  .dqn-blackbox strong{color:var(--accent3);font-weight:400;}
+  .dqn-weights{margin-top:0.5rem;font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--text-dim);line-height:1.6;max-height:80px;overflow:hidden;position:relative;}
+  .dqn-weights::after{content:'';position:absolute;bottom:0;left:0;right:0;height:24px;background:linear-gradient(transparent,var(--bg3));}
+  .dqn-live-row{display:flex;gap:1rem;margin-top:0.5rem;flex-wrap:wrap;}
+  .dqn-live-item{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-dim);}
+  .dqn-live-val{color:var(--accent3);}
+
+  /* DQN network visualization */
+  .dqn-net-wrap{margin:0.6rem 0 0.4rem;position:relative;}
+  .dqn-net-svg{width:100%;display:block;}
+  .dqn-net-label{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--text-dim);text-align:center;margin-bottom:0.2rem;letter-spacing:0.04em;}
+  .dqn-frozen-badge{display:none;font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--accent3);margin-top:0.2rem;text-align:center;}
+
+  /* Q inspector */
+  .q-cell-id{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--accent);margin-bottom:0.4rem;}
+  .q-rows{display:flex;flex-direction:column;gap:0.2rem;}
+  .q-row{display:flex;align-items:center;gap:0.35rem;}
+  .q-arrow{font-size:13px;width:14px;text-align:center;flex-shrink:0;color:var(--text-dim);}
+  .q-bar-wrap{flex:1;height:5px;background:var(--bg2);border:1px solid var(--border);border-radius:1px;overflow:hidden;}
+  .q-bar{height:100%;border-radius:1px;transition:width 0.25s;background:var(--accent2);opacity:0.5;}
+  .q-val{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-dim);width:36px;text-align:right;flex-shrink:0;}
+  .q-row.best .q-arrow{color:var(--accent4);}.q-row.best .q-val{color:var(--accent4);}
+  .q-row.best .q-bar{background:var(--accent4);opacity:1;}
+  .q-hint{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-dim);margin-top:0.35rem;font-style:italic;}
+
+  /* DQN output inspector */
+  .dqn-output-rows{display:flex;flex-direction:column;gap:0.2rem;margin-top:0.4rem;}
+  .dqn-out-row{display:flex;align-items:center;gap:0.35rem;}
+  .dqn-out-bar-wrap{flex:1;height:5px;background:var(--bg2);border:1px solid var(--border);border-radius:1px;overflow:hidden;}
+  .dqn-out-bar{height:100%;border-radius:1px;background:var(--accent3);opacity:0.5;}
+  .dqn-out-val{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-dim);width:36px;text-align:right;flex-shrink:0;}
+  .dqn-out-row.best .q-arrow{color:var(--accent3);}.dqn-out-row.best .dqn-out-val{color:var(--accent3);}
+  .dqn-out-row.best .dqn-out-bar{background:var(--accent3);opacity:1;}
+  .dqn-cell-hint{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--text-dim);margin-top:0.35rem;font-style:italic;line-height:1.5;}
+
+  /* widget body */
+  .widget-body{padding:1.5rem;}
+  .widget-controls{padding:1rem 1.5rem;border-top:1px solid var(--border);display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;}
+  .ctrl-btn{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.08em;padding:0.35rem 1rem;border:1px solid var(--border);background:transparent;color:var(--text-dim);cursor:pointer;transition:all 0.15s;}
+  .ctrl-btn:hover{color:var(--text-bright);border-color:var(--text-dim);}
+  .ctrl-btn.primary{background:var(--accent);border-color:var(--accent);color:var(--bg);}
+  .ctrl-btn.primary:hover{opacity:0.85;}
+  .ctrl-btn.danger{border-color:var(--accent3);color:var(--accent3);}
+  .ctrl-btn.danger:hover{background:var(--accent3);color:var(--bg);}
+  .ctrl-spacer{flex:1;}
+  .speed-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-dim);letter-spacing:0.1em;}
+  footer{padding:4rem 0 6rem;border-top:1px solid var(--border);margin-top:6rem;display:flex;justify-content:space-between;align-items:center;}
+  .footer-nav a{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.1em;color:var(--text-dim);text-decoration:none;transition:color 0.15s;}
+  .footer-nav a:hover{color:var(--accent);}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-title" translate="no" style="text-decoration:none;color:inherit;cursor:pointer;z-index:200;position:relative;">X-Ray</a>
+    <div class="nav-right">
+      <ul class="nav-chapters">
+        <li><a href="chapter_01_vectors.html" translate="no">I. Vectors</a></li>
+        <li><a href="chapter_02_attention.html" translate="no">II. Attention</a></li>
+        <li><a href="chapter_03_local_optima.html" translate="no">III. Local Optima</a></li>
+        <li><a href="chapter_04_emergence.html" translate="no">IV. Emergence</a></li>
+        <li><a href="chapter_05_memory.html" translate="no">V. Memory</a></li>
+        <li><a href="chapter_06_the_wall.html" translate="no">VI. The Wall</a></li>
+        <li><a href="#" class="active" translate="no">VII. The Function</a></li>
+      </ul>
+      <button class="settings-toggle" id="langToggle" onclick="toggleLang()" translate="no">🌐 Lang</button>
+      <button class="settings-toggle" id="settingsToggle" onclick="toggleSettings()" translate="no">⚙ Display</button>
+    </div>
+  </div>
+</nav>
+
+<div class="lang-bar" id="langBar">
+  <div class="lang-inner">
+    <button class="lang-btn active" data-lang="en" onclick="applyTranslation('en')">EN</button>
+    <button class="lang-btn" data-lang="de" onclick="applyTranslation('de')">DE</button>
+  </div>
+</div>
+
+<div class="settings-bar" id="settingsBar">
+  <div class="settings-inner">
+    <div class="setting-group"><span class="setting-group-label" translate="no">Theme</span>
+      <div class="setting-btns">
+        <button class="set-btn active" id="btnLight" onclick="setTheme('light')" translate="no">Light</button>
+        <button class="set-btn" id="btnDark" onclick="setTheme('dark')" translate="no">Dark</button>
+      </div>
+    </div>
+    <div class="setting-group"><span class="setting-group-label" translate="no">Font size</span>
+      <div class="setting-btns">
+        <button class="set-btn active" id="btnFsDef" onclick="setFsize('default')" translate="no">Default</button>
+        <button class="set-btn" id="btnFsLg" onclick="setFsize('large')" translate="no">Large</button>
+        <button class="set-btn" id="btnFsXl" onclick="setFsize('xl')" translate="no">XL</button>
+      </div>
+    </div>
+    <div class="setting-group"><span class="setting-group-label" translate="no">Contrast</span>
+      <div class="setting-btns">
+        <button class="set-btn active" id="btnCnStd" onclick="setContrast('standard')" translate="no">Standard</button>
+        <button class="set-btn" id="btnCnHi" onclick="setContrast('high')" translate="no">High</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main>
+  <div class="chapter-header">
+    <span class="chapter-number" id="chNum">Chapter VII</span>
+    <h1 id="chTitle">The Function</h1>
+    <p class="chapter-subtitle" id="chSub">Same arrows. Different inside.</p>
+  </div>
+
+  <div class="prose">
+    <p id="p1">The previous chapter ended with a problem: the Q-table cannot scale. A table needs one row per state, and real problems have more states than can be stored anywhere. Something had to replace it.</p>
+    <p id="p2">The replacement is a neural network. Instead of storing a value for every state, the network <em>learns a function</em> — a mapping from any state to estimated Q-values. It generalizes. It can say something reasonable about states it has never seen, because it has learned the pattern underneath them. This is called Deep Q-Network, or DQN.</p>
+    <p id="p2b">One difference is visible before you press Run. The Q-learning maze starts empty — no arrows anywhere. The network maze already shows arrows pointing in various directions. This is not a bug. Q-learning stores explicit zeros: it knows nothing until it visits a cell and receives a reward. The network, by contrast, has randomly initialized weights — and a function with random weights still <em>computes something</em> for every input. The arrows are there from the start, but they point at random. Watch them shift and stabilize as learning progresses.</p>
+    <p id="p3">The two agents below solve the same maze. Left uses Q-learning with a table — everything we know from Chapter V. Right uses DQN with a small neural network instead of a table. Watch them run. They look the same. The arrows appear at the same rate, point in similar directions, converge to similar policies. There is no visual difference between the two outputs.</p>
+  </div>
+
+  <div class="widget">
+    <div class="widget-header">
+      <span class="widget-label" id="wLabel">QL vs DQN — same maze, same arrows, different inside</span>
+    </div>
+
+    <div class="widget-body">
+      <div class="dual-col">
+
+        <!-- LEFT: Q-Learning -->
+        <div class="agent-col">
+          <div class="col-header">
+            <span class="col-title" id="colTitleQL">Q-Learning</span>
+            <span class="col-tag ql" id="colTagQL">table</span>
+          </div>
+          <canvas id="qlCanvas" width="280" height="280"></canvas>
+          <div class="agent-stats">
+            <div class="astat"><span class="astat-label" id="qlLblSteps">Steps</span><span class="astat-val" id="qlSteps">0</span></div>
+            <div class="astat"><span class="astat-label" id="qlLblGoals">Goal reached</span><span class="astat-val" id="qlGoals">0 times</span></div>
+            <div class="astat"><span class="astat-label" id="qlLblFirst">First goal at step</span><span class="astat-val" id="qlFirst">—</span></div>
+            <div class="astat"><span class="astat-label" id="qlLblBest">Best episode</span><span class="astat-val highlight" id="qlBest">—</span></div>
+          </div>
+        </div>
+
+        <!-- RIGHT: DQN -->
+        <div class="agent-col">
+          <div class="col-header">
+            <span class="col-title" id="colTitleDQN">DQN</span>
+            <span class="col-tag dqn" id="colTagDQN">network</span>
+          </div>
+          <canvas id="dqnCanvas" width="280" height="280"></canvas>
+          <div class="agent-stats">
+            <div class="astat"><span class="astat-label" id="dqnLblSteps">Steps</span><span class="astat-val" id="dqnSteps">0</span></div>
+            <div class="astat"><span class="astat-label" id="dqnLblGoals">Goal reached</span><span class="astat-val" id="dqnGoals">0 times</span></div>
+            <div class="astat"><span class="astat-label" id="dqnLblFirst">First goal at step</span><span class="astat-val" id="dqnFirst">—</span></div>
+            <div class="astat"><span class="astat-label" id="dqnLblBest">Best episode</span><span class="astat-val highlight" id="dqnBest">—</span></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div id="pauseBanner" class="pause-banner"></div>
+
+    <!-- Q-data toggle -->
+    <div class="q-data-toggle">
+      <button class="ctrl-btn" id="btnQData" onclick="toggleQData()" translate="no">▶ Show Inside</button>
+    </div>
+
+    <div class="q-data-panel" id="qDataPanel">
+
+      <!-- shared glossary -->
+      <div class="q-data-section">
+        <div class="q-data-title" id="qdGlossTitle">Shared parameters</div>
+        <div class="q-glossary">
+          <div class="q-gloss-item"><span class="q-gloss-term" id="qdEpsLive">ε (exploration)</span><span class="q-gloss-live" id="qdEpsVal" translate="no">1.00 / 1.00</span></div>
+          <div class="q-gloss-item"><span class="q-gloss-term" id="qdEpiLive">Episodes</span><span class="q-gloss-live" id="qdEpiVal" translate="no">0 / 0</span></div>
+          <div class="q-gloss-item"><span class="q-gloss-term" id="qdBestLive">Best episode</span><span class="q-gloss-live" id="qdBestVal" translate="no">— / —</span></div>
+        </div>
+      </div>
+
+      <!-- side by side: QL table vs DQN network -->
+      <div class="q-data-section">
+        <div class="q-data-title" id="qdInsideTitle">What's inside</div>
+        <div class="data-dual">
+
+          <!-- QL side -->
+          <div class="data-half">
+            <div class="data-half-label" id="qdQLLabel">Q-Learning — table</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-dim);margin-bottom:0.5rem;" id="qdQLDesc">49 cells × 4 actions = 196 values. Each value updated directly by the Bellman equation. Every decision is readable.</div>
+            <div class="q-grid-wrap"><table class="qGridTable" id="qlGridTable"></table></div>
+            <div style="margin-top:0.5rem;">
+              <div class="q-cell-id" id="qlCellId" translate="no">click a cell →</div>
+              <div class="q-rows">
+                <div class="q-row" id="qlRowN"><span class="q-arrow">↑</span><div class="q-bar-wrap"><div class="q-bar" id="qlBarN" style="width:0%"></div></div><span class="q-val" id="qlValN">0.000</span></div>
+                <div class="q-row" id="qlRowS"><span class="q-arrow">↓</span><div class="q-bar-wrap"><div class="q-bar" id="qlBarS" style="width:0%"></div></div><span class="q-val" id="qlValS">0.000</span></div>
+                <div class="q-row" id="qlRowE"><span class="q-arrow">→</span><div class="q-bar-wrap"><div class="q-bar" id="qlBarE" style="width:0%"></div></div><span class="q-val" id="qlValE">0.000</span></div>
+                <div class="q-row" id="qlRowW"><span class="q-arrow">←</span><div class="q-bar-wrap"><div class="q-bar" id="qlBarW" style="width:0%"></div></div><span class="q-val" id="qlValW">0.000</span></div>
+              </div>
+              <div class="q-hint" id="qlHint">Click any cell in the table above</div>
+            </div>
+          </div>
+
+          <!-- DQN side -->
+          <div class="data-half">
+            <div class="data-half-label dqn" id="qdDQNLabel">DQN — neural network</div>
+            <div class="dqn-blackbox">
+              <div id="qdDQNDesc">Architecture: input(2) → hidden(32, ReLU) → output(4)</div>
+              <div style="margin-top:0.3rem;" id="qdDQNWeights">Total weights: <strong id="dqnWeightCount">–</strong> · Updated by backpropagation, not Bellman directly.</div>
+              <div style="margin-top:0.3rem;color:var(--accent3);" id="qdDQNNote">You can see the output. You cannot read the reasoning.</div>
+            </div>
+            <div class="dqn-live-row">
+              <div class="dqn-live-item" id="qdLossLabel">Loss: <span class="dqn-live-val" id="dqnLoss" translate="no">—</span></div>
+              <div class="dqn-live-item" id="qdReplayLabel">Replay buffer: <span class="dqn-live-val" id="dqnReplay" translate="no">0</span></div>
+              <div class="dqn-live-item" id="qdSyncLabel">Target sync: <span class="dqn-live-val" id="dqnSync" translate="no">0</span></div>
+            </div>
+            <div style="margin-top:0.6rem;">
+              <div class="q-cell-id" id="dqnCellId" translate="no">click a cell in the right maze →</div>
+              <div class="dqn-net-wrap">
+                <div class="dqn-net-label" id="dqnNetLabel">input → hidden (32, ReLU) → output</div>
+                <svg id="dqnNetSvg" class="dqn-net-svg" viewBox="0 0 280 130" xmlns="http://www.w3.org/2000/svg" style="min-height:130px;cursor:pointer;" title="click to unfreeze" onclick="dqnFrozen=false;document.getElementById('dqnFrozenBadge').style.display='none';"><text x="140" y="65" text-anchor="middle" dominant-baseline="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="var(--text-dim)" id="dqnSvgPlaceholder">click a cell in the maze to visualize</text></svg>
+                <div class="dqn-frozen-badge" id="dqnFrozenBadge" onclick="dqnFrozen=false;document.getElementById('dqnFrozenBadge').style.display='none';" style="cursor:pointer;" title="click to unfreeze">⬛ frozen — click to unfreeze</div>
+              </div>
+              <div class="dqn-output-rows" style="margin-top:0.5rem;">
+                <div class="dqn-out-row" id="dqnOutN"><span class="q-arrow">↑</span><div class="dqn-out-bar-wrap"><div class="dqn-out-bar" id="dqnBarN" style="width:0%"></div></div><span class="dqn-out-val" id="dqnValN">0.000</span></div>
+                <div class="dqn-out-row" id="dqnOutS"><span class="q-arrow">↓</span><div class="dqn-out-bar-wrap"><div class="dqn-out-bar" id="dqnBarS" style="width:0%"></div></div><span class="dqn-out-val" id="dqnValS">0.000</span></div>
+                <div class="dqn-out-row" id="dqnOutE"><span class="q-arrow">→</span><div class="dqn-out-bar-wrap"><div class="dqn-out-bar" id="dqnBarE" style="width:0%"></div></div><span class="dqn-out-val" id="dqnValE">0.000</span></div>
+                <div class="dqn-out-row" id="dqnOutW"><span class="q-arrow">←</span><div class="dqn-out-bar-wrap"><div class="dqn-out-bar" id="dqnBarW" style="width:0%"></div></div><span class="dqn-out-val" id="dqnValW">0.000</span></div>
+              </div>
+              <div class="dqn-cell-hint" id="dqnHint">These are network outputs for the selected cell. Same format as QL — but there is no table behind them. A function computed this. The two numbers in the input circles are normalized coordinates: row and column divided by grid size, scaled to [0,1]. Click different cells and watch the hidden layer — 32 neurons activate in shifting patterns, but their individual meaning is not readable.</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <div class="widget-controls">
+      <button class="ctrl-btn primary" id="btnRun" onclick="toggleRun()" translate="no">Run</button>
+      <button class="ctrl-btn" onclick="resetAll()" translate="no">Reset</button>
+      <button class="ctrl-btn" onclick="newMaze()" translate="no">New maze</button>
+      <span class="ctrl-spacer"></span>
+      <span class="speed-label" id="speedLabel">Speed:</span>
+      <button class="set-btn" id="spd1" onclick="setSpeed(1)" translate="no">1×</button>
+      <button class="set-btn active" id="spd5" onclick="setSpeed(5)" translate="no">5×</button>
+      <button class="set-btn" id="spd20" onclick="setSpeed(20)" translate="no">20×</button>
+    </div>
+  </div>
+
+  <div class="section-break" id="secBreak1">the function</div>
+
+  <div class="prose">
+    <p id="p6">Open the "Show Inside" panel. Click a cell in the Q-learning table. You see four numbers — one per direction — and the logic behind the decision is fully exposed. The agent chose north because north had the highest value. You can verify this. You can trace how that value was built, update by update, reward by reward.</p>
+    <p id="p7">Now click a cell on the DQN side. You also see four numbers — and the best direction is also marked. The output format is identical. But ask yourself: <em>where do these numbers come from?</em> Not from a table. From 1,024 weights distributed across two layers of a neural network. Backpropagation updated those weights. The numbers are the result of a computation you cannot follow step by step.</p>
+    <p id="p7b">Look at the two numbers in the input layer. When you click cell (row 4, col 1), they show <strong>0.50</strong> and <strong>0.00</strong>. Not 4 and 1 — but normalized coordinates: row divided by the maximum row, column divided by the maximum column. The entire grid maps to the unit square [0,0]–[1,1]. Neural networks work better with small numbers near zero; passing raw grid indices would require very different weight magnitudes. The normalization is invisible to you as a user, but it is the actual language the network speaks.</p>
+    <p id="p7c">This also means the network generalizes. The Q-table is a dictionary — if the agent has never visited a cell, the value is zero, full stop. The network is a function — it computes something for every input, including cells it has never seen, because nearby coordinates produce similar outputs. Look at the two mazes: Q-learning shows arrows only where the agent has actually been. Cells behind walls, cells the agent skipped — they stay blank. The DQN maze shows an arrow in nearly every cell from the very first step, because random initial weights already produce <em>some</em> output for every coordinate. That is the trade-off made visible: the table is honest about what it does not know. The network always has an answer — right or wrong. Walk the path from (0,0) to (0,6) in the Show Inside panel and watch the hidden layer. Thirty-two neurons activate in shifting patterns. You can see that something is happening. You cannot read what each neuron means.</p>
+    <p id="p8">This is the trade-off. The network <strong>scales</strong> — it can handle state spaces that would destroy any table. But it does so by becoming opaque. The decision is made. The reason is not accessible.</p>
+  </div>
+
+  <div class="prose">
+    <p id="p8b">There is a second cost, less obvious than opacity. Run both agents on this 7×7 maze and watch the step counter. Q-learning converges in thousands of steps. DQN needs an order of magnitude more — the replay buffer must fill, the target network must sync repeatedly, backpropagation must adjust 1,024 weights across thousands of updates before the policy stabilizes. The network is slower to learn precisely because it is more powerful: it carries machinery designed for problems far larger than this maze. DQN is overkill here. The Wall showed that Q-learning cannot scale up. This shows the reverse: DQN does not scale down. Every tool has the problem it was built for.</p>
+  </div>
+
+  <blockquote class="pull-quote">
+    <p id="pq1">"The Q-table told you everything. The network tells you the answer."</p>
+  </blockquote>
+
+  <div class="prose">
+    <p id="p9">This opacity is not a flaw to be fixed. It is a structural property of function approximation. When a system learns a compressed representation of a high-dimensional space, the individual weights stop being interpretable in isolation. The network works — often better than the table — but it works in a way that resists inspection. The next chapter is about what this means.</p>
+  </div>
+</main>
+
+<footer>
+  <div class="footer-nav"><a href="chapter_06_the_wall.html" id="footerPrev">← VI. The Wall</a></div>
+  <div class="footer-nav"><a href="chapter_08_looking_inside.html" id="footerNext">VIII. Looking Inside →</a></div>
+</footer>
+
+<script>
+// ─── Constants ───────────────────────────────────────────────────────────────
+const ROWS=7,COLS=7,CS=280,CELL=CS/COLS;
+const GOAL_R=ROWS-1,GOAL_C=COLS-1;
+const ACTIONS=[{dr:-1,dc:0},{dr:1,dc:0},{dr:0,dc:1},{dr:0,dc:-1}];
+const ARROWS=['↑','↓','→','←'];
+
+// ─── Settings ────────────────────────────────────────────────────────────────
+function setTheme(t,skip){
+  document.documentElement.dataset.theme=t==='dark'?'dark':'';
+  localStorage.setItem('xray-theme',t);
+  document.getElementById('btnLight').classList.toggle('active',t==='light');
+  document.getElementById('btnDark').classList.toggle('active',t==='dark');
+  if(!skip){drawQL();drawDQN();}
+}
+function setFsize(s){
+  document.documentElement.dataset.fsize=s==='default'?'':s;
+  localStorage.setItem('xray-fsize',s);
+  ['btnFsDef','btnFsLg','btnFsXl'].forEach(id=>document.getElementById(id).classList.remove('active'));
+  document.getElementById(s==='default'?'btnFsDef':s==='large'?'btnFsLg':'btnFsXl').classList.add('active');
+}
+function setContrast(c){
+  document.documentElement.dataset.contrast=c==='high'?'high':'';
+  localStorage.setItem('xray-contrast',c);
+  document.getElementById('btnCnStd').classList.toggle('active',c==='standard');
+  document.getElementById('btnCnHi').classList.toggle('active',c==='high');
+}
+function toggleSettings(){
+  const sb=document.getElementById('settingsBar'),lb=document.getElementById('langBar');
+  lb.classList.remove('open');document.getElementById('langToggle').classList.remove('active');
+  sb.classList.toggle('open');
+  document.getElementById('settingsToggle').classList.toggle('active',sb.classList.contains('open'));
+}
+function toggleLang(){
+  const lb=document.getElementById('langBar'),sb=document.getElementById('settingsBar');
+  sb.classList.remove('open');document.getElementById('settingsToggle').classList.remove('active');
+  lb.classList.toggle('open');
+  document.getElementById('langToggle').classList.toggle('active',lb.classList.contains('open'));
+}
+
+// ─── Maze ────────────────────────────────────────────────────────────────────
+function generateMaze(){
+  const vis=Array.from({length:ROWS},()=>new Array(COLS).fill(false));
+  const w=Array.from({length:ROWS},()=>Array.from({length:COLS},()=>({N:true,S:true,E:true,W:true})));
+  const dirs=[{dr:-1,dc:0,d:'N',opp:'S'},{dr:1,dc:0,d:'S',opp:'N'},{dr:0,dc:1,d:'E',opp:'W'},{dr:0,dc:-1,d:'W',opp:'E'}];
+  function sh(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+  let r=0,c=0;vis[r][c]=true;const stack=[[r,c]];
+  while(stack.length){
+    const[cr,cc]=stack[stack.length-1];
+    const nb=sh(dirs.map(d=>({nr:cr+d.dr,nc:cc+d.dc,...d}))).filter(({nr,nc})=>nr>=0&&nr<ROWS&&nc>=0&&nc<COLS&&!vis[nr][nc]);
+    if(nb.length){const{nr,nc,d,opp}=nb[0];w[cr][cc][d]=false;w[nr][nc][opp]=false;vis[nr][nc]=true;stack.push([nr,nc]);}
+    else stack.pop();
+  }
+  return w;
+}
+let maze=generateMaze();
+
+function canMove(r,c,a){
+  const w=maze[r][c];
+  if(a===0)return r>0&&!w.N;if(a===1)return r<ROWS-1&&!w.S;
+  if(a===2)return c<COLS-1&&!w.E;if(a===3)return c>0&&!w.W;return false;
+}
+function validActions(r,c){return[0,1,2,3].filter(a=>canMove(r,c,a));}
+
+// ─── Q-Learning ──────────────────────────────────────────────────────────────
+const QL_ALPHA=0.3,QL_GAMMA=0.9,EPS_DECAY=0.995,EPS_MIN=0.05;
+let QL={
+  r:0,c:0,steps:0,episodes:0,best:Infinity,epSteps:0,
+  eps:1.0,Q:null,firstGoal:null,randomMoves:0,greedyMoves:0,
+  init(){
+    this.r=0;this.c=0;this.steps=0;this.episodes=0;this.best=Infinity;
+    this.epSteps=0;this.eps=1.0;this.firstGoal=null;this.randomMoves=0;this.greedyMoves=0;
+    this.Q=Array.from({length:ROWS},()=>Array.from({length:COLS},()=>new Array(4).fill(0)));
+  },
+  choose(r,c){
+    const v=validActions(r,c);
+    if(Math.random()<this.eps){this.randomMoves++;return v[Math.floor(Math.random()*v.length)];}
+    this.greedyMoves++;
+    let best=-Infinity,ba=v[0];
+    for(const a of v)if(this.Q[r][c][a]>best){best=this.Q[r][c][a];ba=a;}
+    return ba;
+  },
+  step(){
+    const a=this.choose(this.r,this.c);
+    const nr=this.r+ACTIONS[a].dr,nc=this.c+ACTIONS[a].dc;
+    const done=(nr===GOAL_R&&nc===GOAL_C);
+    const reward=done?1.0:-0.01;
+    const maxN=done?0:Math.max(...validActions(nr,nc).map(na=>this.Q[nr][nc][na]));
+    this.Q[this.r][this.c][a]+=QL_ALPHA*(reward+QL_GAMMA*maxN-this.Q[this.r][this.c][a]);
+    this.r=nr;this.c=nc;this.steps++;this.epSteps++;
+    if(done){
+      if(this.epSteps<this.best)this.best=this.epSteps;
+      if(this.firstGoal===null)this.firstGoal=this.steps;
+      this.episodes++;this.eps=Math.max(EPS_MIN,this.eps*EPS_DECAY);
+      this.epSteps=0;this.r=0;this.c=0;return true;
+    }
+    return false;
+  }
+};
+
+// ─── DQN ─────────────────────────────────────────────────────────────────────
+// 2-layer MLP: input(2) → hidden(32,ReLU) → output(4)
+// Weights: W1[2×32], b1[32], W2[32×4], b2[4]  → total: 64+32+128+4 = 228... wait
+// Actually: 2*32=64 + 32 + 32*4=128 + 4 = 228 weights+biases
+const H=32;
+function randW(n){return Array.from({length:n},()=>(Math.random()-0.5)*0.5);}
+let DQN={
+  r:0,c:0,steps:0,episodes:0,best:Infinity,epSteps:0,
+  eps:1.0,firstGoal:null,lastLoss:null,syncCount:0,
+  W1:null,b1:null,W2:null,b2:null,
+  tW1:null,tb1:null,tW2:null,tb2:null,
+  replay:[],
+  REPLAY_SIZE:512,BATCH:32,LR:0.005,GAMMA:0.9,TARGET_SYNC:100,stepsSinceSync:0,
+  init(){
+    this.r=0;this.c=0;this.steps=0;this.episodes=0;this.best=Infinity;
+    this.epSteps=0;this.eps=1.0;this.firstGoal=null;this.lastLoss=null;this.syncCount=0;this.stepsSinceSync=0;
+    this.W1=randW(2*H);this.b1=randW(H);this.W2=randW(H*4);this.b2=randW(4);
+    this.tW1=[...this.W1];this.tb1=[...this.b1];this.tW2=[...this.W2];this.tb2=[...this.b2];
+    this.replay=[];
+  },
+  forward(r,c,useTarget=false){
+    const inp=[r/(ROWS-1),c/(COLS-1)];
+    const W1=useTarget?this.tW1:this.W1,b1=useTarget?this.tb1:this.b1;
+    const W2=useTarget?this.tW2:this.W2,b2=useTarget?this.tb2:this.b2;
+    // hidden
+    const h=Array.from({length:H},(_,i)=>{
+      let s=b1[i];for(let j=0;j<2;j++)s+=inp[j]*W1[j*H+i];
+      return Math.max(0,s); // ReLU
+    });
+    // output
+    const out=Array.from({length:4},(_,i)=>{
+      let s=b2[i];for(let j=0;j<H;j++)s+=h[j]*W2[j*4+i];return s;
+    });
+    return{h,out};
+  },
+  choose(r,c){
+    const v=validActions(r,c);
+    if(Math.random()<this.eps)return v[Math.floor(Math.random()*v.length)];
+    const{out}=this.forward(r,c);
+    let best=-Infinity,ba=v[0];
+    for(const a of v)if(out[a]>best){best=out[a];ba=a;}
+    return ba;
+  },
+  syncTarget(){
+    this.tW1=[...this.W1];this.tb1=[...this.b1];
+    this.tW2=[...this.W2];this.tb2=[...this.b2];
+    this.syncCount++;
+  },
+  train(){
+    if(this.replay.length<this.BATCH)return;
+    // sample batch
+    const batch=[];
+    for(let i=0;i<this.BATCH;i++)batch.push(this.replay[Math.floor(Math.random()*this.replay.length)]);
+    let totalLoss=0;
+    // SGD per sample (simplified)
+    for(const{r,c,a,reward,nr,nc,done} of batch){
+      const inp=[r/(ROWS-1),c/(COLS-1)];
+      // forward pass
+      const h=Array.from({length:H},(_,i)=>{
+        let s=this.b1[i];for(let j=0;j<2;j++)s+=inp[j]*this.W1[j*H+i];return Math.max(0,s);
+      });
+      const out=Array.from({length:4},(_,i)=>{
+        let s=this.b2[i];for(let j=0;j<H;j++)s+=h[j]*this.W2[j*4+i];return s;
+      });
+      // target
+      let targetQ;
+      if(done){targetQ=reward;}
+      else{
+        const{out:nextOut}=this.forward(nr,nc,true);
+        const vNext=validActions(nr,nc);
+        targetQ=reward+this.GAMMA*Math.max(...vNext.map(na=>nextOut[na]));
+      }
+      const err=out[a]-targetQ;
+      totalLoss+=err*err;
+      // backward — output layer
+      const dOut=new Array(4).fill(0);dOut[a]=2*err;
+      // W2, b2
+      for(let j=0;j<H;j++)for(let k=0;k<4;k++)this.W2[j*4+k]-=this.LR*dOut[k]*h[j];
+      for(let k=0;k<4;k++)this.b2[k]-=this.LR*dOut[k];
+      // hidden layer
+      const dH=Array.from({length:H},(_,j)=>{
+        let s=0;for(let k=0;k<4;k++)s+=dOut[k]*this.W2[j*4+k];
+        return s*(h[j]>0?1:0);
+      });
+      for(let i=0;i<2;i++)for(let j=0;j<H;j++)this.W1[i*H+j]-=this.LR*dH[j]*inp[i];
+      for(let j=0;j<H;j++)this.b1[j]-=this.LR*dH[j];
+    }
+    this.lastLoss=totalLoss/this.BATCH;
+  },
+  step(){
+    const a=this.choose(this.r,this.c);
+    const nr=this.r+ACTIONS[a].dr,nc=this.c+ACTIONS[a].dc;
+    const done=(nr===GOAL_R&&nc===GOAL_C);
+    const reward=done?1.0:-0.01;
+    this.replay.push({r:this.r,c:this.c,a,reward,nr,nc,done});
+    if(this.replay.length>this.REPLAY_SIZE)this.replay.shift();
+    this.r=nr;this.c=nc;this.steps++;this.epSteps++;this.stepsSinceSync++;
+    this.train();
+    if(this.stepsSinceSync>=this.TARGET_SYNC){this.syncTarget();this.stepsSinceSync=0;}
+    if(done){
+      if(this.epSteps<this.best)this.best=this.epSteps;
+      if(this.firstGoal===null)this.firstGoal=this.steps;
+      this.episodes++;this.eps=Math.max(EPS_MIN,this.eps*EPS_DECAY);
+      this.epSteps=0;this.r=0;this.c=0;return true;
+    }
+    return false;
+  }
+};
+
+// ─── Drawing ─────────────────────────────────────────────────────────────────
+function getCSSVar(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+
+function drawArrow(ctx,cx,cy,dir,opacity,color){
+  const len=CELL*0.27,hw=CELL*0.09;
+  ctx.globalAlpha=opacity;ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=1.5;
+  let x1,y1,x2,y2;
+  if(dir===0){x1=cx;y1=cy+len*.5;x2=cx;y2=cy-len*.5;}
+  else if(dir===1){x1=cx;y1=cy-len*.5;x2=cx;y2=cy+len*.5;}
+  else if(dir===2){x1=cx-len*.5;y1=cy;x2=cx+len*.5;y2=cy;}
+  else{x1=cx+len*.5;y1=cy;x2=cx-len*.5;y2=cy;}
+  ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+  const ang=Math.atan2(y2-y1,x2-x1);
+  ctx.beginPath();ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-hw*Math.cos(ang-Math.PI/6),y2-hw*Math.sin(ang-Math.PI/6));
+  ctx.lineTo(x2-hw*Math.cos(ang+Math.PI/6),y2-hw*Math.sin(ang+Math.PI/6));
+  ctx.closePath();ctx.fill();ctx.globalAlpha=1;
+}
+
+function drawMazeBase(ctx,agentR,agentC,agentColor){
+  ctx.clearRect(0,0,CS,CS);
+  ctx.fillStyle=getCSSVar('--bg3');ctx.fillRect(0,0,CS,CS);
+  // walls
+  ctx.strokeStyle=getCSSVar('--border');ctx.lineWidth=1.5;
+  ctx.strokeRect(0.75,0.75,CS-1.5,CS-1.5);
+  for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){
+    const x=c*CELL,y=r*CELL,w=maze[r][c];
+    ctx.beginPath();
+    if(w.S&&r<ROWS-1){ctx.moveTo(x,y+CELL);ctx.lineTo(x+CELL,y+CELL);}
+    if(w.E&&c<COLS-1){ctx.moveTo(x+CELL,y);ctx.lineTo(x+CELL,y+CELL);}
+    ctx.stroke();
+  }
+  // goal
+  ctx.fillStyle=getCSSVar('--accent4');
+  ctx.font=`${Math.floor(CELL*0.48)}px serif`;
+  ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText('★',(GOAL_C+.5)*CELL,(GOAL_R+.5)*CELL);
+  // agent
+  ctx.beginPath();
+  ctx.arc((agentC+.5)*CELL,(agentR+.5)*CELL,CELL*0.22,0,Math.PI*2);
+  ctx.fillStyle=agentColor;ctx.fill();
+}
+
+function drawQL(){
+  const ctx=document.getElementById('qlCanvas').getContext('2d');
+  const isDark=document.documentElement.dataset.theme==='dark';
+  // heat bg
+  let maxQ=0;
+  for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++)maxQ=Math.max(maxQ,...QL.Q[r][c]);
+  if(maxQ<0.001)maxQ=1;
+  ctx.clearRect(0,0,CS,CS);ctx.fillStyle=getCSSVar('--bg3');ctx.fillRect(0,0,CS,CS);
+  for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){
+    const v=Math.max(0,Math.max(...QL.Q[r][c]))/maxQ;
+    if(v>0.001){ctx.fillStyle=isDark?`rgba(126,179,200,${v*0.28})`:`rgba(42,96,128,${v*0.16})`;ctx.fillRect(c*CELL,r*CELL,CELL,CELL);}
+  }
+  drawMazeBase(ctx,QL.r,QL.c,isDark?'#7eb3c8':'#2a6080');
+  // arrows
+  const ac=isDark?'rgba(126,179,200,1.0)':'rgba(42,96,128,1.0)';
+  for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){
+    if(r===GOAL_R&&c===GOAL_C)continue;
+    const vals=QL.Q[r][c],maxV=Math.max(...vals);
+    let ba=0;for(let i=1;i<4;i++)if(vals[i]>vals[ba])ba=i;
+    const opacity=maxQ>0?Math.max(0.04, maxV/maxQ):0;
+    if(opacity>0.005)drawArrow(ctx,(c+.5)*CELL,(r+.5)*CELL,ba,opacity,ac);
+  }
+  // selected cell
+  if(qlSelR>=0){ctx.strokeStyle=getCSSVar('--accent2');ctx.lineWidth=2;ctx.strokeRect(qlSelC*CELL+1,qlSelR*CELL+1,CELL-2,CELL-2);}
+}
+
+function drawDQN(){
+  const ctx=document.getElementById('dqnCanvas').getContext('2d');
+  const isDark=document.documentElement.dataset.theme==='dark';
+  ctx.clearRect(0,0,CS,CS);ctx.fillStyle=getCSSVar('--bg3');ctx.fillRect(0,0,CS,CS);
+  // compute Q-vals per cell from network for heat
+  let maxV=0;
+  const cellVals=Array.from({length:ROWS},(_,r)=>Array.from({length:COLS},(_,c)=>{
+    const{out}=DQN.forward(r,c);const m=Math.max(...out);if(m>maxV)maxV=m;return out;
+  }));
+  if(maxV<0.001)maxV=1;
+  for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){
+    const m=Math.max(0,Math.max(...cellVals[r][c]))/maxV;
+    if(m>0.001){ctx.fillStyle=isDark?`rgba(200,126,126,${m*0.28})`:`rgba(128,32,48,${m*0.14})`;ctx.fillRect(c*CELL,r*CELL,CELL,CELL);}
+  }
+  drawMazeBase(ctx,DQN.r,DQN.c,isDark?'#c87e7e':'#802030');
+  // arrows from network
+  const ac=isDark?'rgba(200,126,126,0.85)':'rgba(128,32,48,0.75)';
+  for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){
+    if(r===GOAL_R&&c===GOAL_C)continue;
+    const out=cellVals[r][c],maxO=Math.max(...out);
+    if(maxO<0.001){ctx.globalAlpha=0.2;ctx.fillStyle=getCSSVar('--text-dim');ctx.beginPath();ctx.arc((c+.5)*CELL,(r+.5)*CELL,CELL*0.06,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;}
+    else{
+      const v=validActions(r,c);let ba=v[0];for(const a of v)if(out[a]>out[ba])ba=a;
+      drawArrow(ctx,(c+.5)*CELL,(r+.5)*CELL,ba,0.4+Math.min(0.55,maxO/maxV*0.55),ac);
+    }
+  }
+  if(dqnSelR>=0){ctx.strokeStyle=getCSSVar('--accent3');ctx.lineWidth=2;ctx.strokeRect(dqnSelC*CELL+1,dqnSelR*CELL+1,CELL-2,CELL-2);}
+}
+
+// ─── Canvas click handlers ────────────────────────────────────────────────────
+let qlSelR=-1,qlSelC=-1,dqnSelR=-1,dqnSelC=-1;
+
+document.getElementById('qlCanvas').addEventListener('click',function(e){
+  const rect=this.getBoundingClientRect();
+  const scaleX=CS/rect.width,scaleY=CS/rect.height;
+  qlSelC=Math.floor((e.clientX-rect.left)*scaleX/CELL);
+  qlSelR=Math.floor((e.clientY-rect.top)*scaleY/CELL);
+  if(qlSelR<0||qlSelR>=ROWS||qlSelC<0||qlSelC>=COLS){qlSelR=-1;return;}
+  updateQLInspector();drawQL();
+  if(qDataOpen)updateQLGrid();
+});
+
+document.getElementById('dqnCanvas').addEventListener('click',function(e){
+  const rect=this.getBoundingClientRect();
+  const scaleX=CS/rect.width,scaleY=CS/rect.height;
+  dqnSelC=Math.floor((e.clientX-rect.left)*scaleX/CELL);
+  dqnSelR=Math.floor((e.clientY-rect.top)*scaleY/CELL);
+  if(dqnSelR<0||dqnSelR>=ROWS||dqnSelC<0||dqnSelC>=COLS){dqnSelR=-1;return;}
+  dqnFrozen=true;dqnFrozenR=dqnSelR;dqnFrozenC=dqnSelC;
+  updateDQNInspector(true);drawDQN();
+});
+
+function updateQLInspector(){
+  if(qlSelR<0)return;
+  const vals=QL.Q[qlSelR][qlSelC];
+  const maxV=Math.max(...vals);
+  document.getElementById('qlCellId').textContent=`row ${qlSelR+1}, col ${qlSelC+1}`;
+  let ba=0;for(let i=1;i<4;i++)if(vals[i]>vals[ba])ba=i;
+  ['N','S','E','W'].forEach((d,i)=>{
+    const row=document.getElementById('qlRow'+d);
+    document.getElementById('qlBar'+d).style.width=(maxV>0.001?Math.max(0,vals[i]/maxV*100):0)+'%';
+    document.getElementById('qlVal'+d).textContent=vals[i].toFixed(3);
+    row.classList.toggle('best',i===ba&&maxV>0.001);
+  });
+  document.getElementById('qlHint').textContent=maxV>0.001?`Best: ${ARROWS[ba]}`:'Not learned yet';
+}
+
+function drawNetworkViz(h, inp, out, frozen){
+  const svg=document.getElementById('dqnNetSvg');
+  if(!svg)return;
+  const isDark=document.documentElement.dataset.theme==='dark';
+  const W=280,H_SVG=130;
+  const textCol=isDark?'#6b8a9a':'#667788';
+  const lineCol=isDark?'rgba(126,179,200,':'rgba(42,96,128,';
+  const outCol=isDark?'rgba(200,126,126,':'rgba(128,32,48,';
+
+  // Layer x positions
+  const xIn=30, xH=140, xOut=250;
+  // Input neurons y positions (2 neurons)
+  const yIn=[42,88];
+  // Hidden neurons (32 = 8 cols x 4 rows)
+  const HCols=8, HRows=4, hSpX=12, hSpY=22;
+  const hStartX=xH-(HCols-1)*hSpX/2, hStartY=H_SVG/2-(HRows-1)*hSpY/2;
+  const hPos=[];
+  for(let r=0;r<HRows;r++)for(let c=0;c<HCols;c++)hPos.push([hStartX+c*hSpX, hStartY+r*hSpY]);
+  // Output neurons y positions (4 neurons)
+  const yOut=[26,52,78,104];
+
+  // Build SVG
+  let s='';
+
+  // ─ Connection lines input→hidden (only top activated hidden neurons) ─
+  const maxH=Math.max(...h,0.001);
+  // Draw lines only for top 8 most activated hidden neurons
+  const sorted=[...h.entries()].sort((a,b)=>b[1]-a[1]).slice(0,8);
+  for(const[j,act] of sorted){
+    const op=0.08+act/maxH*0.35;
+    const[hx,hy]=hPos[j];
+    for(let i=0;i<2;i++){
+      s+=`<line x1="${xIn}" y1="${yIn[i]}" x2="${hx}" y2="${hy}" stroke="${lineCol}${op.toFixed(2)})" stroke-width="0.7"/>`;
+    }
+  }
+
+  // ─ Connection lines hidden→output ─
+  const maxOut=Math.max(...out.map(Math.abs),0.001);
+  for(let k=0;k<4;k++){
+    const op=0.1+Math.abs(out[k])/maxOut*0.3;
+    for(const[j,act] of sorted){
+      const[hx,hy]=hPos[j];
+      s+=`<line x1="${hx}" y1="${hy}" x2="${xOut}" y2="${yOut[k]}" stroke="${outCol}${(op*0.7).toFixed(2)})" stroke-width="0.5"/>`;
+    }
+  }
+
+  // ─ Hidden neurons ─
+  for(let j=0;j<hPos.length;j++){
+    const act=h[j],norm=Math.min(1,act/maxH);
+    const col=isDark
+      ?`rgba(${Math.round(80+norm*80)},${Math.round(140+norm*60)},${Math.round(160+norm*40)},${0.4+norm*0.6})`
+      :`rgba(${Math.round(20+norm*60)},${Math.round(80+norm*80)},${Math.round(100+norm*80)},${0.35+norm*0.6})`;
+    const r=act>0.01?3.5:2.5;
+    s+=`<circle cx="${hPos[j][0]}" cy="${hPos[j][1]}" r="${r}" fill="${col}"/>`;
+  }
+
+  // ─ Input neurons ─
+  const inLabels=['row','col'];
+  for(let i=0;i<2;i++){
+    const v=inp[i];
+    s+=`<circle cx="${xIn}" cy="${yIn[i]}" r="8" fill="${isDark?'#2a4050':'#c8dde8'}" stroke="${isDark?'#7eb3c8':'#2a6080'}" stroke-width="1.2"/>`;
+    s+=`<text x="${xIn}" y="${yIn[i]+1}" text-anchor="middle" dominant-baseline="middle" font-family="JetBrains Mono,monospace" font-size="5.5" fill="${isDark?'#a0c4d8':'#1a4060'}">${v.toFixed(2)}</text>`;
+    s+=`<text x="${xIn-14}" y="${yIn[i]}" text-anchor="end" dominant-baseline="middle" font-family="JetBrains Mono,monospace" font-size="7" fill="${textCol}">${inLabels[i]}</text>`;
+  }
+
+  // ─ Output neurons ─
+  const outLabels=['↑','↓','→','←'];
+  const maxOutV=Math.max(...out);
+  const minOutV=Math.min(...out);
+  const outRange=maxOutV-minOutV+0.001;
+  const bestOut=out.indexOf(maxOutV);
+  for(let k=0;k<4;k++){
+    const isBest=k===bestOut;
+    const fill=isBest?(isDark?'rgba(200,126,126,0.85)':'rgba(128,32,48,0.8)'):(isDark?'#2a3a40':'#d8e8ee');
+    const stroke=isBest?(isDark?'#c87e7e':'#802030'):(isDark?'#4a6a80':'#2a6080');
+    s+=`<circle cx="${xOut}" cy="${yOut[k]}" r="9" fill="${fill}" stroke="${stroke}" stroke-width="1.2"/>`;
+    s+=`<text x="${xOut}" y="${yOut[k]+1}" text-anchor="middle" dominant-baseline="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="${isBest?(isDark?'#fff':'#fff'):(isDark?'#a0c4d8':'#1a4060')}">${outLabels[k]}</text>`;
+    s+=`<text x="${xOut+14}" y="${yOut[k]}" text-anchor="start" dominant-baseline="middle" font-family="JetBrains Mono,monospace" font-size="6.5" fill="${isBest?(isDark?'#c87e7e':'#802030'):textCol}">${out[k].toFixed(2)}</text>`;
+  }
+
+  // ─ Layer labels ─
+  s+=`<text x="${xIn}" y="10" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="6.5" fill="${textCol}">input</text>`;
+  s+=`<text x="${xH}" y="10" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="6.5" fill="${textCol}">hidden ×32</text>`;
+  s+=`<text x="${xOut}" y="10" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="6.5" fill="${textCol}">output</text>`;
+
+  svg.innerHTML=s;
+  const badge=document.getElementById('dqnFrozenBadge');
+  if(badge)badge.style.display=frozen?'block':'none';
+}
+
+let dqnFrozen=false, dqnFrozenR=-1, dqnFrozenC=-1;
+
+function updateDQNInspector(frozen){
+  const r=frozen&&dqnFrozenR>=0?dqnFrozenR:dqnSelR;
+  const c=frozen&&dqnFrozenC>=0?dqnFrozenC:dqnSelC;
+  if(r<0)return;
+  const{h,out}=DQN.forward(r,c);
+  const inp=[r/(ROWS-1),c/(COLS-1)];
+  const maxV=Math.max(...out);
+  document.getElementById('dqnCellId').textContent=`row ${r+1}, col ${c+1}`;
+  const v=validActions(r,c);let ba=v[0];for(const a of v)if(out[a]>out[ba])ba=a;
+  ['N','S','E','W'].forEach((d,i)=>{
+    const row=document.getElementById('dqnOut'+d);
+    document.getElementById('dqnBar'+d).style.width=(maxV>0.001?Math.max(0,(out[i]-Math.min(...out))/(maxV-Math.min(...out)+0.001)*100):0)+'%';
+    document.getElementById('dqnVal'+d).textContent=out[i].toFixed(3);
+    row.classList.toggle('best',i===ba);
+  });
+  if(qDataOpen) drawNetworkViz(h, inp, out, frozen||false);
+}
+
+// ─── Stats ───────────────────────────────────────────────────────────────────
+function updateStats(){
+  document.getElementById('qlSteps').textContent=QL.steps.toLocaleString();
+  document.getElementById('qlGoals').textContent=QL.episodes+' times';
+  document.getElementById('qlFirst').textContent=QL.firstGoal===null?'—':QL.firstGoal.toLocaleString();
+  document.getElementById('qlBest').textContent=QL.best===Infinity?'—':QL.best+' steps';
+  document.getElementById('dqnSteps').textContent=DQN.steps.toLocaleString();
+  document.getElementById('dqnGoals').textContent=DQN.episodes+' times';
+  document.getElementById('dqnFirst').textContent=DQN.firstGoal===null?'—':DQN.firstGoal.toLocaleString();
+  document.getElementById('dqnBest').textContent=DQN.best===Infinity?'—':DQN.best+' steps';
+}
+
+// ─── Q-data panel ────────────────────────────────────────────────────────────
+let qDataOpen=false;
+
+function toggleQData(){
+  if(!qDataOpen && dqnSelR>=0){
+    const{h,out}=DQN.forward(dqnSelR,dqnSelC);
+    const inp=[dqnSelR/(ROWS-1),dqnSelC/(COLS-1)];
+    setTimeout(()=>drawNetworkViz(h,inp,out,dqnFrozen),50);
+  }
+  qDataOpen=!qDataOpen;
+  document.getElementById('qDataPanel').classList.toggle('open',qDataOpen);
+  const btn=document.getElementById('btnQData');
+  btn.textContent=qDataOpen?'▼ Hide Inside':'▶ Show Inside';
+  if(qDataOpen){buildQLGrid();updateQLGrid();updateDQNLive();}
+}
+
+function buildQLGrid(){
+  const tbl=document.getElementById('qlGridTable');
+  tbl.innerHTML='';
+  for(let r=0;r<ROWS;r++){
+    const tr=document.createElement('tr');
+    for(let c=0;c<COLS;c++){
+      const td=document.createElement('td');
+      if(r===GOAL_R&&c===GOAL_C){td.classList.add('goal-cell');td.textContent='★';}
+      td.dataset.r=r;td.dataset.c=c;
+      td.addEventListener('click',function(){
+        qlSelR=+this.dataset.r;qlSelC=+this.dataset.c;
+        document.querySelectorAll('#qlGridTable td').forEach(x=>x.classList.remove('selected-cell'));
+        this.classList.add('selected-cell');
+        updateQLInspector();drawQL();
+      });
+      tr.appendChild(td);
+    }
+    tbl.appendChild(tr);
+  }
+  // weight count
+  const wc=2*H+H+H*4+4;
+  document.getElementById('dqnWeightCount').textContent=wc.toLocaleString();
+}
+
+function updateQLGrid(){
+  if(!qDataOpen)return;
+  let maxQ=0;
+  for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++)maxQ=Math.max(maxQ,...QL.Q[r][c]);
+  document.querySelectorAll('#qlGridTable td').forEach(td=>{
+    const r=+td.dataset.r,c=+td.dataset.c;
+    if(r===GOAL_R&&c===GOAL_C)return;
+    const vals=QL.Q[r][c],maxV=Math.max(...vals);
+    if(maxV<0.001){td.textContent='·';td.style.color='var(--text-dim)';td.style.background='';}
+    else{
+      let ba=0;for(let i=1;i<4;i++)if(vals[i]>vals[ba])ba=i;
+      td.textContent=ARROWS[ba];td.style.color='';
+      td.style.background=`rgba(126,179,200,${Math.min(1,maxV/(maxQ||1))*0.35})`;
+    }
+    if(qlSelR===r&&qlSelC===c)td.classList.add('selected-cell');
+    else td.classList.remove('selected-cell');
+  });
+}
+
+function updateDQNLive(){
+  if(!qDataOpen)return;
+  document.getElementById('qdEpsVal').textContent=`${QL.eps.toFixed(2)} / ${DQN.eps.toFixed(2)}`;
+  document.getElementById('qdEpiVal').textContent=`${QL.episodes} / ${DQN.episodes}`;
+  const qb=QL.best===Infinity?'—':QL.best,db=DQN.best===Infinity?'—':DQN.best;
+  document.getElementById('qdBestVal').textContent=`${qb} / ${db}`;
+  document.getElementById('dqnLoss').textContent=DQN.lastLoss===null?'—':DQN.lastLoss.toFixed(4);
+  document.getElementById('dqnReplay').textContent=DQN.replay.length+'/'+DQN.REPLAY_SIZE;
+  document.getElementById('dqnSync').textContent=DQN.syncCount;
+  if(dqnSelR>=0)updateDQNInspector();
+}
+
+// ─── Control ─────────────────────────────────────────────────────────────────
+let running=false,animHandle=null,stepsPerFrame=8,frameCount=0,firstGoalPaused=false;
+
+function resetAll(){
+  running=false;firstGoalPaused=false;
+  if(animHandle){cancelAnimationFrame(animHandle);animHandle=null;}
+  QL.init();DQN.init();
+  qlSelR=-1;qlSelC=-1;dqnSelR=-1;dqnSelC=-1;
+  document.getElementById('pauseBanner').classList.remove('visible');
+  const btn=document.getElementById('btnRun');
+  btn.textContent=currentLang==='de'?'Start':'Run';
+  btn.classList.add('primary');btn.classList.remove('danger');
+  if(qDataOpen)buildQLGrid();
+  drawQL();drawDQN();updateStats();updateQLGrid();updateDQNLive();
+}
+
+function newMaze(){maze=generateMaze();resetAll();}
+
+function setSpeed(s){
+  stepsPerFrame=s===1?1:s===5?8:40;
+  ['spd1','spd5','spd20'].forEach(id=>document.getElementById(id).classList.remove('active'));
+  document.getElementById('spd'+s).classList.add('active');
+}
+
+function toggleRun(){
+  running=!running;
+  const btn=document.getElementById('btnRun');
+  if(running){
+    btn.textContent='Pause';btn.classList.remove('primary');btn.classList.add('danger');
+    animate();
+  } else {
+    btn.textContent=currentLang==='de'?'Weiter':'Continue';
+    btn.classList.remove('danger');btn.classList.add('primary');
+  }
+}
+
+function animate(){
+  if(!running)return;
+  let qlGoal=false,dqnGoal=false;
+  for(let i=0;i<stepsPerFrame;i++){
+    if(QL.step())qlGoal=true;
+    if(DQN.step())dqnGoal=true;
+  }
+  // auto-pause on first time both have found the goal
+  if((qlGoal||dqnGoal)&&!firstGoalPaused&&QL.episodes>=1&&DQN.episodes>=1){
+    firstGoalPaused=true;running=false;
+    const btn=document.getElementById('btnRun');
+    btn.textContent=currentLang==='de'?'Weiter':'Continue';
+    btn.classList.remove('danger');btn.classList.add('primary');
+    const banner=document.getElementById('pauseBanner');
+    banner.textContent=currentLang==='de'
+      ?'Beide Agenten haben das Ziel gefunden — vergleiche die Pfeile links und rechts, dann weitermachen.'
+      :'Both agents reached the goal — compare the arrows left and right, then continue.';
+    banner.classList.add('visible');
+  }
+  frameCount++;
+  if(frameCount%2===0){drawQL();drawDQN();updateStats();}
+  if(frameCount%6===0){updateQLGrid();updateDQNLive();}
+  if(qlSelR>=0)updateQLInspector();
+  if(dqnSelR>=0){
+    if(!dqnFrozen){
+      const{h,out}=DQN.forward(DQN.r,DQN.c);
+      const inp=[DQN.r/(ROWS-1),DQN.c/(COLS-1)];
+      if(qDataOpen&&frameCount%4===0)drawNetworkViz(h,inp,out,false);
+      if(frameCount%4===0)document.getElementById('dqnCellId').textContent=`agent @ row ${DQN.r+1}, col ${DQN.c+1} (live)`;
+    } else {
+      updateDQNInspector(true);
+    }
+  }
+  animHandle=requestAnimationFrame(animate);
+}
+
+// ─── i18n ────────────────────────────────────────────────────────────────────
+let currentLang=localStorage.getItem('xray-lang')||'en';
+const T={
+  en:{
+    chNum:'Chapter VII',chTitle:'The Function',chSub:'Same arrows. Different inside.',
+    p1:'The previous chapter ended with a problem: the Q-table cannot scale. A table needs one row per state, and real problems have more states than can be stored anywhere. Something had to replace it.',
+    p2b:'One difference is visible before you press Run. The Q-learning maze starts empty — no arrows anywhere. The network maze already shows arrows pointing in various directions. This is not a bug. Q-learning stores explicit zeros: it knows nothing until it visits a cell and receives a reward. The network, by contrast, has randomly initialized weights — and a function with random weights still computes something for every input. The arrows are there from the start, but they point at random. Watch them shift and stabilize as learning progresses.',
+    p2:'The replacement is a neural network. Instead of storing a value for every state, the network learns a function — a mapping from any state to estimated Q-values. It generalizes. It can say something reasonable about states it has never seen, because it has learned the pattern underneath them. This is called Deep Q-Network, or DQN.',
+    p3:'The two agents below solve the same maze. Left uses Q-learning with a table — everything we know from Chapter V. Right uses DQN with a small neural network instead of a table. Watch them run. They look the same. The arrows appear at the same rate, point in similar directions, converge to similar policies. There is no visual difference between the two outputs.',
+    wLabel:'QL vs DQN — same maze, same arrows, different inside',
+    colTitleQL:'Q-Learning',colTagQL:'table',colTitleDQN:'DQN',colTagDQN:'network',
+    qlLblSteps:'Steps',qlLblGoals:'Goal reached',qlLblFirst:'First goal at step',qlLblBest:'Best episode',
+    dqnLblSteps:'Steps',dqnLblGoals:'Goal reached',dqnLblFirst:'First goal at step',dqnLblBest:'Best episode',
+    qdGlossTitle:'Shared parameters',qdEpsLive:'ε — QL / DQN',qdEpiLive:'Episodes — QL / DQN',qdBestLive:'Best episode — QL / DQN',
+    qdInsideTitle:"What's inside",
+    qdQLLabel:'Q-Learning — table',
+    qdDQNLabel:'DQN — neural network',
+    dqnHint:'These are network outputs for the selected cell. Same format as QL — but there is no table behind them. A function computed this. The two numbers in the input circles are normalized coordinates: row and column divided by grid size, scaled to [0,1]. Click different cells and watch the hidden layer — 32 neurons activate in shifting patterns, but their individual meaning is not readable.',
+    p6:'Open the "Show Inside" panel. Click a cell in the Q-learning table. You see four numbers — one per direction — and the logic behind the decision is fully exposed. The agent chose north because north had the highest value. You can verify this. You can trace how that value was built, update by update, reward by reward.',
+    p7:'Now click a cell on the DQN side. You also see four numbers — and the best direction is also marked. The output format is identical. But ask yourself: where do these numbers come from? Not from a table. From 1,024 weights distributed across two layers of a neural network. Backpropagation updated those weights. The numbers are the result of a computation you cannot follow step by step.',
+    p7b:'Look at the two numbers in the input layer. When you click cell (row 4, col 1), they show <strong>0.50</strong> and <strong>0.00</strong>. Not 4 and 1 — but normalized coordinates: row divided by the maximum row, column divided by the maximum column. The entire grid maps to the unit square [0,0]–[1,1]. Neural networks work better with small numbers near zero; passing raw grid indices would require very different weight magnitudes. The normalization is invisible to you as a user, but it is the actual language the network speaks.',
+    p7c:'This also means the network generalizes. The Q-table is a dictionary — if the agent has never visited a cell, the value is zero, full stop. The network is a function — it computes something for every input, including cells it has never seen, because nearby coordinates produce similar outputs. Look at the two mazes: Q-learning shows arrows only where the agent has actually been. Cells behind walls, cells the agent skipped — they stay blank. The DQN maze shows an arrow in nearly every cell from the very first step, because random initial weights already produce <em>some</em> output for every coordinate. That is the trade-off made visible: the table is honest about what it does not know. The network always has an answer — right or wrong. Walk the path from (0,0) to (0,6) in the Show Inside panel and watch the hidden layer. Thirty-two neurons activate in shifting patterns. You can see that something is happening. You cannot read what each neuron means.',
+    p8:'This is the trade-off. The network scales — it can handle state spaces that would destroy any table. But it does so by becoming opaque. The decision is made. The reason is not accessible.',
+    p8b:'There is a second cost, less obvious than opacity. Run both agents on this 7×7 maze and watch the step counter. Q-learning converges in thousands of steps. DQN needs an order of magnitude more — the replay buffer must fill, the target network must sync repeatedly, backpropagation must adjust 1,024 weights across thousands of updates before the policy stabilizes. The network is slower to learn precisely because it is more powerful: it carries machinery designed for problems far larger than this maze. DQN is overkill here. The Wall showed that Q-learning cannot scale up. This shows the reverse: DQN does not scale down. Every tool has the problem it was built for.',
+    pq1:'"The Q-table told you everything. The network tells you the answer."',
+    p9:'This opacity is not a flaw to be fixed. It is a structural property of function approximation. When a system learns a compressed representation of a high-dimensional space, the individual weights stop being interpretable in isolation. The network works — often better than the table — but it works in a way that resists inspection. The next chapter is about what this means.',
+    footerPrev:'← VI. The Wall',footerNext:'VIII. Looking Inside →',speedLabel:'Speed:',
+  },
+  de:{
+    chNum:'Kapitel VII',chTitle:'Die Funktion',chSub:'Gleiche Pfeile. Anderes Innere.',
+    p1:'Das vorherige Kapitel endete mit einem Problem: Die Q-Tabelle kann nicht skalieren. Eine Tabelle benötigt eine Zeile pro Zustand, und reale Probleme haben mehr Zustände als irgendwo gespeichert werden kann.',
+    p2b:'Ein Unterschied ist sichtbar, bevor du Run drückst. Das Q-Learning-Labyrinth beginnt leer — keine Pfeile. Das Netzwerk-Labyrinth zeigt bereits Pfeile in verschiedene Richtungen. Das ist kein Fehler. Q-Learning speichert explizite Nullen: Es weiß nichts, bis es eine Zelle besucht und eine Belohnung erhält. Das Netz dagegen hat zufällig initialisierte Gewichte — und eine Funktion mit zufälligen Gewichten berechnet trotzdem etwas für jede Eingabe. Die Pfeile sind von Anfang an da, aber sie zeigen zufällig. Beobachte, wie sie sich verschieben und stabilisieren.',
+    p2:'Der Ersatz ist ein neuronales Netz. Anstatt einen Wert für jeden Zustand zu speichern, lernt das Netz eine Funktion — eine Abbildung von einem beliebigen Zustand zu geschätzten Q-Werten. Es verallgemeinert. Es kann etwas Vernünftiges über Zustände sagen, die es noch nie gesehen hat. Dies nennt man Deep Q-Network oder DQN.',
+    p3:'Die beiden Agenten lösen dasselbe Labyrinth. Links verwendet Q-Learning mit einer Tabelle. Rechts verwendet DQN mit einem kleinen neuronalen Netz statt einer Tabelle. Beobachte sie. Sie sehen gleich aus. Die Pfeile erscheinen mit derselben Rate, zeigen in ähnliche Richtungen, konvergieren zu ähnlichen Strategien. Es gibt keinen visuellen Unterschied zwischen den beiden Ausgaben.',
+    wLabel:'QL vs DQN — gleiches Labyrinth, gleiche Pfeile, anderes Innere',
+    colTitleQL:'Q-Learning',colTagQL:'Tabelle',colTitleDQN:'DQN',colTagDQN:'Netzwerk',
+    qlLblSteps:'Schritte',qlLblGoals:'Ziel erreicht',qlLblFirst:'Erstes Ziel bei Schritt',qlLblBest:'Beste Episode',
+    dqnLblSteps:'Schritte',dqnLblGoals:'Ziel erreicht',dqnLblFirst:'Erstes Ziel bei Schritt',dqnLblBest:'Beste Episode',
+    qdGlossTitle:'Gemeinsame Parameter',qdEpsLive:'ε — QL / DQN',qdEpiLive:'Episoden — QL / DQN',qdBestLive:'Beste Episode — QL / DQN',
+    qdInsideTitle:'Was ist innen',
+    qdQLLabel:'Q-Learning — Tabelle',
+    qdDQNLabel:'DQN — Neuronales Netz',
+    dqnHint:'Dies sind Netzwerkausgaben für die gewählte Zelle. Gleiches Format wie QL — aber es gibt keine Tabelle dahinter. Eine Funktion hat das berechnet.',
+    p6:'Öffne das "Innere anzeigen"-Panel. Klicke auf eine Zelle in der Q-Lerntabelle. Du siehst vier Zahlen — eine pro Richtung — und die Logik hinter der Entscheidung ist vollständig offengelegt.',
+    p7:'Klicke nun auf eine Zelle auf der DQN-Seite. Du siehst auch vier Zahlen. Das Ausgabeformat ist identisch. Aber frage dich: Woher kommen diese Zahlen? Nicht aus einer Tabelle. Aus Gewichten eines neuronalen Netzes. Die Zahlen sind das Ergebnis einer Berechnung, der du nicht Schritt für Schritt folgen kannst.',
+    p8:'Das ist der Kompromiss. Das Netz skaliert. Aber es wird dabei undurchsichtig. Die Entscheidung wird getroffen. Der Grund ist nicht zugänglich.',
+    pq1:'"Die Q-Tabelle hat dir alles gesagt. Das Netz sagt dir die Antwort."',
+    p9:'Diese Undurchsichtigkeit ist kein zu behebender Fehler. Sie ist eine strukturelle Eigenschaft der Funktionsapproximation. Das Netz funktioniert — oft besser als die Tabelle — aber es funktioniert auf eine Weise, die sich der Inspektion widersetzt.',
+    footerPrev:'← VI. Die Wand',footerNext:'VIII. Innen schauen →',speedLabel:'Tempo:',
+  }
+};
+
+function applyTranslation(lang){
+  currentLang=lang;localStorage.setItem('xray-lang',lang);
+  const t=T[lang];
+  const HTML_IDS=new Set(['p7b','p7c','p8b','p2','p2b','p3','p8','p9','dqnHint','qdDQNNote']);
+  const set=(id,val)=>{const el=document.getElementById(id);if(el&&val!==undefined){if(HTML_IDS.has(id))el.innerHTML=val;else el.textContent=val;}};
+  Object.keys(t).forEach(k=>set(k,t[k]));
+  const btn=document.getElementById('btnRun');
+  if(!running)btn.textContent=lang==='de'?'Start':'Run';
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.dataset.lang===lang));
+  document.getElementById('langBar').classList.remove('open');
+  document.getElementById('langToggle').classList.remove('active');
+}
+
+// ─── Init ────────────────────────────────────────────────────────────────────
+(function(){
+  setTheme(localStorage.getItem('xray-theme')||'light',true);
+  setFsize(localStorage.getItem('xray-fsize')||'default');
+  setContrast(localStorage.getItem('xray-contrast')||'standard');
+})();
+QL.init();DQN.init();
+applyTranslation(currentLang);
+drawQL();drawDQN();updateStats();
+</script>
+</body>
+</html>

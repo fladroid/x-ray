@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>X-Ray — An Interactive Book</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@300;400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;1,8..60,300&display=swap');
+
+  :root {
+    --bg: #f5f2ed; --bg2: #ede8e0; --bg3: #e4ddd4;
+    --border: #c8c0b4; --text: #2a2520; --text-dim: #7a6e65;
+    --text-bright: #1a1210; --accent: #8a6030; --accent2: #2a6080;
+    --accent3: #802030; --accent4: #286040;
+  }
+  [data-theme="dark"] {
+    --bg: #0e0e0f; --bg2: #141416; --bg3: #1a1a1d;
+    --border: #2a2a2e; --text: #d4cfc8; --text-dim: #6b6660;
+    --text-bright: #ede8e0; --accent: #c8a96e; --accent2: #7eb3c8;
+    --accent3: #c87e7e; --accent4: #7ec89a;
+  }
+  html { font-size: 18px; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: 'Source Serif 4', Georgia, serif;
+    line-height: 1.8; max-width: 800px;
+    margin: 0 auto; padding: 0 2rem;
+    transition: background 0.2s, color 0.2s;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    background: rgba(245,242,237,0.96);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+    z-index: 100; transition: background 0.2s;
+  }
+  [data-theme="dark"] nav { background: rgba(14,14,15,0.96); }
+  .nav-inner {
+    max-width: 800px; margin: 0 auto; padding: 0 2rem;
+    display: flex; align-items: center;
+    justify-content: space-between; height: 52px;
+  }
+  .nav-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.15em;
+    color: var(--text-dim); text-transform: uppercase;
+  }
+  .theme-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.12em;
+    color: var(--text-dim); background: transparent;
+    border: none; border-left: 1px solid var(--border);
+    padding: 0 14px; height: 52px; cursor: pointer;
+    text-transform: uppercase; transition: color 0.15s;
+  }
+  .theme-btn:hover { color: var(--accent); }
+
+  /* HERO — accordion */
+  .hero {
+    padding-top: 72px;
+    overflow: hidden;
+    transition: all 0.4s ease;
+  }
+
+  .hero-full {
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* Collapsed hero — mini strip */
+  .hero-mini {
+    display: none;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .hero-mini:hover .hero-mini-title { color: var(--accent); }
+  .hero-mini-title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1rem;
+    font-style: italic;
+    color: var(--text-dim);
+    transition: color 0.2s;
+  }
+  .hero-mini-hint {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  /* Collapsed state */
+  body.collapsed .hero-full { display: none; }
+  body.collapsed .hero-mini { display: flex; }
+  body.collapsed .chapters { padding-top: 1rem; }
+
+  .hero-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.2em;
+    color: var(--text-dim); text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(1.8rem, 3.5vw, 2.4rem);
+    font-weight: 400; line-height: 1.15;
+    color: var(--text-bright); margin-bottom: 1rem;
+  }
+  .hero h1 em { font-style: italic; color: var(--accent); }
+  .rule { width: 40px; height: 1px; background: var(--accent); margin: 1rem 0; }
+  .hero-sub {
+    font-size: 0.92rem; color: var(--text-dim);
+    max-width: 560px; line-height: 1.75; margin-bottom: 1.2rem;
+  }
+  .hero-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.1em;
+    color: var(--text-dim); display: flex; gap: 2rem;
+    flex-wrap: wrap; margin-bottom: 1.6rem;
+  }
+  .hero-meta span { display: flex; align-items: center; gap: 0.5rem; }
+  .hero-meta .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent4); display: inline-block;
+  }
+
+  /* Contents toggle button */
+  .contents-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--bg);
+    background: var(--accent);
+    border: none;
+    padding: 0.5rem 1.4rem;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .contents-btn:hover { opacity: 0.85; }
+
+  /* CHAPTERS */
+  .chapters { padding: 2rem 0 6rem; }
+  .chapters-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.2em;
+    color: var(--text-dim); text-transform: uppercase; margin-bottom: 1.2rem;
+  }
+  .chapter-card {
+    display: grid; grid-template-columns: 3rem 1fr auto;
+    gap: 0 1.5rem; align-items: start;
+    text-decoration: none; color: inherit;
+    padding: 1.6rem 0; border-top: 1px solid var(--border);
+    transition: background 0.15s;
+  }
+  .chapter-card:last-child { border-bottom: 1px solid var(--border); }
+  .chapter-card:hover {
+    background: var(--bg2);
+    margin: 0 -2rem; padding-left: 2rem; padding-right: 2rem;
+  }
+  .chapter-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.1em;
+    color: var(--text-dim); padding-top: 0.25rem;
+  }
+  .chapter-title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1.15rem; font-weight: 400;
+    color: var(--text-bright); margin-bottom: 0.35rem; line-height: 1.3;
+  }
+  .chapter-card:hover .chapter-title { color: var(--accent); }
+  .chapter-desc { font-size: 0.88rem; color: var(--text-dim); line-height: 1.65; }
+  .chapter-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.1em;
+    color: var(--accent4); text-transform: uppercase;
+    padding-top: 0.3rem; white-space: nowrap;
+  }
+  .chapter-card.coming-soon { opacity: 0.45; cursor: default; pointer-events: none; }
+  .chapter-tag.soon { color: var(--text-dim); }
+
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2.5rem 0 3rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.08em;
+    color: var(--text-dim); display: flex;
+    justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;
+  }
+  footer a { color: var(--text-dim); text-decoration: none; }
+  footer a:hover { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <span class="nav-title">X-Ray — Interactive</span>
+    <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">Dark</button>
+  </div>
+</nav>
+
+<main>
+  <section class="hero">
+
+    <!-- FULL hero -->
+    <div class="hero-full">
+      <p class="hero-label">An Interactive Book</p>
+      <h1>What's inside when<br>everything looks <em>fine.</em></h1>
+      <div class="rule"></div>
+      <p class="hero-sub">A guided exploration of how machine learning systems work — not what they do, but what happens inside. Each chapter is interactive: you observe, adjust, and see the system respond in real time.</p>
+      <div class="hero-meta">
+        <span><span class="dot"></span> 7 chapters available</span>
+        <span><span class="dot"></span> Interactive widgets</span>
+        <span><span class="dot"></span> No prior knowledge required</span>
+      </div>
+      <button class="contents-btn" onclick="toggleHero()">Contents ↓</button>
+    </div>
+
+    <!-- MINI hero (collapsed) -->
+    <div class="hero-mini" onclick="toggleHero()">
+      <span class="hero-mini-title">What's inside when everything looks fine.</span>
+      <span class="hero-mini-hint">↑ About</span>
+    </div>
+
+  </section>
+
+  <section class="chapters">
+    <p class="chapters-label">Chapters</p>
+
+    <a class="chapter-card" href="chapter_01_vectors.html">
+      <span class="chapter-num">I</span>
+      <div class="chapter-body">
+        <div class="chapter-title">The Space Where Words Live</div>
+        <div class="chapter-desc">Words as points in geometric space. Meaning as distance. The map the machine navigates before it says a single word.</div>
+      </div>
+      <span class="chapter-tag">Vector space</span>
+    </a>
+
+    <a class="chapter-card" href="chapter_02_attention.html">
+      <span class="chapter-num">II</span>
+      <div class="chapter-body">
+        <div class="chapter-title">The Art of Paying Attention</div>
+        <div class="chapter-desc">How a model decides what matters. Attention as a weighted gaze — shifting, context-dependent, never fixed.</div>
+      </div>
+      <span class="chapter-tag">Attention</span>
+    </a>
+
+    <a class="chapter-card" href="chapter_03_local_optima.html">
+      <span class="chapter-num">III</span>
+      <div class="chapter-body">
+        <div class="chapter-title">The Valley That Looks Like a Peak</div>
+        <div class="chapter-desc">Why a system can be stable and wrong at the same time. Local optima, loss landscapes, and the geometry of being stuck.</div>
+      </div>
+      <span class="chapter-tag">Optimization</span>
+    </a>
+
+    <a class="chapter-card" href="chapter_04_emergence.html">
+      <span class="chapter-num">IV</span>
+      <div class="chapter-body">
+        <div class="chapter-title">Something From Nothing</div>
+        <div class="chapter-desc">Complex behavior from simple rules. An agent that knows nothing — only moves, only collides, only accumulates. Emergence before learning.</div>
+      </div>
+      <span class="chapter-tag">Emergence</span>
+    </a>
+
+    <a class="chapter-card" href="chapter_05_memory.html">
+      <span class="chapter-num">V</span>
+      <div class="chapter-body">
+        <div class="chapter-title">The Table That Learns</div>
+        <div class="chapter-desc">Q-learning: an agent that begins to remember. Watch a policy crystallize from noise — one cell at a time, fully inspectable.</div>
+      </div>
+      <span class="chapter-tag">Q-Learning</span>
+    </a>
+
+    <a class="chapter-card" href="chapter_06_the_wall.html">
+      <span class="chapter-num">VI</span>
+      <div class="chapter-body">
+        <div class="chapter-title">The Wall</div>
+        <div class="chapter-desc">Grow the maze and watch the table break. State space explosion — the moment when a perfect method hits a hard limit.</div>
+      </div>
+      <span class="chapter-tag">State space</span>
+    </a>
+
+    <a class="chapter-card" href="chapter_07_the_function.html">
+      <span class="chapter-num">VII</span>
+      <div class="chapter-body">
+        <div class="chapter-title">The Function</div>
+        <div class="chapter-desc">Same maze, same arrows — but the table is gone. A neural network approximates what was once explicit. Same output, different inside.</div>
+      </div>
+      <span class="chapter-tag">DQN</span>
+    </a>
+
+    <a class="chapter-card" href="chapter_08_looking_inside.html">
+      <span class="chapter-num">VIII</span>
+      <div class="chapter-body">
+        <div class="chapter-title">Looking Inside</div>
+        <div class="chapter-desc">Seven X-Ray moments. What we were actually doing. Look inside — not once, every time.</div>
+      </div>
+      <span class="chapter-tag">reflection</span>
+    </a>
+
+  </section>
+</main>
+
+<footer>
+  <span>X-Ray — An Interactive Book · Flavio Flajs</span>
+  <a href="https://github.com/fladroid/x-ray" target="_blank">GitHub →</a>
+</footer>
+
+<script>
+  // Theme
+  const saved = localStorage.getItem('xray-theme') || 'light';
+  if (saved === 'dark') {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    document.getElementById('themeBtn').textContent = 'Light';
+  }
+  function toggleTheme() {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    if (isDark) {
+      document.documentElement.removeAttribute('data-theme');
+      localStorage.setItem('xray-theme', 'light');
+      document.getElementById('themeBtn').textContent = 'Dark';
+    } else {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      localStorage.setItem('xray-theme', 'dark');
+      document.getElementById('themeBtn').textContent = 'Light';
+    }
+  }
+
+  // Hero accordion
+  function toggleHero() {
+    document.body.classList.toggle('collapsed');
+    localStorage.setItem('xray-hero', document.body.classList.contains('collapsed') ? '0' : '1');
+  }
+
+  // Restore state
+  if (localStorage.getItem('xray-hero') === '0') {
+    document.body.classList.add('collapsed');
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>X-Ray — VIII. Looking Inside</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400&family=Source+Serif+4:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#f4f0e8;--bg2:#ede8df;--bg3:#e5e0d6;--text:#1a1610;--text-dim:#6a6258;
+      --accent:#7a4820;--accent2:#2a6080;--accent3:#805030;--accent4:#286040;
+      --border:#d0c8bc;--serif:'Source Serif 4',Georgia,serif;--mono:'JetBrains Mono',monospace;
+    }
+    [data-theme="dark"]{
+      --bg:#14181e;--bg2:#1a1e26;--bg3:#1e242e;--text:#d8e4ec;--text-dim:#6a8090;
+      --accent:#c8a870;--accent2:#7eb3c8;--accent3:#c8906a;--accent4:#70b890;
+      --border:#2a3440;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    html{font-size:16px;}
+    body{background:var(--bg);color:var(--text);font-family:var(--serif);line-height:1.75;min-height:100vh;transition:background 0.2s,color 0.2s;}
+
+    /* NAV */
+    nav{position:sticky;top:0;z-index:100;height:52px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0;}
+    .nav-title{font-family:var(--mono);font-size:11px;letter-spacing:0.15em;color:var(--text-dim);text-transform:uppercase;padding:0 20px;text-decoration:none;color:inherit;cursor:pointer;}
+    .nav-right{display:flex;align-items:center;}
+    .nav-chapters{display:flex;list-style:none;}
+    .nav-chapters a{font-family:var(--mono);font-size:11px;color:var(--text-dim);text-decoration:none;padding:0 14px;height:52px;display:flex;align-items:center;border-left:1px solid var(--border);transition:color 0.2s,background 0.2s;}
+    .nav-chapters a:hover,.nav-chapters a.active{color:var(--accent);background:rgba(138,96,48,0.06);}
+    [data-theme="dark"] .nav-chapters a:hover,[data-theme="dark"] .nav-chapters a.active{background:rgba(200,169,110,0.05);}
+    .settings-toggle{font-family:var(--mono);font-size:11px;letter-spacing:0.12em;color:var(--text-dim);background:transparent;border:none;border-left:1px solid var(--border);padding:0 14px;height:52px;cursor:pointer;text-transform:uppercase;transition:color 0.15s;}
+    .settings-toggle:hover,.settings-toggle.active{color:var(--accent);}
+    @media(max-width:640px){.nav-chapters{display:none;}}
+
+    /* SETTINGS BAR */
+    .settings-bar{position:fixed;top:52px;left:0;right:0;background:var(--bg2);border-bottom:1px solid var(--border);z-index:90;display:none;padding:0.6rem 1.5rem;gap:1.5rem;flex-wrap:wrap;align-items:center;}
+    .settings-bar.open{display:flex;}
+    .set-group{display:flex;align-items:center;gap:0.4rem;}
+    .set-label{font-family:var(--mono);font-size:9px;color:var(--text-dim);letter-spacing:0.08em;text-transform:uppercase;}
+    .set-btn{font-family:var(--mono);font-size:9px;padding:3px 8px;border:1px solid var(--border);background:transparent;color:var(--text-dim);cursor:pointer;border-radius:1px;transition:all 0.15s;}
+    .set-btn:hover,.set-btn.active{border-color:var(--accent);color:var(--accent);}
+
+    /* LANG BAR */
+    .lang-bar{position:fixed;top:52px;left:0;right:0;background:var(--bg2);border-bottom:1px solid var(--border);z-index:89;display:none;padding:0.5rem 1.5rem;gap:0.5rem;align-items:center;}
+    .lang-bar.open{display:flex;}
+    .lang-btn{font-family:var(--mono);font-size:10px;padding:4px 10px;border:1px solid var(--border);background:transparent;color:var(--text-dim);cursor:pointer;border-radius:1px;transition:all 0.15s;}
+    .lang-btn:hover,.lang-btn.active{border-color:var(--accent2);color:var(--accent2);}
+
+    /* MAIN */
+    main{max-width:680px;margin:0 auto;padding:4rem 2rem 6rem;}
+
+    .chapter-num{font-family:var(--mono);font-size:11px;letter-spacing:0.15em;color:var(--text-dim);text-transform:uppercase;margin-bottom:0.5rem;}
+    .chapter-title{font-size:2rem;font-weight:300;letter-spacing:-0.01em;color:var(--text);margin-bottom:0.4rem;line-height:1.2;}
+    .chapter-sub{font-family:var(--mono);font-size:11px;color:var(--text-dim);letter-spacing:0.05em;margin-bottom:3rem;}
+
+    .prose p{margin-bottom:1.4rem;font-size:1.05rem;color:var(--text);}
+    .prose p:last-child{margin-bottom:0;}
+
+    .section-break{font-family:var(--mono);font-size:9px;letter-spacing:0.25em;color:var(--text-dim);text-transform:uppercase;text-align:center;padding:2.5rem 0;opacity:0.5;}
+
+    .pull-quote{border-left:2px solid var(--accent);margin:2.5rem 0;padding:0.5rem 0 0.5rem 1.5rem;}
+    .pull-quote p{font-size:1.1rem;font-style:italic;color:var(--accent3);line-height:1.6;}
+
+    footer{border-top:1px solid var(--border);padding:1.5rem 2rem;display:flex;justify-content:space-between;max-width:680px;margin:0 auto;}
+    .footer-nav a{font-family:var(--mono);font-size:11px;color:var(--text-dim);text-decoration:none;letter-spacing:0.05em;transition:color 0.15s;}
+    .footer-nav a:hover{color:var(--accent);}
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-title" translate="no">X-Ray</a>
+  <div class="nav-right">
+    <ul class="nav-chapters">
+      <li><a href="chapter_01_vectors.html" translate="no">I. Vectors</a></li>
+      <li><a href="chapter_02_attention.html" translate="no">II. Attention</a></li>
+      <li><a href="chapter_03_local_optima.html" translate="no">III. Local Optima</a></li>
+      <li><a href="chapter_04_emergence.html" translate="no">IV. Emergence</a></li>
+      <li><a href="chapter_05_memory.html" translate="no">V. Memory</a></li>
+      <li><a href="chapter_06_the_wall.html" translate="no">VI. The Wall</a></li>
+      <li><a href="chapter_07_the_function.html" translate="no">VII. The Function</a></li>
+      <li><a href="chapter_08_looking_inside.html" class="active" translate="no">VIII. Looking Inside</a></li>
+    </ul>
+    <button class="settings-toggle" id="langToggle" onclick="toggleLang()" translate="no">&#127760; Lang</button>
+    <button class="settings-toggle" id="settingsToggle" onclick="toggleSettings()" translate="no">&#9881; Display</button>
+  </div>
+</nav>
+
+<div class="settings-bar" id="settingsBar">
+  <div class="set-group">
+    <span class="set-label">Theme</span>
+    <button class="set-btn" id="themeLight" onclick="setTheme('light')">Light</button>
+    <button class="set-btn" id="themeDark" onclick="setTheme('dark')">Dark</button>
+  </div>
+  <div class="set-group">
+    <span class="set-label">Size</span>
+    <button class="set-btn" id="fsSmall" onclick="setFsize('small')">Small</button>
+    <button class="set-btn" id="fsDefault" onclick="setFsize('default')">Default</button>
+    <button class="set-btn" id="fsLarge" onclick="setFsize('large')">Large</button>
+  </div>
+</div>
+
+<div class="lang-bar" id="langBar">
+  <button class="lang-btn active" data-lang="en" onclick="applyTranslation('en')">EN</button>
+  <button class="lang-btn" data-lang="de" onclick="applyTranslation('de')">DE</button>
+</div>
+
+<main>
+  <div class="chapter-num" id="chNum">Chapter VIII</div>
+  <h1 class="chapter-title" id="chTitle">Looking Inside</h1>
+  <p class="chapter-sub" id="chSub">what we were actually doing</p>
+
+  <div class="prose">
+    <p id="p1">Every chapter in this book began with something that looked finished. A word that seemed to have meaning on its own. An agent that seemed to be learning. A system that seemed stable. A network that seemed to be reasoning.</p>
+    <p id="p2">Then we looked inside.</p>
+  </div>
+
+  <div class="section-break" id="sec1">I &mdash; VII</div>
+
+  <div class="prose">
+    <p id="p3">In Chapter I, a word became a position in a geometric space. Meaning stopped being a property of the symbol and became a relationship between points. <em>King minus man plus woman equals queen</em> &mdash; not as metaphor, but as arithmetic. The surface said: words. The inside said: distances.</p>
+    <p id="p4">In Chapter II, attention showed us that a model does not read sentences &mdash; it reweights them. Every token attends to every other token, and the same word carries different information depending on everything around it. The surface said: language. The inside said: a matrix of weighted relationships, recomputed every time.</p>
+    <p id="p5">In Chapter III, we watched gradient descent find the nearest valley and stop there, satisfied. The system was stable. The loss was low. It was also wrong. Local optima look exactly like global optima from the inside. Stability is not proof of correctness.</p>
+    <p id="p6">In Chapter IV, no rule produced the pattern. The pattern emerged anyway &mdash; from simple local interactions, repeated until structure appeared. The behavior was real. The intention was nowhere.</p>
+    <p id="p7">In Chapter V, Q-learning built a table. Every cell readable. Every decision traceable. The agent learned to navigate the maze, and we could follow every step of that learning &mdash; reward by reward, update by update. Full transparency, at the cost of scale.</p>
+    <p id="p8">In Chapter VI, the table hit a wall. Not a conceptual wall &mdash; a mathematical one. As the state space grew, the table grew faster. What worked at seven by seven became impossible at fifteen by fifteen. A system that was correct at small scale was architecturally unable to grow.</p>
+    <p id="p9">In Chapter VII, the network replaced the table. The arrows looked the same. The decisions looked the same. But the reasoning became inaccessible. One thousand and twenty-four weights, updated by backpropagation, produced an answer without leaving a readable trace. The network scaled. It also went dark.</p>
+  </div>
+
+  <div class="section-break" id="sec2">looking inside</div>
+
+  <div class="prose">
+    <p id="p10">Seven chapters. Seven times we looked at something that appeared to be working and asked: what is actually happening inside?</p>
+    <p id="p11">This is not a method. You cannot apply it in steps. It is closer to a habit &mdash; the habit of not accepting the surface as the full story, of asking what structure is hidden beneath the behavior you can observe.</p>
+    <p id="p12">The Q-table was transparent and fragile. The neural network was opaque and powerful. Neither is the answer. Both are tools, and every tool has the problem it was built for. The X-Ray attitude is not about preferring one over the other. It is about knowing which one you are holding, and what it cannot show you.</p>
+  </div>
+
+  <blockquote class="pull-quote">
+    <p id="pq1">What looks stable may be trapped. What looks random may be structured. What looks like reasoning may be pattern-matching at a scale too large to inspect.</p>
+  </blockquote>
+
+  <div class="prose">
+    <p id="p13">And what looks broken from the outside may be working exactly as designed &mdash; just for a problem you did not intend to solve.</p>
+  </div>
+
+  <div class="section-break" id="sec3">&#160;</div>
+
+  <div class="prose">
+    <p id="p14"><em>Look inside. Not once. Every time.</em></p>
+  </div>
+
+</main>
+
+<footer>
+  <div class="footer-nav"><a href="chapter_07_the_function.html" id="footerPrev">&#8592; VII. The Function</a></div>
+  <div class="footer-nav"></div>
+</footer>
+
+<script>
+let currentLang = localStorage.getItem('xray-lang') || 'en';
+
+function toggleSettings(){
+  document.getElementById('settingsBar').classList.toggle('open');
+  document.getElementById('settingsToggle').classList.toggle('active');
+  document.getElementById('langBar').classList.remove('open');
+  document.getElementById('langToggle').classList.remove('active');
+}
+function toggleLang(){
+  document.getElementById('langBar').classList.toggle('open');
+  document.getElementById('langToggle').classList.toggle('active');
+  document.getElementById('settingsBar').classList.remove('open');
+  document.getElementById('settingsToggle').classList.remove('active');
+}
+function setTheme(t,silent){
+  document.documentElement.dataset.theme=t;
+  localStorage.setItem('xray-theme',t);
+  document.getElementById('themeLight').classList.toggle('active',t==='light');
+  document.getElementById('themeDark').classList.toggle('active',t==='dark');
+}
+function setFsize(s){
+  const sizes={small:'14px',default:'16px',large:'18px'};
+  document.documentElement.style.fontSize=sizes[s]||'16px';
+  localStorage.setItem('xray-fsize',s);
+  ['fsSmall','fsDefault','fsLarge'].forEach(id=>document.getElementById(id).classList.remove('active'));
+  document.getElementById('fs'+s.charAt(0).toUpperCase()+s.slice(1)).classList.add('active');
+}
+
+const T = {
+  en: {
+    chNum:'Chapter VIII', chTitle:'Looking Inside', chSub:'what we were actually doing',
+    p1:'Every chapter in this book began with something that looked finished. A word that seemed to have meaning on its own. An agent that seemed to be learning. A system that seemed stable. A network that seemed to be reasoning.',
+    p2:'Then we looked inside.',
+    sec1:'I — VII',
+    p3:'In Chapter I, a word became a position in a geometric space. Meaning stopped being a property of the symbol and became a relationship between points. <em>King minus man plus woman equals queen</em> — not as metaphor, but as arithmetic. The surface said: words. The inside said: distances.',
+    p4:'In Chapter II, attention showed us that a model does not read sentences — it reweights them. Every token attends to every other token, and the same word carries different information depending on everything around it. The surface said: language. The inside said: a matrix of weighted relationships, recomputed every time.',
+    p5:'In Chapter III, we watched gradient descent find the nearest valley and stop there, satisfied. The system was stable. The loss was low. It was also wrong. Local optima look exactly like global optima from the inside. Stability is not proof of correctness.',
+    p6:'In Chapter IV, no rule produced the pattern. The pattern emerged anyway — from simple local interactions, repeated until structure appeared. The behavior was real. The intention was nowhere.',
+    p7:'In Chapter V, Q-learning built a table. Every cell readable. Every decision traceable. The agent learned to navigate the maze, and we could follow every step of that learning — reward by reward, update by update. Full transparency, at the cost of scale.',
+    p8:'In Chapter VI, the table hit a wall. Not a conceptual wall — a mathematical one. As the state space grew, the table grew faster. What worked at seven by seven became impossible at fifteen by fifteen. A system that was correct at small scale was architecturally unable to grow.',
+    p9:'In Chapter VII, the network replaced the table. The arrows looked the same. The decisions looked the same. But the reasoning became inaccessible. One thousand and twenty-four weights, updated by backpropagation, produced an answer without leaving a readable trace. The network scaled. It also went dark.',
+    sec2:'looking inside',
+    p10:'Seven chapters. Seven times we looked at something that appeared to be working and asked: what is actually happening inside?',
+    p11:'This is not a method. You cannot apply it in steps. It is closer to a habit — the habit of not accepting the surface as the full story, of asking what structure is hidden beneath the behavior you can observe.',
+    p12:'The Q-table was transparent and fragile. The neural network was opaque and powerful. Neither is the answer. Both are tools, and every tool has the problem it was built for. The X-Ray attitude is not about preferring one over the other. It is about knowing which one you are holding, and what it cannot show you.',
+    pq1:'What looks stable may be trapped. What looks random may be structured. What looks like reasoning may be pattern-matching at a scale too large to inspect.',
+    p13:'And what looks broken from the outside may be working exactly as designed — just for a problem you did not intend to solve.',
+    p14:'<em>Look inside. Not once. Every time.</em>',
+    footerPrev:'← VII. The Function'
+  },
+  de: {
+    chNum:'Kapitel VIII', chTitle:'Innen schauen', chSub:'was wir wirklich getan haben',
+    p1:'Jedes Kapitel in diesem Buch begann mit etwas, das fertig aussah. Ein Wort, das für sich allein Bedeutung zu haben schien. Ein Agent, der zu lernen schien. Ein System, das stabil schien. Ein Netz, das zu denken schien.',
+    p2:'Dann schauten wir hinein.',
+    sec1:'I — VII',
+    p3:'In Kapitel I wurde ein Wort zu einer Position in einem geometrischen Raum. Bedeutung hörte auf, eine Eigenschaft des Symbols zu sein, und wurde zu einer Beziehung zwischen Punkten. <em>König minus Mann plus Frau gleich Königin</em> — nicht als Metapher, sondern als Arithmetik. Die Oberfläche sagte: Wörter. Das Innere sagte: Abstände.',
+    p4:'In Kapitel II zeigte uns Attention, dass ein Modell keine Sätze liest — es gewichtet sie neu. Jedes Token achtet auf jedes andere Token, und dasselbe Wort trägt je nach allem um es herum unterschiedliche Informationen. Die Oberfläche sagte: Sprache. Das Innere sagte: eine Matrix gewichteter Beziehungen, jedes Mal neu berechnet.',
+    p5:'In Kapitel III sahen wir, wie Gradientenabstieg das nächste Tal fand und dort zufrieden stehenblieb. Das System war stabil. Der Verlust war gering. Es lag auch falsch. Lokale Optima sehen von innen genauso aus wie globale Optima. Stabilität ist kein Beweis für Korrektheit.',
+    p6:'In Kapitel IV erzeugte keine Regel das Muster. Das Muster entstand trotzdem — aus einfachen lokalen Interaktionen, die sich wiederholten, bis Struktur erschien. Das Verhalten war real. Die Absicht war nirgends.',
+    p7:'In Kapitel V baute Q-Learning eine Tabelle. Jede Zelle lesbar. Jede Entscheidung nachvollziehbar. Der Agent lernte, das Labyrinth zu navigieren, und wir konnten jeden Schritt dieses Lernens verfolgen — Belohnung für Belohnung, Update für Update. Vollständige Transparenz, auf Kosten der Skalierung.',
+    p8:'In Kapitel VI stiess die Tabelle an eine Wand. Keine konzeptionelle Wand — eine mathematische. Je grösser der Zustandsraum wurde, desto schneller wuchs die Tabelle. Was bei sieben mal sieben funktionierte, wurde bei fünfzehn mal fünfzehn unmöglich. Ein System, das im kleinen Maßstab korrekt war, war architektonisch nicht in der Lage zu wachsen.',
+    p9:'In Kapitel VII ersetzte das Netz die Tabelle. Die Pfeile sahen gleich aus. Die Entscheidungen sahen gleich aus. Aber die Begründung wurde unzugänglich. Tausendvierundzwanzig Gewichte, durch Backpropagation aktualisiert, produzierten eine Antwort ohne eine lesbare Spur zu hinterlassen. Das Netz skalierte. Es wurde auch dunkel.',
+    sec2:'innen schauen',
+    p10:'Sieben Kapitel. Sieben Mal haben wir etwas betrachtet, das zu funktionieren schien, und gefragt: Was passiert eigentlich darin?',
+    p11:'Das ist keine Methode. Man kann sie nicht in Schritten anwenden. Es ist eher eine Gewohnheit — die Gewohnheit, die Oberfläche nicht als die ganze Geschichte zu akzeptieren, zu fragen, welche Struktur sich hinter dem beobachtbaren Verhalten verbirgt.',
+    p12:'Die Q-Tabelle war transparent und zerbrechlich. Das neuronale Netz war undurchsichtig und leistungsfähig. Keines ist die Antwort. Beide sind Werkzeuge, und jedes Werkzeug hat das Problem, für das es gebaut wurde. Die X-Ray-Haltung geht nicht darum, eines dem anderen vorzuziehen. Es geht darum zu wissen, welches man in der Hand hält und was es einem nicht zeigen kann.',
+    pq1:'Was stabil aussieht, könnte gefangen sein. Was zufällig aussieht, könnte strukturiert sein. Was wie Denken aussieht, könnte Mustererkennung in einem zu grossen Maßstab sein, um es zu überprüfen.',
+    p13:'Und was von aussen kaputt aussieht, funktioniert möglicherweise genau wie vorgesehen — nur für ein Problem, das man nicht zu lösen beabsichtigte.',
+    p14:'<em>Schau hinein. Nicht einmal. Jedes Mal.</em>',
+    footerPrev:'← VII. Die Funktion'
+  }
+};
+
+function applyTranslation(lang){
+  currentLang=lang;localStorage.setItem('xray-lang',lang);
+  const t=T[lang];
+  const HTML_IDS=new Set(['p3','p4','p5','p6','p7','p8','p9','p11','p12','p13','p14','pq1']);
+  const set=(id,val)=>{const el=document.getElementById(id);if(el&&val!==undefined){if(HTML_IDS.has(id))el.innerHTML=val;else el.textContent=val;}};
+  Object.keys(t).forEach(k=>set(k,t[k]));
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.dataset.lang===lang));
+  document.getElementById('langBar').classList.remove('open');
+  document.getElementById('langToggle').classList.remove('active');
+}
+
+(function(){
+  setTheme(localStorage.getItem('xray-theme')||'light');
+  setFsize(localStorage.getItem('xray-fsize')||'default');
+})();
+applyTranslation(currentLang);
+</script>
+</body>
+</html>
