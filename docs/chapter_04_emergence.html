@@ -27,7 +27,7 @@
   html[data-fsize="xl"] { font-size: 25px; }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html { scroll-behavior: smooth; }
-  body { background: var(--bg); color: var(--text); font-family: 'Source Serif 4', Georgia, serif; line-height: 1.8; max-width: 800px; margin: 0 auto; padding: 0 2rem; transition: background 0.2s, color 0.2s; }
+  body { padding-top: 52px; background: var(--bg); color: var(--text); font-family: 'Source Serif 4', Georgia, serif; line-height: 1.8; max-width: 800px; margin: 0 auto; padding: 0 2rem; transition: background 0.2s, color 0.2s; }
 
   .settings-bar { position: fixed; top: 52px; left: 0; right: 0; background: var(--bg2); border-bottom: 1px solid var(--border); z-index: 90; display: none; }
   .settings-bar.open { display: block; }
@@ -46,7 +46,7 @@
   .lang-btn:hover { color: var(--text-bright); border-color: var(--text-dim); }
   .lang-btn.active { background: var(--accent2); border-color: var(--accent2); color: var(--bg); }
 
-    nav{position:sticky;top:0;z-index:100;height:52px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0;max-width:none;width:100%;margin:0;left:0;right:0;box-sizing:border-box;}
+    nav{position:fixed;top:0;left:0;right:0;width:100%;z-index:100;height:52px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0;box-sizing:border-box;}
     .nav-title{font-family:var(--mono);font-size:11px;letter-spacing:0.15em;color:var(--text-dim);text-transform:uppercase;padding:0 16px;text-decoration:none;color:inherit;cursor:pointer;white-space:nowrap;flex-shrink:0;}
     .nav-right{display:flex;align-items:center;flex:1;min-width:0;}
     .nav-chapters{display:flex;list-style:none;flex:1;min-width:0;}
@@ -127,7 +127,7 @@
 <body>
 
 <nav>
-  <a href="index.html" class="nav-title" translate="no">X-RAY — v1.7</a>
+  <a href="index.html" class="nav-title" translate="no">X-RAY — v1.8</a>
   <div class="nav-right">
     <ul class="nav-chapters">
       <li><a href="chapter_01_vectors.html" translate="no">I. Vectors</a></li>
@@ -212,7 +212,7 @@
           <canvas id="mazeCanvas" width="300" height="300"></canvas>
         </div>
         <div class="dual-panel">
-          <div class="dual-panel-label" id="panelLabelHeat" translate="no">X-RAY — v1.7 view</div>
+          <div class="dual-panel-label" id="panelLabelHeat" translate="no">X-RAY — v1.8 view</div>
           <canvas id="heatCanvas" width="300" height="300"></canvas>
         </div>
       </div>
@@ -235,7 +235,7 @@
         </div>
       </div>
       <div class="trail-legend">
-        <div class="trail-legend-title" id="trailLegendTitle">X-RAY — v1.7 frequency scale</div>
+        <div class="trail-legend-title" id="trailLegendTitle">X-RAY — v1.8 frequency scale</div>
         <div class="trail-scale" id="trailScale"></div>
         <div class="trail-scale-labels">
           <span id="trailLow">never</span>
@@ -264,7 +264,7 @@
 
   <div class="prose">
     <p id="p8">The heatmap does not belong to the agent. The agent does not see it. Only we see it — from outside, looking in. Some regions are explored more than others, not by plan but by the topology of the maze itself. The walls guide the wandering even without the agent knowing they exist.</p>
-    <p id="p9">This is what X-RAY — v1.7 vision reveals: even apparent randomness has shape. The structure is there — you simply cannot see it from the inside.</p>
+    <p id="p9">This is what X-RAY — v1.8 vision reveals: even apparent randomness has shape. The structure is there — you simply cannot see it from the inside.</p>
   </div>
 
   <div class="prose">
@@ -620,7 +620,7 @@ const TRANSLATIONS = {
     p5: 'Watch what happens when it moves randomly. No structure, no purpose — just noise. The agent visits some cells many times and never finds others. There is no learning here, only wandering. The maze is as opaque at step 10,000 as it was at step 1.',
     w1label: 'The Wanderer — two views of the same agent',
     panelLabelAgent: 'Agent view',
-    panelLabelHeat: 'X-RAY — v1.7 view',
+    panelLabelHeat: 'X-RAY — v1.8 view',
     statLabelSteps: 'Steps taken',
     statLabelVisited: 'Cells visited',
     statLabelRevisits: 'Revisit rate',
@@ -634,10 +634,10 @@ const TRANSLATIONS = {
     p7: 'What the agent lacks is exactly what the next chapter introduces: the ability to remember which paths led somewhere useful. Not intelligence — just memory of outcomes. That single addition transforms wandering into something that begins to resemble learning.',
     secBreak1: 'emergence',
     p8: "There is a deeper point here. The agent's random walk is not entirely without structure — it produces a heatmap. Some regions are explored more than others, not by plan but by the topology of the maze itself. The walls guide the wandering even without the agent knowing they exist.",
-    p9: 'This is what X-RAY — v1.7 vision reveals: even apparent randomness has shape. The structure is there — you simply cannot see it from the inside.',
+    p9: 'This is what X-RAY — v1.8 vision reveals: even apparent randomness has shape. The structure is there — you simply cannot see it from the inside.',
     w2label: 'Widget II — Heat Map',
     heatNote: 'Run the wanderer above to populate. The brighter the cell, the more times it was visited.',
-    p10: 'The heatmap does not belong to the agent. The agent does not see it. Only we see it — from outside, looking in. This is the X-RAY — v1.7 position: not inside the system, not fooled by its surface behavior, but reading the structure the system itself cannot perceive.',
+    p10: 'The heatmap does not belong to the agent. The agent does not see it. Only we see it — from outside, looking in. This is the X-RAY — v1.8 position: not inside the system, not fooled by its surface behavior, but reading the structure the system itself cannot perceive.',
     p11: 'In the next chapter, we give the agent a small piece of this view. We let it remember. And from that single change, something emerges that the wanderer could never produce.',
     footer_prev: '← III. Local Optima',
     footer_next: 'V. Memory →',
@@ -655,7 +655,7 @@ const TRANSLATIONS = {
     p5: 'Beobachte, was passiert, wenn er sich zufällig bewegt. Keine Struktur, kein Ziel — nur Rauschen. Der Agent besucht manche Felder viele Male und findet andere nie. Hier gibt es kein Lernen, nur Wandern. Das Labyrinth ist bei Schritt 10.000 genauso undurchsichtig wie bei Schritt 1.',
     w1label: 'Der Wanderer — zwei Sichten auf denselben Agenten',
     panelLabelAgent: 'Agentensicht',
-    panelLabelHeat: 'X-RAY — v1.7-Sicht',
+    panelLabelHeat: 'X-RAY — v1.8-Sicht',
     statLabelSteps: 'Schritte',
     statLabelVisited: 'Besuchte Felder',
     statLabelRevisits: 'Wiederholungsrate',
@@ -669,10 +669,10 @@ const TRANSLATIONS = {
     p7: 'Was dem Agenten fehlt, ist genau das, was das nächste Kapitel einführt: die Fähigkeit, sich zu merken, welche Wege irgendwohin nützlich waren. Nicht Intelligenz — nur Gedächtnis für Ergebnisse. Diese eine Ergänzung verwandelt das Wandern in etwas, das beginnt, dem Lernen zu ähneln.',
     secBreak1: 'Emergenz',
     p8: 'Es gibt einen tieferen Punkt hier. Der zufällige Weg des Agenten ist nicht völlig ohne Struktur — er erzeugt eine Heatmap. Manche Regionen werden mehr erkundet als andere, nicht nach Plan, sondern durch die Topologie des Labyrinths selbst. Die Wände leiten das Wandern, ohne dass der Agent weiß, dass sie existieren.',
-    p9: 'Das ist es, was X-RAY — v1.7-Vision offenbart: Selbst scheinbare Zufälligkeit hat eine Form. Die Struktur ist da — man kann sie von innen einfach nicht sehen.',
+    p9: 'Das ist es, was X-RAY — v1.8-Vision offenbart: Selbst scheinbare Zufälligkeit hat eine Form. Die Struktur ist da — man kann sie von innen einfach nicht sehen.',
     w2label: 'Widget II — Heatmap',
     heatNote: 'Starte den Wanderer oben, um die Karte zu füllen. Je heller das Feld, desto öfter wurde es besucht.',
-    p10: 'Die Heatmap gehört nicht dem Agenten. Der Agent sieht sie nicht. Nur wir sehen sie — von außen, hineinschauend. Das ist die X-RAY — v1.7-Position: nicht im System, nicht getäuscht von seinem Oberflächenverhalten, sondern die Struktur lesend, die das System selbst nicht wahrnehmen kann.',
+    p10: 'Die Heatmap gehört nicht dem Agenten. Der Agent sieht sie nicht. Nur wir sehen sie — von außen, hineinschauend. Das ist die X-RAY — v1.8-Position: nicht im System, nicht getäuscht von seinem Oberflächenverhalten, sondern die Struktur lesend, die das System selbst nicht wahrnehmen kann.',
     p11: 'Im nächsten Kapitel geben wir dem Agenten ein kleines Stück dieser Sicht. Wir lassen ihn sich erinnern. Und aus dieser einen Veränderung entsteht etwas, das der Wanderer nie hätte erzeugen können.',
     footer_prev: '← III. Die bequeme Falle',
     footer_next: 'V. Gedächtnis →',
