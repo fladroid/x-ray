@@ -252,7 +252,7 @@
 <body>
 
 <nav>
-  <a href="index.html" class="nav-title" translate="no">X-RAY — v1.5</a>
+  <a href="index.html" class="nav-title" translate="no">X-RAY — v1.6</a>
   <div class="nav-right">
     <ul class="nav-chapters">
       <li><a href="chapter_01_vectors.html" translate="no">I. Vectors</a></li>
@@ -368,7 +368,7 @@
   </div>
 
   <div class="prose">
-    <p id="p10">What you're seeing is a form of X-Ray. In most of the model's processing, the math is opaque — billions of multiplications producing outputs that can't be directly interpreted. Attention weights are different. They are, in a real sense, the model's own account of what it found relevant. Not a full explanation. But a window.</p>
+    <p id="p10">What you're seeing is a form of X-RAY — v1.6. In most of the model's processing, the math is opaque — billions of multiplications producing outputs that can't be directly interpreted. Attention weights are different. They are, in a real sense, the model's own account of what it found relevant. Not a full explanation. But a window.</p>
     <p id="p11">Notice how the word <em>bank</em> attends differently depending on the sentence. In the river sentence, it pulls toward <em>river</em>, <em>steep</em>, <em>beside</em>. In the financial sentence, toward <em>withdrew</em>, <em>money</em>. Same word, different context, different representation. Wittgenstein's insight, implemented in matrix multiplication.</p>
   </div>
 
@@ -424,7 +424,7 @@
     <p id="p14">There is something quietly remarkable about this. The model was not told that <em>bank</em> has two meanings. It was not given a disambiguation rule. It was trained on text, and from that training it learned — implicitly, geometrically — that the right representation of a word depends on its neighbourhood.</p>
     <p id="p15">This is what Wittgenstein meant by language as practice. Meaning doesn't live inside words like furniture inside a house. It emerges from use, from context, from the web of relationships that a word inhabits. The transformer didn't discover this insight. It rediscovered it — through a completely alien process, at a scale no human could replicate, arriving at the same place from a completely different direction.</p>
     <p id="p16">Whether the model <em>knows</em> any of this is a question we should hold carefully. What we can say is this: it behaves as if it understands context. The attention weights are evidence — partial, imperfect, but real — that something structurally similar to contextual understanding is happening inside.</p>
-    <p id="p17">That is the X-Ray view of attention. Not the full picture. Never the full picture. But a crack of light through the black box — and that is more than most systems ever offer.</p>
+    <p id="p17">That is the X-RAY — v1.6 view of attention. Not the full picture. Never the full picture. But a crack of light through the black box — and that is more than most systems ever offer.</p>
   </div>
 
 </main>
@@ -660,7 +660,7 @@ function renderContextViz() {
 // ============================================================
 const TRANSLATIONS = {
   en: {
-    nav_title: 'X-RAY — v1.5',
+    nav_title: 'X-RAY — v1.6',
     nav_ch1: 'I. Vectors', nav_ch2: 'II. Attention', nav_ch3: 'III. Local Optima', nav_ch4: 'IV. Emergence',
     settings_label: '⚙ Display',
     setting_theme: 'Theme', setting_theme_light: 'Light', setting_theme_dark: 'Dark',
@@ -680,14 +680,14 @@ const TRANSLATIONS = {
     p7: 'That shaping process is called <strong>attention</strong>. And it is one of the few things about a language model\'s inner life that you can actually see.',
     p8: 'Here is what attention looks like from the inside. Every token in a sequence generates three vectors: a <em>query</em> ("what am I looking for?"), a <em>key</em> ("what do I offer?"), and a <em>value</em> ("what do I contribute if selected?"). Each token\'s query is compared to every other token\'s key. The result is a score — a weight — that determines how much each token influences the representation of every other token.',
     p9: 'The matrix below shows these weights for a sample sentence. Each row is a token asking its question. Each column is a token answering. The intensity of colour shows the weight of attention — how strongly the row token is shaped by the column token. Click any token label to highlight its row.',
-    p10: 'What you\'re seeing is a form of X-Ray. In most of the model\'s processing, the math is opaque — billions of multiplications producing outputs that can\'t be directly interpreted. Attention weights are different. They are, in a real sense, the model\'s own account of what it found relevant. Not a full explanation. But a window.',
+    p10: 'What you\'re seeing is a form of X-RAY — v1.6. In most of the model\'s processing, the math is opaque — billions of multiplications producing outputs that can\'t be directly interpreted. Attention weights are different. They are, in a real sense, the model\'s own account of what it found relevant. Not a full explanation. But a window.',
     p11: 'Notice how the word <em>bank</em> attends differently depending on the sentence. In the river sentence, it pulls toward <em>river</em>, <em>steep</em>, <em>beside</em>. In the financial sentence, toward <em>withdrew</em>, <em>money</em>. Same word, different context, different representation. Wittgenstein\'s insight, implemented in matrix multiplication.',
     p12: 'But attention is not just disambiguation. It is the mechanism by which meaning becomes <em>relational</em>. A word doesn\'t have a representation — it has a family of representations, one for each context it appears in. The model never sees the word <em>bank</em>; it sees <em>bank-in-this-sentence</em>.',
     p13: 'This is the geometry of attention: each token begins as a fixed point in space — the embedding you saw in Chapter I. By the time attention has finished its work, that point has moved. It has been pulled toward the tokens that mattered and pushed away from those that didn\'t. The final position encodes not just what the word is, but what the word is <em>here</em>, <em>now</em>, in this particular sequence of words.',
     p14: 'There is something quietly remarkable about this. The model was not told that <em>bank</em> has two meanings. It was not given a disambiguation rule. It was trained on text, and from that training it learned — implicitly, geometrically — that the right representation of a word depends on its neighbourhood.',
     p15: 'This is what Wittgenstein meant by language as practice. Meaning doesn\'t live inside words like furniture inside a house. It emerges from use, from context, from the web of relationships that a word inhabits. The transformer didn\'t discover this insight. It rediscovered it — through a completely alien process, at a scale no human could replicate, arriving at the same place from a completely different direction.',
     p16: 'Whether the model <em>knows</em> any of this is a question we should hold carefully. What we can say is this: it behaves as if it understands context. The attention weights are evidence — partial, imperfect, but real — that something structurally similar to contextual understanding is happening inside.',
-    p17: 'That is the X-Ray view of attention. Not the full picture. Never the full picture. But a crack of light through the black box — and that is more than most systems ever offer.',
+    p17: 'That is the X-RAY — v1.6 view of attention. Not the full picture. Never the full picture. But a crack of light through the black box — and that is more than most systems ever offer.',
     widget1_label: 'Interactive — Attention Matrix',
     widget1_status: 'Simulated weights',
     legend_low: 'low attention', legend_high: 'high attention',
@@ -703,7 +703,7 @@ const TRANSLATIONS = {
     footer_page: 'Chapter II of VIII',
   },
   de: {
-    nav_title: 'X-RAY — v1.5',
+    nav_title: 'X-RAY — v1.6',
     nav_ch1: 'I. Vektorraum', nav_ch2: 'II. Aufmerksamkeit', nav_ch3: 'III. Lokale Optima', nav_ch4: 'IV. Emergenz',
     settings_label: '⚙ Ansicht',
     setting_theme: 'Design', setting_theme_light: 'Hell', setting_theme_dark: 'Dunkel',
@@ -724,14 +724,14 @@ const TRANSLATIONS = {
     p7: 'Dieser Formprozess heißt <strong>Aufmerksamkeit</strong>. Und er ist eines der wenigen Dinge im Innenleben eines Sprachmodells, die man tatsächlich sehen kann.',
     p8: 'So sieht Aufmerksamkeit von innen aus. Jedes Token in einer Sequenz erzeugt drei Vektoren: eine <em>Anfrage</em> („Wonach suche ich?"), einen <em>Schlüssel</em> („Was biete ich an?") und einen <em>Wert</em> („Was trage ich bei, wenn ich ausgewählt werde?"). Die Anfrage jedes Tokens wird mit dem Schlüssel jedes anderen Tokens verglichen. Das Ergebnis ist ein Wert — ein Gewicht —, das bestimmt, wie stark jedes Token die Repräsentation jedes anderen Tokens beeinflusst.',
     p9: 'Die Matrix unten zeigt diese Gewichte für einen Beispielsatz. Jede Zeile ist ein Token, das seine Frage stellt. Jede Spalte ist ein Token, das antwortet. Die Farbintensität zeigt das Aufmerksamkeitsgewicht — wie stark das Zeilentoken durch das Spaltentoken geprägt wird. Klicken Sie auf ein Token-Label, um seine Zeile hervorzuheben.',
-    p10: 'Was Sie sehen, ist eine Form von X-Ray. Bei den meisten Berechnungen des Modells ist die Mathematik undurchsichtig — Milliarden von Multiplikationen erzeugen Ergebnisse, die nicht direkt interpretiert werden können. Aufmerksamkeitsgewichte sind anders. Sie sind, in einem echten Sinne, die eigene Darstellung des Modells davon, was es als relevant befunden hat. Keine vollständige Erklärung. Aber ein Fenster.',
+    p10: 'Was Sie sehen, ist eine Form von X-RAY — v1.6. Bei den meisten Berechnungen des Modells ist die Mathematik undurchsichtig — Milliarden von Multiplikationen erzeugen Ergebnisse, die nicht direkt interpretiert werden können. Aufmerksamkeitsgewichte sind anders. Sie sind, in einem echten Sinne, die eigene Darstellung des Modells davon, was es als relevant befunden hat. Keine vollständige Erklärung. Aber ein Fenster.',
     p11: 'Beachten Sie, wie das Wort <em>Bank</em> je nach Satz unterschiedlich aufmerksam ist. Im Flusssatz zieht es zu <em>Fluss</em>, <em>steil</em>, <em>neben</em>. Im Finanzsatz zu <em>abheben</em>, <em>Geld</em>. Gleiches Wort, anderer Kontext, andere Repräsentation. Wittgensteins Einsicht, implementiert in Matrizenmultiplikation.',
     p12: 'Aber Aufmerksamkeit ist nicht nur Disambiguierung. Es ist der Mechanismus, durch den Bedeutung <em>relational</em> wird. Ein Wort hat keine Repräsentation — es hat eine Familie von Repräsentationen, eine für jeden Kontext, in dem es vorkommt. Das Modell sieht nie das Wort <em>Bank</em>; es sieht <em>Bank-in-diesem-Satz</em>.',
     p13: 'Das ist die Geometrie der Aufmerksamkeit: Jedes Token beginnt als fester Punkt im Raum — das Embedding, das Sie in Kapitel I gesehen haben. Wenn die Aufmerksamkeit ihre Arbeit beendet hat, hat sich dieser Punkt bewegt. Er wurde zu den Tokens hingezogen, die wichtig waren, und von denen weggedrückt, die es nicht waren. Die endgültige Position kodiert nicht nur, was das Wort ist, sondern was das Wort <em>hier</em>, <em>jetzt</em>, in dieser bestimmten Wortfolge ist.',
     p14: 'Daran ist etwas still Bemerkenswertes. Das Modell wurde nicht darüber informiert, dass <em>Bank</em> zwei Bedeutungen hat. Es erhielt keine Disambiguierungsregel. Es wurde auf Text trainiert, und aus diesem Training lernte es — implizit, geometrisch —, dass die richtige Repräsentation eines Wortes von seiner Nachbarschaft abhängt.',
     p15: 'Das ist es, was Wittgenstein mit Sprache als Praxis meinte. Bedeutung lebt nicht in Wörtern wie Möbel in einem Haus. Sie entsteht aus dem Gebrauch, aus dem Kontext, aus dem Beziehungsgeflecht, das ein Wort bewohnt. Der Transformer hat diese Einsicht nicht entdeckt. Er hat sie wiederentdeckt — durch einen völlig fremden Prozess, in einem Maßstab, den kein Mensch replizieren könnte, und ist vom vollständig anderen Weg an denselben Ort gelangt.',
     p16: 'Ob das Modell irgendetwas davon <em>weiß</em>, ist eine Frage, die wir sorgfältig halten sollten. Was wir sagen können, ist: Es verhält sich so, als würde es Kontext verstehen. Die Aufmerksamkeitsgewichte sind Belege — partiell, unvollkommen, aber real —, dass drinnen etwas strukturell Ähnliches wie kontextuelles Verstehen geschieht.',
-    p17: 'Das ist der X-Ray-Blick auf Aufmerksamkeit. Nicht das vollständige Bild. Nie das vollständige Bild. Aber ein Lichtstrahl durch die Black Box — und das ist mehr, als die meisten Systeme je bieten.',
+    p17: 'Das ist der X-RAY — v1.6-Blick auf Aufmerksamkeit. Nicht das vollständige Bild. Nie das vollständige Bild. Aber ein Lichtstrahl durch die Black Box — und das ist mehr, als die meisten Systeme je bieten.',
     widget1_label: 'Interaktiv — Aufmerksamkeitsmatrix',
     widget1_status: 'Simulierte Gewichte',
     legend_low: 'geringe Aufmerksamkeit', legend_high: 'hohe Aufmerksamkeit',

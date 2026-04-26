@@ -169,7 +169,7 @@
 <body>
 
 <nav>
-  <a href="index.html" class="nav-title" translate="no">X-RAY — v1.5</a>
+  <a href="index.html" class="nav-title" translate="no">X-RAY — v1.6</a>
   <div class="nav-right">
     <ul class="nav-chapters">
       <li><a href="chapter_01_vectors.html" translate="no">I. Vectors</a></li>
@@ -380,7 +380,7 @@
   <div class="prose">
     <p id="p6">The right side paused when Q-learning first reached the goal. At that moment, the random walker may have also passed through the goal — perhaps many times. But it has no policy. It cannot reliably find the goal again. It will find it again only by accident.</p>
     <p id="p7">The Q-learning agent has something different. Look at the arrows in the cells it has visited. They are not yet complete — many cells are still blank, not yet explored. But the cells near the goal already have confident arrows pointing toward it. Knowledge is propagating backward from the reward.</p>
-    <p id="p8">This is the X-Ray view of learning: not what the agent did, but what it knows. The table is readable. Click any cell in the right maze and you see four numbers — the estimated value of moving north, south, east, west from that position. The brightest bar is the agent's current best guess. You can trace the reasoning behind every future decision before it is made.</p>
+    <p id="p8">This is the X-RAY — v1.6 view of learning: not what the agent did, but what it knows. The table is readable. Click any cell in the right maze and you see four numbers — the estimated value of moving north, south, east, west from that position. The brightest bar is the agent's current best guess. You can trace the reasoning behind every future decision before it is made.</p>
   </div>
 
   <blockquote class="pull-quote">
@@ -854,7 +854,7 @@ const T={
     qdGlossTitle:'What these numbers mean', qdEpsLive:'Current ε', qdRandLabel:'Random moves (ε triggered)', qdGreedyLabel:'Greedy moves (Q-table used)', qdBestLabel:'Best episode (steps)', qdEpisLive:'Current episodes', qdPolicyTitle:'Q-Table — policy map', qdPolicySub:'Arrow = best action per cell · Grey dot = not yet learned · Click cell for Q-values', qdInspTitle:'Q-Values for selected cell', qlLabelSteps:'Steps', qlLabelGoals:'Goal reached', qlLabelFirst:'First goal at step', qlLabelEpisodes:'Episodes', qlLabelBest:'Best episode', qlLabelEps:'ε (exploration)',
     p6:'The right side paused when Q-learning first reached the goal. At that moment, the random walker may have also passed through the goal — perhaps many times. But it has no policy. It cannot reliably find the goal again. It will find it again only by accident.',
     p7:'The Q-learning agent has something different. Look at the arrows in the cells it has visited. They are not yet complete — many cells are still blank, not yet explored. But the cells near the goal already have confident arrows pointing toward it. Knowledge is propagating backward from the reward.',
-    p8:'This is the X-Ray view of learning: not what the agent did, but what it knows. The table is readable. Click any cell in the right maze and you see four numbers — the estimated value of moving in each direction. The brightest bar is the agent\'s current best guess.',
+    p8:'This is the X-RAY — v1.6 view of learning: not what the agent did, but what it knows. The table is readable. Click any cell in the right maze and you see four numbers — the estimated value of moving in each direction. The brightest bar is the agent\'s current best guess.',
     pq1:'"What fires together, wires together."',
     p9:'Continue the simulation after pausing. Watch the arrows fill in. Watch the policy crystallize. Then ask: what happens if the maze is ten times larger? The table needs ten times more rows. There is a point where the table becomes too large to exist. That point is the subject of the next chapter.',
     footer_prev:'← IV. Emergence', footer_next:'VI. The Wall →',
@@ -871,7 +871,7 @@ const T={
     qdGlossTitle:'Was diese Zahlen bedeuten', qdEpsLive:'Aktuelles ε', qdRandLabel:'Zufällige Züge (ε ausgelöst)', qdGreedyLabel:'Greedy-Züge (Q-Tabelle genutzt)', qdBestLabel:'Beste Episode (Schritte)', qdEpisLive:'Aktuelle Episoden', qdPolicyTitle:'Q-Tabelle — Policy-Karte', qdPolicySub:'Pfeil = beste Aktion · Punkt = noch nicht gelernt · Zelle klicken für Q-Werte', qdInspTitle:'Q-Werte der gewählten Zelle', qlLabelSteps:'Schritte', qlLabelGoals:'Ziel erreicht', qlLabelFirst:'Erstes Ziel bei Schritt', qlLabelEpisodes:'Episoden', qlLabelBest:'Beste Episode', qlLabelEps:'ε (Erkundung)',
     p6:'Die rechte Seite pausierte, als Q-Learning das Ziel zum ersten Mal erreichte. In diesem Moment hat der Zufallswanderer möglicherweise auch das Ziel passiert — vielleicht mehrmals. Aber er hat keine Strategie.',
     p7:'Der Q-Learning-Agent hat etwas anderes. Schau auf die Pfeile in den Zellen, die er besucht hat. Sie sind noch nicht vollständig — viele Zellen sind noch leer. Aber die Zellen nahe dem Ziel haben bereits sichere Pfeile, die darauf zeigen.',
-    p8:'Das ist die X-Ray-Sicht auf das Lernen: nicht was der Agent getan hat, sondern was er weiß. Die Tabelle ist lesbar. Klicke auf eine Zelle im rechten Labyrinth und du siehst vier Zahlen — den geschätzten Wert der Bewegung in jede Richtung.',
+    p8:'Das ist die X-RAY — v1.6-Sicht auf das Lernen: nicht was der Agent getan hat, sondern was er weiß. Die Tabelle ist lesbar. Klicke auf eine Zelle im rechten Labyrinth und du siehst vier Zahlen — den geschätzten Wert der Bewegung in jede Richtung.',
     pq1:'"Was zusammen feuert, verbindet sich."',
     p9:'Setze die Simulation nach der Pause fort. Beobachte, wie die Pfeile sich füllen. Beobachte, wie die Strategie kristallisiert. Dann frage: Was passiert, wenn das Labyrinth zehnmal größer ist?',
     footer_prev:'← IV. Emergenz', footer_next:'VI. Die Wand →',
